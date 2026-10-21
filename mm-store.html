@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MM STORE | Animal Rush</title>
+
+<style>
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  font-family:Tahoma,Arial,sans-serif;
+  background:#f5f6f8;
+  color:#0c1220;
+  font-size:17px;
+  line-height:1.8;
+}
+
+button,a{font-family:inherit}
+
+/* هدر */
+.top{
+  padding:24px 16px;
+  text-align:center;
+  background:#0c1220;
+  color:#fff;
+}
+
+.logo{
+  font-size:36px;
+  font-weight:900;
+  letter-spacing:1px;
+}
+
+.logo span{color:#ffb020}
+
+.subtitle{
+  margin:6px 0 0;
+  color:#c8cdd8;
+  font-size:17px;
+  font-weight:bold;
+}
+
+/* صفحه اصلی */
+.hero{
+  max-width:900px;
+  margin:auto;
+  padding:36px 16px 22px;
+  text-align:center;
+}
+
+.hero .small{
+  display:inline-block;
+  padding:9px 20px;
+  border-radius:999px;
+  background:#ffe9c2;
+  color:#7a4a00;
+  font-size:17px;
+  font-weight:900;
+}
+
+.hero h1{
+  margin:18px 0 10px;
+  font-size:clamp(28px,6.5vw,46px);
+  font-weight:900;
+  line-height:1.4;
+}
+
+.hero p{
+  max-width:600px;
+  margin:auto;
+  color:#2b3446;
+  line-height:1.9;
+  font-size:18px;
+  font-weight:600;
+}
+
+/* گزینه‌ها */
+.choices{
+  max-width:850px;
+  margin:16px auto 50px;
+  padding:0 16px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+}
+
+.choice{
+  border:3px solid #0c1220;
+  border-radius:22px;
+  padding:28px 18px;
+  background:#fff;
+  cursor:pointer;
+  transition:.2s;
+  text-align:center;
+}
+
+.choice:hover{
+  transform:translateY(-4px);
+  background:#fff8eb;
+  border-color:#f39a12;
+}
+
+.icon{
+  width:74px;
+  height:74px;
+  margin:0 auto 14px;
+  display:grid;
+  place-items:center;
+  border-radius:20px;
+  background:#ffe9c2;
+  font-size:38px;
+}
+
+.choice h2{
+  margin:0 0 8px;
+  font-size:22px;
+  font-weight:900;
+}
+
+.choice p{
+  margin:0;
+  color:#2b3446;
+  line-height:1.8;
+  font-size:16px;
+  font-weight:700;
+}
+
+.go{
+  display:inline-block;
+  margin-top:18px;
+  padding:12px 24px;
+  border-radius:12px;
+  background:#0c1220;
+  color:#fff;
+  font-weight:900;
+  font-size:17px;
+}
+
+/* پنل‌ها */
+.panel{
+  display:none;
+  max-width:720px;
+  margin:0 auto 50px;
+  padding:0 14px;
+}
+
+.panel.active{display:block}
+
+.box{
+  border:2px solid #d7dbe4;
+  border-radius:22px;
+  padding:24px 18px;
+  background:#fff;
+}
+
+.back{
+  border:2px solid #0c1220;
+  background:#fff;
+  color:#0c1220;
+  padding:10px 18px;
+  border-radius:10px;
+  cursor:pointer;
+  margin-bottom:16px;
+  font-size:16px;
+  font-weight:900;
+}
+
+.box h2{
+  font-size:25px;
+  font-weight:900;
+  margin:0 0 10px;
+}
+
+.desc{
+  color:#2b3446;
+  line-height:2;
+  font-size:17px;
+  font-weight:600;
+  margin:0 0 14px;
+}
+
+/* قیمت */
+.price{
+  margin:18px 0;
+  padding:18px 14px;
+  border-radius:16px;
+  background:#0c1220;
+  color:#fff;
+  text-align:center;
+}
+
+.price strong{
+  display:block;
+  font-size:32px;
+  font-weight:900;
+  color:#ffb020;
+}
+
+.price span{
+  display:block;
+  color:#dfe3ea;
+  font-size:16px;
+  font-weight:bold;
+}
+
+/* اطلاعات پرداخت */
+.info{
+  margin:14px 0;
+  padding:16px;
+  border-radius:14px;
+  background:#f2f4f7;
+}
+
+.info-title{
+  font-weight:900;
+  font-size:17px;
+  margin-bottom:10px;
+}
+
+.id-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.id-code{
+  cursor:pointer;
+  text-decoration:none;
+  direction:ltr;
+  display:inline-block;
+  background:#fff;
+  border:2px solid #0c1220;
+  border-radius:10px;
+  padding:10px 14px;
+  font-family:monospace;
+  font-weight:900;
+  font-size:17px;
+  color:#0c1220;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.copy{
+  flex-shrink:0;
+  border:0;
+  background:#f39a12;
+  color:#0c1220;
+  border-radius:10px;
+  padding:10px 16px;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:900;
+}
+
+.copy:active{
+  background:#d98709;
+}
+
+/* دکمه پشتیبانی */
+.support{
+  display:block;
+  text-align:center;
+  text-decoration:none;
+  border:2px solid #0c1220;
+  color:#0c1220;
+  padding:14px 16px;
+  border-radius:12px;
+  font-weight:900;
+  font-size:17px;
+  background:#fff;
+}
+
+/* آموزش */
+.steps{
+  margin:18px 0 0;
+  padding:16px 18px;
+  background:#f2f4f7;
+  border-radius:14px;
+}
+
+.steps h3{
+  margin:0 0 10px;
+  font-size:19px;
+  font-weight:900;
+}
+
+.steps ol{
+  margin:0;
+  padding-right:22px;
+}
+
+.steps li{
+  margin:9px 0;
+  color:#1a2334;
+  line-height:1.9;
+  font-size:16px;
+  font-weight:700;
+}
+
+/* گزینه‌های سکه */
+.coin-options{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin-top:14px;
+}
+
+.coin-option{
+  border:2px solid #c6ccd8;
+  background:#fff;
+  border-radius:12px;
+  padding:8px 10px;
+  cursor:pointer;
+  text-align:center;
+  transition:.15s;
+  line-height:1.4;
+}
+
+.coin-option:hover{
+  border-color:#f39a12;
+}
+
+.coin-option.selected{
+  border:2px solid #f39a12;
+  background:#fff3da;
+}
+
+.coin-option b{
+  display:block;
+  font-size:16px;
+  font-weight:900;
+  color:#0c1220;
+}
+
+.coin-option span{
+  display:block;
+  color:#1a2334;
+  margin-top:2px;
+  font-size:14px;
+  font-weight:800;
+}
+
+.coin-option.special{
+  border-color:#f39a12;
+  background:#fff3da;
+}
+
+.coin-option.special b{
+  color:#a35b00;
+}
+
+.notice{
+  margin-top:16px;
+  padding:14px 16px;
+  background:#ffe9c2;
+  border:2px solid #f39a12;
+  border-radius:12px;
+  color:#4d3a12;
+  font-size:15px;
+  font-weight:700;
+  line-height:1.9;
+}
+
+/* فوتر */
+footer{
+  border-top:2px solid #dfe3ea;
+  text-align:center;
+  padding:24px 16px;
+  color:#2b3446;
+  font-size:15px;
+  font-weight:700;
+  background:#fff;
+}
+
+footer .flinks{
+  margin-top:12px;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+footer .flinks a{
+  color:#0c1220;
+  text-decoration:none;
+  border:1px solid #d7dbe4;
+  border-radius:10px;
+  padding:8px 12px;
+  background:#f5f6f8;
+  font-weight:800;
+}
+
+/* موبایل */
+@media(max-width:560px){
+
+  body{
+    font-size:16px;
+  }
+
+  .choices{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+
+  .hero{
+    padding:26px 12px 16px;
+  }
+
+  .box{
+    padding:18px 13px;
+    border-radius:18px;
+  }
+
+  .price strong{
+    font-size:26px;
+  }
+
+  .coin-options{
+    gap:7px;
+  }
+
+  .coin-option{
+    padding:7px 6px;
+    border-radius:10px;
+  }
+
+  .coin-option b{
+    font-size:14.5px;
+  }
+
+  .coin-option span{
+    font-size:13px;
+  }
+
+  .id-code{
+    padding:9px 12px;
+    font-size:16px;
+  }
+
+  .copy{
+    padding:9px 14px;
+    font-size:15px;
+  }
+
+  .id-row{
+    gap:8px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="top">
+  <div class="logo">MM <span>STORE</span></div>
+  <p class="subtitle">فروشگاه خدمات Animal Rush</p>
+</header>
+
+<main>
+
+<section class="hero" id="hero">
+  <span class="small">🎮 انتخاب خدمات</span>
+  <h1>چه چیزی نیاز داری؟</h1>
+  <p>
+    یکی از گزینه‌های زیر را انتخاب کن تا قیمت و روش خرید را مرحله‌به‌مرحله ببینی.
+  </p>
+</section>
+
+<section class="choices" id="choices">
+
+  <div class="choice" onclick="showPanel('subscription')">
+    <div class="icon">👑</div>
+    <h2>خرید اشتراک</h2>
+    <p>اشتراک ویژه Animal Rush با قیمت ۵۵,۰۰۰ تومان</p>
+    <span class="go">مشاهده جزئیات ←</span>
+  </div>
+
+  <div class="choice" onclick="showPanel('coins')">
+    <div class="icon">🪙</div>
+    <h2>خرید سکه</h2>
+    <p>از ۱۰,۰۰۰ تا ۲۰۰,۰۰۰ سکه، هر مقدار که بخواهی</p>
+    <span class="go">مشاهده جزئیات ←</span>
+  </div>
+
+</section>
+
+<!-- ==================== اشتراک ==================== -->
+
+<section class="panel" id="subscription">
+
+<div class="box">
+
+<button class="back" onclick="goBack()">← بازگشت</button>
+
+<div class="price">
+  <strong>۱۲,۰۰۰ سکه</strong>
+  <span>قیمت اشتراک: ۱۲,۰۰۰ سکه یا ۵۵,۰۰۰ تومان</span>
+</div>
+
+<div class="info">
+
+  <div class="info-title">
+    شماره کارت یا شناسه پرداخت
+  </div>
+
+  <div class="id-row">
+
+    <button
+      type="button"
+      class="id-code"
+      onclick="copyText('6037997363271207')">
+      6037997363271207
+    </button>
+
+    <button
+      class="copy"
+      onclick="copyText('6037997363271207')">
+      کپی شماره کارت
+    </button>
+
+  </div>
+
+</div>
+
+<div class="info">
+
+  <div class="info-title">
+    شناسه بازی برای فعال‌سازی اشتراک
+  </div>
+
+  <div class="id-row">
+
+    <button
+      type="button"
+      class="id-code"
+      onclick="copyText('zkipltdfxo')">
+      zkipltdfxo
+    </button>
+
+    <button
+      class="copy"
+      onclick="copyText('zkipltdfxo')">
+      کپی شناسه
+    </button>
+
+  </div>
+
+</div>
+
+<div class="steps">
+
+  <h3>📋 راهنمای خرید اشتراک</h3>
+
+  <ol>
+
+    <li>
+      مبلغ اشتراک را به شماره کارت یا شناسه پرداخت بالا واریز کنید.
+    </li>
+
+    <li>
+      پس از پرداخت، یک اسکرین‌شات یا تصویر واضح از رسید پرداخت تهیه کنید.
+    </li>
+
+    <li>
+      روی دکمه «ارسال مدرک و شناسه به پشتیبانی» بزنید و وارد کانال پشتیبانی شوید.
+    </li>
+
+    <li>
+      با <b>پشتیبان دوم</b> ارتباط بگیرید و مدرک پرداخت به همراه شناسه بازی خود را ارسال کنید.
+    </li>
+
+    <li>
+      پس از بررسی و تأیید پرداخت، اشتراک برای حساب شما فعال خواهد شد.
+    </li>
+
+  </ol>
+
+</div>
+
+<a
+  class="support"
+  href="https://rubika.ir/Advertisements7"
+  target="_blank"
+  rel="noopener">
+  💬 ارسال مدرک و شناسه به پشتیبانی
+</a>
+
+</div>
+</section>
+
+<!-- ==================== خرید سکه ==================== -->
+
+<section class="panel" id="coins">
+
+<div class="box">
+
+<button class="back" onclick="goBack()">← بازگشت</button>
+
+<h2>🪙 خرید سکه Animal Rush</h2>
+
+<p class="desc">
+  مقدار سکه موردنظرت را از گزینه‌های زیر انتخاب کن.
+  قیمت همان‌جا نمایش داده می‌شود.
+  حداکثر مقدار قابل سفارش: ۲۰۰,۰۰۰ سکه.
+</p>
+
+<div class="coin-options" id="coinOptions">
+
+<button class="coin-option special"
+data-coins="10000"
+data-price="40000"
+onclick="selectCoins(this)">
+<b>۱۰,۰۰۰ سکه 🔥</b>
+<span>۴۰,۰۰۰ تومان</span>
+</button>
+
+<button class="coin-option"
+data-coins="20000"
+data-price="80000"
+onclick="selectCoins(this)">
+<b>۲۰,۰۰۰ سکه</b>
+<span>۸۰,۰۰۰ تومان</span>
+</button>
+
+<button class="coin-option"
+data-coins="30000"
+data-price="120000"
+onclick="selectCoins(this)">
+<b>۳۰,۰۰۰ سکه</b>
+<span>۱۲۰,۰۰۰ تومان</span>
+</button>
+
+<button class="coin-option"
+data-coins="40000"
+data-price="160000"
+onclick="selectCoins(this)">
+<b>۴۰,۰۰۰ سکه</b>
+<span>۱۶۰,۰۰۰ تومان</span>
+</button>
+
+<button class="coin-option"
+data-coins="50000"
+data-price="200000"
+onclick="selectCoins(this)">
+<b>۵۰,۰۰۰ سکه</b>
+<span>۲۰۰,۰۰۰ تومان</span>
+</button>
+
+<button class="coin-option"
+data-coins="60000"
+data-price="240000"
+onclick="selectCoins(this)">
+<b>۶۰,۰۰۰ سکه</b>
+<span>۲۴۰,۰۰۰ تومان</span>
+</button>
+
+<button class="coin-option"
+data-coins="70000"
+data-price="280000"
+onclick="selectCoins(this)">
+<b>۷۰,۰۰۰ سکه</b>
+<span>۲۸۰,۰۰۰ تومان</span>
+</button>
+
+<button class="coin-option"
+data-coins="80000"
+data-price="320000"
+onclick="selectCoins(this)">
+<b>۸۰,۰۰۰ سکه</b>
+<span>۳۲۰,۰۰۰ تومان</span>
+</button>
+
+<button class="coin-option"
+data-coins="90000"
+data-price="360000"
+onclick="selectCoins(this)">
+<b>۹۰,۰۰۰ سکه</b>
+<span>۳۶۰,۰۰۰ تومان</span>
+</button>
+
+<button class="coin-option"
+data-coins="100000"
+data-price="400000"
+onclick="selectCoins(this)">
+<b>۱۰۰,۰۰۰ سکه</b>
+<span>۴۰۰,۰۰۰ تومان</span>
+</button>
+
+<button class="coin-option"
+data-coins="150000"
+data-price="600000"
+onclick="selectCoins(this)">
+<b>۱۵۰,۰۰۰ سکه</b>
+<span>۶۰۰,۰۰۰ تومان</span>
+</button>
+
+<button class="coin-option"
+data-coins="200000"
+data-price="800000"
+onclick="selectCoins(this)">
+<b>۲۰۰,۰۰۰ سکه</b>
+<span>۸۰۰,۰۰۰ تومان</span>
+</button>
+
+</div>
+
+<div class="price" id="coinSummary">
+<strong>یک مقدار را انتخاب کن</strong>
+<span>قیمت سفارش بعد از انتخاب نمایش داده می‌شود.</span>
+</div>
+
+<div class="info">
+
+<div class="info-title">
+شماره کارت فروشگاه
+</div>
+
+<div class="id-row">
+
+<button
+type="button"
+class="id-code"
+onclick="copyText('6037997363271207')">
+6037997363271207
+</button>
+
+<button
+class="copy"
+onclick="copyText('6037997363271207')">
+کپی شماره کارت
+</button>
+
+</div>
+
+</div>
+
+<div class="steps">
+
+<h3>📋 راهنمای خرید سکه</h3>
+
+<ol>
+
+<li>
+مقدار سکه موردنظر را از گزینه‌های بالا انتخاب کنید.
+</li>
+
+<li>
+مبلغ نمایش‌داده‌شده را به شماره کارت بالا واریز کنید.
+</li>
+
+<li>
+پس از پرداخت، از رسید یا تراکنش خود یک اسکرین‌شات تهیه کنید.
+</li>
+
+<li>
+مدرک پرداخت به همراه شناسه بازی خود را برای پشتیبانی ارسال کنید.
+</li>
+
+<li>
+پس از بررسی و تأیید پرداخت، سکه‌ها به شناسه بازی شما واریز خواهند شد.
+</li>
+
+</ol>
+
+</div>
+
+<a
+class="support"
+href="https://rubika.ir/Advertisements7"
+target="_blank"
+rel="noopener">
+💬 ارسال مدرک و شناسه به پشتیبانی
+</a>
+
+<div class="notice">
+
+⚠️ هنگام ارسال درخواست، حتماً
+<b>مدرک پرداخت + شناسه بازی</b>
+را همراه پیام ارسال کنید تا سفارش شما قابل پیگیری باشد.
+
+<br>
+
+🔒 هیچ‌وقت رمز عبور یا کد ورود حساب خود را برای هیچ‌کس ارسال نکنید.
+
+</div>
+
+</div>
+</section>
+
+</main>
+
+<footer>
+
+<div>MM STORE • Animal Rush</div>
+
+<div style="margin-top:6px">
+برای ثبت و پیگیری سفارش فقط از پشتیبانی رسمی استفاده کنید.
+</div>
+
+<div class="flinks">
+
+<a
+href="https://rubika.ir/AnimalRush_MM"
+target="_blank"
+rel="noopener">
+📢 کانال Animal Rush
+</a>
+
+<a
+href="https://rubika.ir/Advertisements7"
+target="_blank"
+rel="noopener">
+💬 پشتیبانی
+</a>
+
+</div>
+
+</footer>
+
+<script>
+
+function showPanel(id){
+
+  document.getElementById('choices').style.display='none';
+
+  document.getElementById('hero').style.display='none';
+
+  document.querySelectorAll('.panel').forEach(function(p){
+    p.classList.remove('active');
+  });
+
+  document.getElementById(id).classList.add('active');
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+}
+
+function goBack(){
+
+  document.querySelectorAll('.panel').forEach(function(p){
+    p.classList.remove('active');
+  });
+
+  document.getElementById('choices').style.display='grid';
+
+  document.getElementById('hero').style.display='block';
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+}
+
+function copyText(text){
+
+  function done(){
+    alert('کپی شد: '+text);
+  }
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+
+    navigator.clipboard
+      .writeText(text)
+      .then(done)
+      .catch(function(){
+        legacyCopy(text);
+        done();
+      });
+
+  }else{
+
+    legacyCopy(text);
+    done();
+
+  }
+
+}
+
+function legacyCopy(text){
+
+  var t=document.createElement('textarea');
+
+  t.value=text;
+
+  t.style.position='fixed';
+  t.style.opacity='0';
+
+  document.body.appendChild(t);
+
+  t.focus();
+  t.select();
+
+  try{
+    document.execCommand('copy');
+  }catch(e){}
+
+  document.body.removeChild(t);
+
+}
+
+function selectCoins(el){
+
+  document.querySelectorAll('.coin-option')
+    .forEach(function(x){
+      x.classList.remove('selected');
+    });
+
+  el.classList.add('selected');
+
+  var coins=
+    Number(el.dataset.coins)
+    .toLocaleString('fa-IR');
+
+  var price=
+    Number(el.dataset.price)
+    .toLocaleString('fa-IR');
+
+  document.getElementById('coinSummary').innerHTML=
+    '<strong>'+coins+' سکه</strong>' +
+    '<span>قیمت: '+price+' تومان</span>';
+
+}
+
+</script>
+
+</body>
+</html>
