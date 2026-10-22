@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MM STORE | Animal Rush</title>
+
+<style>
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  font-family:Tahoma,Arial,sans-serif;
+  background:#f5f6f8;
+  color:#0c1220;
+  font-size:17px;
+  line-height:1.8;
+}
+
+button,a{font-family:inherit}
+
+/* هدر */
+.top{
+  padding:24px 16px;
+  text-align:center;
+  background:#0c1220;
+  color:#fff;
+}
+
+.logo{
+  font-size:36px;
+  font-weight:900;
+  letter-spacing:1px;
+}
+
+.logo span{color:#ffb020}
+
+.subtitle{
+  margin:6px 0 0;
+  color:#c8cdd8;
+  font-size:17px;
+  font-weight:bold;
+}
+
+/* صفحه اصلی */
+.hero{
+  max-width:900px;
+  margin:auto;
+  padding:36px 16px 22px;
+  text-align:center;
+}
+
+.hero .small{
+  display:inline-block;
+  padding:9px 20px;
+  border-radius:999px;
+  background:#ffe9c2;
+  color:#7a4a00;
+  font-size:17px;
+  font-weight:900;
+}
+
+.hero h1{
+  margin:18px 0 10px;
+  font-size:clamp(28px,6.5vw,46px);
+  font-weight:900;
+  line-height:1.4;
+}
+
+.hero p{
+  max-width:600px;
+  margin:auto;
+  color:#2b3446;
+  line-height:1.9;
+  font-size:18px;
+  font-weight:600;
+}
+
+/* گزینه‌ها */
+.choices{
+  max-width:850px;
+  margin:16px auto 50px;
+  padding:0 16px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+}
+
+.choice{
+  border:3px solid #0c1220;
+  border-radius:22px;
+  padding:28px 18px;
+  background:#fff;
+  cursor:pointer;
+  transition:.2s;
+  text-align:center;
+}
+
+.choice:hover{
+  transform:translateY(-4px);
+  background:#fff8eb;
+  border-color:#f39a12;
+}
+
+.icon{
+  width:74px;
+  height:74px;
+  margin:0 auto 14px;
+  display:grid;
+  place-items:center;
+  border-radius:20px;
+  background:#ffe9c2;
+  font-size:38px;
+}
+
+.choice h2{
+  margin:0 0 8px;
+  font-size:22px;
+  font-weight:900;
+}
+
+.choice p{
+  margin:0;
+  color:#2b3446;
+  line-height:1.8;
+  font-size:16px;
+  font-weight:700;
+}
+
+.go{
+  display:inline-block;
+  margin-top:18px;
+  padding:12px 24px;
+  border-radius:12px;
+  background:#0c1220;
+  color:#fff;
+  font-weight:900;
+  font-size:17px;
+}
+
+/* پنل‌ها */
+.panel{
+  display:none;
+  max-width:720px;
+  margin:0 auto 50px;
+  padding:0 14px;
+}
+
+.panel.active{display:block}
+
+.box{
+  border:2px solid #d7dbe4;
+  border-radius:22px;
+  padding:24px 18px;
+  background:#fff;
+}
+
+.back{
+  border:2px solid #0c1220;
+  background:#fff;
+  color:#0c1220;
+  padding:10px 18px;
+  border-radius:10px;
+  cursor:pointer;
+  margin-bottom:16px;
+  font-size:16px;
+  font-weight:900;
+}
+
+.box h2{
+  font-size:25px;
+  font-weight:900;
+  margin:0 0 10px;
+}
+
+.desc{
+  color:#2b3446;
+  line-height:2;
+  font-size:17px;
+  font-weight:600;
+  margin:0 0 14px;
+}
+
+/* قیمت */
+.price{
+  margin:18px 0;
+  padding:18px 14px;
+  border-radius:16px;
+  background:#0c1220;
+  color:#fff;
+  text-align:center;
+}
+
+.price strong{
+  display:block;
+  font-size:64px;
+  font-weight:900;
+  color:#ffb020;
+}
+
+.price span{
+  display:block;
+  color:#dfe3ea;
+  font-size:16px;
+  font-weight:bold;
+}
+
+/* اطلاعات پرداخت */
+.info{
+  margin:14px 0;
+  padding:16px;
+  border-radius:14px;
+  background:#f2f4f7;
+}
+
+.info-title{
+  font-weight:900;
+  font-size:17px;
+  margin-bottom:10px;
+}
+
+.id-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.id-code{
+  cursor:pointer;
+  text-decoration:none;
+  direction:ltr;
+  display:inline-block;
+  background:#fff;
+  border:2px solid #0c1220;
+  border-radius:10px;
+  padding:10px 14px;
+  font-family:monospace;
+  font-weight:900;
+  font-size:17px;
+  color:#0c1220;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.copy{
+  flex-shrink:0;
+  border:0;
+  background:#f39a12;
+  color:#0c1220;
+  border-radius:10px;
+  padding:10px 16px;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:900;
+}
+
+.copy:active{
+  background:#d98709;
+}
+
+/* دکمه پشتیبانی */
+.support{
+  display:block;
+  text-align:center;
+  text-decoration:none;
+  border:2px solid #0c1220;
+  color:#0c1220;
+  padding:14px 16px;
+  border-radius:12px;
+  font-weight:900;
+  font-size:17px;
+  background:#fff;
+}
+
+/* آموزش */
+.steps{
+  margin:18px 0 0;
+  padding:16px 18px;
+  background:#f2f4f7;
+  border-radius:14px;
+}
+
+.steps h3{
+  margin:0 0 10px;
+  font-size:19px;
+  font-weight:900;
+}
+
+.steps ol{
+  margin:0;
+  padding-right:22px;
+}
+
+.steps li{
+  margin:9px 0;
+  color:#1a2334;
+  line-height:1.9;
+  font-size:16px;
+  font-weight:700;
+}
+
+/* گزینه‌های سکه */
+.coin-options{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin-top:14px;
+}
+
+.coin-option{
+  border:2px solid #c6ccd8;
+  background:#fff;
+  border-radius:12px;
+  padding:8px 10px;
+  cursor:pointer;
+  text-align:center;
+  transition:.15s;
+  line-height:1.4;
+}
+
+.coin-option:hover{
+  border-color:#f39a12;
+}
+
+.coin-option.selected{
+  border:2px solid #f39a12;
+  background:#fff3da;
+}
+
+.coin-option b{
+  display:block;
+  font-size:16px;
+  font-weight:900;
+  color:#0c1220;
+}
+
+.coin-option span{
+  display:block;
+  color:#1a2334;
+  margin-top:2px;
+  font-size:14px;
+  font-weight:800;
+}
+
+.coin-option.special{
+  border-color:#f39a12;
+  background:#fff3da;
+}
+
+.coin-option.special b{
+  color:#a35b00;
+}
+
+.notice{
+  margin-top:16px;
+  padding:14px 16px;
+  background:#ffe9c2;
+  border:2px solid #f39a12;
+  border-radius:12px;
+  color:#4d3a12;
+  font-size:15px;
+  font-weight:700;
+  line-height:1.9;
+}
+
+
+.seller-list{display:grid;gap:12px;margin-top:16px}
+.seller-card{width:100%;padding:16px;border:2px solid #d7dbe4;border-radius:14px;background:#fff;text-align:right;cursor:pointer;transition:.15s}
+.seller-card:hover{border-color:#f39a12;background:#fff8eb}
+.seller-card strong{display:block;font-size:18px;font-weight:900;direction:ltr;text-align:right}
+.seller-card span{display:block;color:#2b3446;font-size:15px;font-weight:700;margin-top:4px}
+
+/* فوتر */
+footer{
+  border-top:2px solid #dfe3ea;
+  text-align:center;
+  padding:24px 16px;
+  color:#2b3446;
+  font-size:15px;
+  font-weight:700;
+  background:#fff;
+}
+
+footer .flinks{
+  margin-top:12px;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+footer .flinks a{
+  color:#0c1220;
+  text-decoration:none;
+  border:1px solid #d7dbe4;
+  border-radius:10px;
+  padding:8px 12px;
+  background:#f5f6f8;
+  font-weight:800;
+}
+
+
+/* جست‌وجوی فروشگاه */
+.search-wrap{
+  max-width:850px;
+  margin:14px auto 24px;
+  padding:0 16px;
+}
+
+.search-box{
+  position:relative;
+}
+
+.search-box input{
+  width:100%;
+  border:2px solid #d7dbe4;
+  border-radius:16px;
+  background:#fff;
+  color:#0c1220;
+  padding:15px 50px 15px 16px;
+  outline:none;
+  font-size:17px;
+  font-weight:700;
+  transition:.2s;
+  box-shadow:0 3px 12px rgba(12,18,32,.05);
+}
+
+.search-box input:focus{
+  border-color:#f39a12;
+  box-shadow:0 0 0 4px rgba(243,154,18,.12);
+}
+
+.search-icon{
+  position:absolute;
+  right:16px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:23px;
+  pointer-events:none;
+}
+
+.search-clear{
+  position:absolute;
+  left:10px;
+  top:50%;
+  transform:translateY(-50%);
+  width:34px;
+  height:34px;
+  border:0;
+  border-radius:10px;
+  background:#f2f4f7;
+  color:#0c1220;
+  cursor:pointer;
+  font-size:18px;
+  font-weight:900;
+  display:none;
+}
+
+.search-results{
+  margin-top:12px;
+  display:none;
+}
+
+.search-results.show{
+  display:block;
+}
+
+.search-result{
+  width:100%;
+  border:2px solid #d7dbe4;
+  border-radius:16px;
+  background:#fff;
+  padding:14px 16px;
+  margin-bottom:10px;
+  cursor:pointer;
+  text-align:right;
+  transition:.15s;
+}
+
+.search-result:hover{
+  border-color:#f39a12;
+  background:#fff8eb;
+}
+
+.search-result-title{
+  font-size:18px;
+  font-weight:900;
+}
+
+.search-result-text{
+  margin-top:3px;
+  color:#2b3446;
+  font-size:14px;
+  font-weight:700;
+  line-height:1.7;
+}
+
+.search-empty{
+  padding:14px 16px;
+  border-radius:14px;
+  background:#fff;
+  border:2px dashed #d7dbe4;
+  color:#2b3446;
+  text-align:center;
+  font-weight:800;
+}
+
+@media(max-width:560px){
+  .search-wrap{
+    padding:0 12px;
+    margin:10px auto 18px;
+  }
+
+  .search-box input{
+    padding:14px 46px 14px 48px;
+    font-size:16px;
+  }
+}
+
+/* موبایل */
+@media(max-width:560px){
+
+  body{
+    font-size:16px;
+  }
+
+  .choices{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+
+  .hero{
+    padding:26px 12px 16px;
+  }
+
+  .box{
+    padding:18px 13px;
+    border-radius:18px;
+  }
+
+  .price strong{
+    font-size:26px;
+  }
+
+  .coin-options{
+    gap:7px;
+  }
+
+  .coin-option{
+    padding:7px 6px;
+    border-radius:10px;
+  }
+
+  .coin-option b{
+    font-size:14.5px;
+  }
+
+  .coin-option span{
+    font-size:13px;
+  }
+
+  .id-code{
+    padding:9px 12px;
+    font-size:16px;
+  }
+
+  .copy{
+    padding:9px 14px;
+    font-size:15px;
+  }
+
+  .id-row{
+    gap:8px;
+  }
+}
+
+
+/* دکمه شناور و پنجره راهنما */
+.fab{
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:#ffb020;
+  color:#fff;
+  font-size:32px;
+  font-weight:bold;
+  border:4px solid black;
+  cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,0.4);
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:transform 0.2s, background 0.2s;
+}
+
+.fab:hover{
+  transform:scale(1.05);
+  background:#e59a1b;
+}
+
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(12,18,32,0.58);
+  z-index:10000;
+}
+
+.modal-overlay.is-open{display:flex}
+
+.modal-box{
+  width:min(100%,460px);
+  padding:24px;
+  border-radius:20px;
+  background:#ffffff;
+  color:#0c1220;
+  text-align:center;
+  box-shadow:0 16px 50px rgba(0,0,0,0.22);
+  animation:modal-pop 0.18s ease-out;
+}
+
+.modal-title{
+  margin-bottom:12px;
+  color:#7a4a00;
+  font-size:24px;
+  font-weight:900;
+}
+
+.modal-text{
+  margin-bottom:22px;
+  color:#2b3446;
+  font-size:17px;
+  font-weight:600;
+  line-height:1.9;
+}
+
+.modal-close-btn{
+  min-width:112px;
+  padding:10px 24px;
+  border:0;
+  border-radius:12px;
+  background:#ffb020;
+  color:#fff;
+  font-size:16px;
+  font-weight:900;
+  cursor:pointer;
+  transition:background 0.2s, transform 0.2s;
+}
+
+.modal-close-btn:hover{
+  background:#e59a1b;
+  transform:translateY(-1px);
+}
+
+@keyframes modal-pop{
+  from{opacity:0;transform:translateY(8px) scale(0.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@media(max-width:560px){
+  .fab{
+    bottom:20px;
+    right:20px;
+    width:70px;
+    height:70px;
+    font-size:34px;
+  }
+
+  .modal-box{
+    padding:22px 18px;
+    border-radius:18px;
+  }
+
+  .modal-title{font-size:22px}
+  .modal-text{font-size:16px}
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="top">
+  <div class="logo">MM <span>STORE</span></div>
+  <p class="subtitle">فروشگاه خدمات Animal Rush</p>
+</header>
+
+<main>
+
+<section class="search-wrap" id="searchSection">
+  <div class="search-box">
+    <span class="search-icon">🔎</span>
+    <input
+      id="siteSearch"
+      type="search"
+      autocomplete="off"
+      placeholder="جستجو..."
+      aria-label="جست‌وجو در فروشگاه"
+    >
+    <button
+      id="searchClear"
+      class="search-clear"
+      type="button"
+      aria-label="پاک کردن جست‌وجو"
+    >×</button>
+  </div>
+
+  <div class="search-results" id="searchResults"></div>
+</section>
+
+<section class="choices" id="choices">
+
+  <div class="choice" onclick="showSellerSelection('subscription')">
+    <div class="icon">👑</div>
+    <h2>خرید اشتراک</h2>
+    <p>اشتراک ویژه Animal Rush با قیمت ۵۵,۰۰۰ تومان</p>
+    <span class="go">مشاهده جزئیات ←</span>
+  </div>
+
+  <div class="choice" onclick="showSellerSelection('coins')">
+    <div class="icon">🪙</div>
+    <h2>خرید سکه</h2>
+    <p>از ۱۰,۰۰۰ تا ۲۰۰,۰۰۰ سکه، هر مقدار که بخواهی</p>
+    <span class="go">مشاهده جزئیات ←</span>
+  </div>
+
+  <div class="choice" onclick="showComingSoon('item-sale')">
+    <div class="icon">🚗</div>
+    <h2>خرید و فروش وسیله</h2>
+    <p>خرید و فروش وسایل و ماشین‌های Animal Rush</p>
+    <span class="go">به‌زودی</span>
+  </div>
+
+  <div class="choice" onclick="showComingSoon('account-sale')">
+    <div class="icon">👤</div>
+    <h2>خرید اکانت</h2>
+    <p>خرید و فروش اکانت‌های Animal Rush</p>
+    <span class="go">به‌زودی</span>
+  </div>
+
+</section>
+
+
+<!-- ==================== بخش‌های به‌زودی ==================== -->
+
+<section class="panel" id="comingSoon">
+  <div class="box">
+    <button class="back" onclick="goBack()">← بازگشت</button>
+
+    <div class="price">
+      <strong id="comingSoonTitle">به‌زودی</strong>
+      <span id="comingSoonText">این بخش هنوز فعال نشده است.</span>
+    </div>
+
+    <div class="notice">
+      🚧 این بخش در حال آماده‌سازی است و به‌زودی در فروشگاه MM فعال خواهد شد.
+      <br>
+      لطفاً بعداً دوباره به فروشگاه سر بزنید.
+    </div>
+  </div>
+</section>
+
+<!-- ==================== اشتراک ==================== -->
+
+<section class="panel" id="sellerSelection">
+  <div class="box">
+    <button class="back" onclick="goBack()">← بازگشت</button>
+    <h2>👤 انتخاب فروشنده</h2>
+    <p class="desc">یکی از فروشنده‌های زیر را انتخاب کنید:</p>
+    <div id="sellerList" class="seller-list"></div>
+  </div>
+</section>
+
+<section class="panel" id="subscription">
+  <div class="box">
+    <button class="back" onclick="backToSellers()">← بازگشت</button>
+    <div class="price"><span>قیمت اشتراک: ۱۲,۰۰۰ سکه یا ۵۵,۰۰۰ تومان</span></div>
+    <div class="info"><div class="info-title">فروشنده انتخاب‌شده</div><div class="id-row"><span class="id-code" id="subscriptionSeller"></span></div></div>
+    <div class="info"><div class="info-title">شماره کارت</div><div class="id-row"><button class="id-code" id="subscriptionCard" type="button"></button><button class="copy" id="subscriptionCardCopy" type="button">کپی شماره کارت</button></div></div>
+    <div class="info"><div class="info-title">شناسه بازی / پرداخت</div><div class="id-row"><button class="id-code" id="subscriptionGameId" type="button"></button><button class="copy" id="subscriptionGameIdCopy" type="button">کپی شناسه</button></div></div>
+    <div class="steps"><h3>📋 راهنمای خرید اشتراک</h3><ol>
+      <li>مبلغ اشتراک را به شماره کارت یا شناسه پرداخت فروشنده‌ای که انتخاب کرده‌اید واریز کنید.</li>
+      <li>پس از پرداخت، یک اسکرین‌شات یا تصویر واضح از رسید پرداخت تهیه کنید.</li>
+      <li>روی دکمه «ارسال مدرک و شناسه به پشتیبانی» بزنید و وارد بخش پشتیبانی شوید.</li>
+      <li id="subscriptionStep4"></li>
+      <li>پس از بررسی و تأیید پرداخت، اشتراک برای حساب شما فعال خواهد شد.</li>
+    </ol></div>
+    <a class="support" href="https://rubika.ir/Advertisements7" rel="noopener" target="_blank">💬 ارسال مدرک و شناسه به پشتیبانی</a>
+  </div>
+</section>
+
+<section class="panel" id="coins">
+  <div class="box">
+    <button class="back" onclick="backToSellers()">← بازگشت</button>
+    <h2>🪙 خرید سکه Animal Rush</h2>
+    <p class="desc">مقدار سکه موردنظرت را از گزینه‌های زیر انتخاب کن. قیمت همان‌جا نمایش داده می‌شود. حداکثر مقدار قابل سفارش: ۲۰۰,۰۰۰ سکه.</p>
+    <div class="info"><div class="info-title">فروشنده انتخاب‌شده</div><div class="id-row"><span class="id-code" id="coinSeller"></span></div></div>
+    <div class="coin-options" id="coinOptions"></div>
+    <div class="price" id="coinSummary"><strong>یک مقدار را انتخاب کن</strong><span>قیمت سفارش بعد از انتخاب نمایش داده می‌شود.</span></div>
+    <div class="info"><div class="info-title">شماره کارت فروشنده</div><div class="id-row"><button class="id-code" id="coinCard" type="button"></button><button class="copy" id="coinCardCopy" type="button">کپی شماره کارت</button></div></div>
+    <div class="steps"><h3>📋 راهنمای خرید سکه</h3><ol>
+      <li>مقدار سکه موردنظر خود را انتخاب کنید.</li>
+      <li>مبلغ نمایش‌داده‌شده را به شماره کارت یا شناسه پرداخت فروشنده‌ای که انتخاب کرده‌اید واریز کنید.</li>
+      <li>پس از پرداخت، از رسید یا تراکنش خود یک اسکرین‌شات یا تصویر واضح تهیه کنید.</li>
+      <li id="coinStep4"></li>
+      <li id="coinStep5"></li>
+      <li>پس از بررسی و تأیید پرداخت، سکه‌ها به شناسه بازی شما واریز خواهند شد.</li>
+    </ol></div>
+    <a class="support" href="https://rubika.ir/Advertisements7" rel="noopener" target="_blank">💬 ارسال مدرک و شناسه به پشتیبانی</a>
+    <div class="notice">⚠️ هنگام ارسال درخواست، حتماً <b>مدرک پرداخت + شناسه بازی</b> را همراه پیام ارسال کنید تا سفارش شما قابل پیگیری باشد.<br>🔒 هیچ‌وقت رمز عبور یا کد ورود حساب خود را برای هیچ‌کس ارسال نکنید.</div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+
+<div>MM STORE • Animal Rush</div>
+
+<div style="margin-top:6px">
+برای ثبت و پیگیری سفارش فقط از پشتیبانی رسمی استفاده کنید.
+</div>
+
+<div class="flinks">
+
+<a
+href="https://rubika.ir/AnimalRush_MM"
+target="_blank"
+rel="noopener">
+📢 کانال Animal Rush
+</a>
+
+<a
+href="https://rubika.ir/Advertisements7"
+target="_blank"
+rel="noopener">
+💬 پشتیبانی
+</a>
+
+</div>
+
+</footer>
+
+<script>
+
+
+const sellers = [
+  {id:'parham9289', username:'@parham9289', card:'6037997363271207', gameId:'zkipltdfxo', subscription:true, coins:true, coinPricePer1000:4000},
+  {id:'admin_VELA_SHOP_1', username:'@admin_VELA_SHOP_1', card:'6219861951290781', gameId:null, subscription:false, coins:true, coinPricePer1000:6000},
+  {id:'PV_PiDneet', username:'@PV_PiDneet', card:'6219861953998019', gameId:'qmmvwfxzif', subscription:true, coins:true, coinPricePer1000:4000}
+];
+let currentPurchaseType = null;
+let currentSeller = null;
+
+function showSellerSelection(type){
+  currentPurchaseType=type; currentSeller=null;
+  document.getElementById('choices').style.display='none';
+  document.getElementById('searchSection').style.display='none';
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const eligible=sellers.filter(s=>s[type]);
+  document.getElementById('sellerList').innerHTML=eligible.map(s=>`<button type="button" class="seller-card" onclick="selectSeller('${s.id}')"><strong>${s.username}</strong><span>برای ادامه، این فروشنده را انتخاب کنید</span></button>`).join('');
+  document.getElementById('sellerSelection').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function selectSeller(id){
+  const seller=sellers.find(s=>s.id===id && s[currentPurchaseType]);
+  if(!seller) return;
+  currentSeller=seller;
+  if(currentPurchaseType==='subscription') renderSubscription(seller);
+  else renderCoins(seller);
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(currentPurchaseType).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function backToSellers(){ if(currentPurchaseType) showSellerSelection(currentPurchaseType); else goBack(); }
+function setCopyButton(id,value){ document.getElementById(id).onclick=()=>copyText(value); }
+function renderSubscription(s){
+  document.getElementById('subscriptionSeller').textContent=s.username;
+  document.getElementById('subscriptionCard').textContent=s.card;
+  document.getElementById('subscriptionGameId').textContent=s.gameId;
+  setCopyButton('subscriptionCard',s.card); setCopyButton('subscriptionCardCopy',s.card);
+  setCopyButton('subscriptionGameId',s.gameId); setCopyButton('subscriptionGameIdCopy',s.gameId);
+  document.getElementById('subscriptionStep4').textContent=`با فروشنده ${s.username} ارتباط بگیرید و مدرک پرداخت به همراه شناسه بازی خود را ارسال کنید.`;
+}
+function renderCoins(s){
+  document.getElementById('coinSeller').textContent=s.username;
+  document.getElementById('coinCard').textContent=s.card;
+  setCopyButton('coinCard',s.card); setCopyButton('coinCardCopy',s.card);
+  const amounts=[10000,20000,30000,40000,50000,60000,70000,80000,90000,100000,150000,200000];
+  document.getElementById('coinOptions').innerHTML=amounts.map((n,i)=>{const cost=n/1000*s.coinPricePer1000;return `<button type="button" class="coin-option ${i===0?'special':''}" data-coins="${n}" data-price="${cost}" onclick="selectCoins(this)"><b>${n.toLocaleString('fa-IR')} سکه${i===0?' 🔥':''}</b><span>${cost.toLocaleString('fa-IR')} تومان</span></button>`}).join('');
+  document.getElementById('coinSummary').innerHTML='<strong>یک مقدار را انتخاب کن</strong><span>قیمت سفارش بعد از انتخاب نمایش داده می‌شود.</span>';
+  document.getElementById('coinStep4').textContent=`با فروشنده ${s.username} ارتباط بگیرید.`;
+  document.getElementById('coinStep5').textContent='مدرک پرداخت را به همراه شناسه بازی خود برای فروشنده ارسال کنید.';
+}
+
+function showPanel(id){
+
+  if(id === 'subscription' || id === 'coins'){ showSellerSelection(id); return; }
+  document.getElementById('choices').style.display='none';
+  document.getElementById('searchSection').style.display='none';
+
+  document.querySelectorAll('.panel').forEach(function(p){
+    p.classList.remove('active');
+  });
+
+  document.getElementById(id).classList.add('active');
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+}
+
+function showComingSoon(type){
+
+  var title = document.getElementById('comingSoonTitle');
+  var text = document.getElementById('comingSoonText');
+
+  if(type === 'item-sale'){
+    title.textContent = '🚗 خرید و فروش وسیله';
+    text.textContent = 'بخش خرید و فروش وسیله هنوز فعال نشده است.';
+  }else{
+    title.textContent = '👤 خرید اکانت';
+    text.textContent = 'بخش خرید اکانت هنوز فعال نشده است.';
+  }
+
+  document.getElementById('choices').style.display='none';
+  document.getElementById('searchSection').style.display='none';
+
+  document.querySelectorAll('.panel').forEach(function(p){
+    p.classList.remove('active');
+  });
+
+  document.getElementById('comingSoon').classList.add('active');
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+}
+
+
+function goBack(){
+
+  document.querySelectorAll('.panel').forEach(function(p){
+    p.classList.remove('active');
+  });
+
+  document.getElementById('choices').style.display='grid';
+  document.getElementById('searchSection').style.display='block';
+  clearSearch();
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+}
+
+
+/* ==================== جست‌وجوی فروشگاه ==================== */
+
+function normalizeSearchText(text){
+  return String(text || '')
+    .toLowerCase()
+    .replace(/ي/g,'ی')
+    .replace(/ى/g,'ی')
+    .replace(/ك/g,'ک')
+    .replace(/ة/g,'ه')
+    .replace(/ۀ/g,'ه')
+    .replace(/ؤ/g,'و')
+    .replace(/إ|أ|ٱ/g,'ا')
+    .replace(/ـ/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function getSearchItems(){
+  var subscription = document.getElementById('subscription');
+  var coins = document.getElementById('coins');
+
+  return [
+    {
+      id:'subscription',
+      title:'👑 خرید اشتراک',
+      text: subscription ? subscription.innerText : 'خرید اشتراک Animal Rush',
+      description:'اشتراک Animal Rush و راهنمای پرداخت'
+    },
+    {
+      id:'coins',
+      title:'🪙 خرید سکه',
+      text: coins ? coins.innerText : 'خرید سکه Animal Rush',
+      description:'انتخاب مقدار سکه و راهنمای خرید'
+    },
+    {
+      id:'item-sale',
+      title:'🚗 خرید و فروش وسیله',
+      text:'خرید و فروش وسیله',
+      description:'این بخش به‌زودی فعال می‌شود'
+    },
+    {
+      id:'account-sale',
+      title:'👤 خرید اکانت',
+      text:'خرید اکانت',
+      description:'این بخش به‌زودی فعال می‌شود'
+    }
+  ];
+}
+
+function renderSearchResults(query){
+  var results = document.getElementById('searchResults');
+  var normalized = normalizeSearchText(query);
+
+  if(!normalized){
+    results.classList.remove('show');
+    results.innerHTML='';
+    return;
+  }
+
+  var items = getSearchItems().filter(function(item){
+    var title = normalizeSearchText(item.title);
+    return title.includes(normalized);
+  });
+
+  results.classList.add('show');
+
+  if(!items.length){
+    results.innerHTML =
+      '<div class="search-empty">🔎 موردی با این عبارت پیدا نشد.</div>';
+    return;
+  }
+
+  results.innerHTML = items.map(function(item){
+    return `
+      <button type="button" class="search-result" onclick="openSearchResult('${item.id}')">
+        <div class="search-result-title">${item.title}</div>
+        <div class="search-result-text">${item.description}</div>
+      </button>
+    `;
+  }).join('');
+}
+
+function openSearchResult(id){
+  var input = document.getElementById('siteSearch');
+
+  if(input){
+    input.blur();
+  }
+
+  showPanel(id);
+}
+
+function clearSearch(){
+  var input = document.getElementById('siteSearch');
+  var results = document.getElementById('searchResults');
+  var clear = document.getElementById('searchClear');
+
+  if(input){
+    input.value='';
+  }
+
+  if(results){
+    results.classList.remove('show');
+    results.innerHTML='';
+  }
+
+  if(clear){
+    clear.style.display='none';
+  }
+}
+
+(function initSearch(){
+  var input = document.getElementById('siteSearch');
+  var clear = document.getElementById('searchClear');
+
+  if(!input) return;
+
+  input.addEventListener('input', function(){
+    renderSearchResults(this.value);
+    clear.style.display = this.value.trim() ? 'block' : 'none';
+  });
+
+  clear.addEventListener('click', function(){
+    clearSearch();
+    input.focus();
+  });
+})();
+
+
+function copyText(text){
+
+  function done(){
+    alert('کپی شد: '+text);
+  }
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+
+    navigator.clipboard
+      .writeText(text)
+      .then(done)
+      .catch(function(){
+        legacyCopy(text);
+        done();
+      });
+
+  }else{
+
+    legacyCopy(text);
+    done();
+
+  }
+
+}
+
+function legacyCopy(text){
+
+  var t=document.createElement('textarea');
+
+  t.value=text;
+
+  t.style.position='fixed';
+  t.style.opacity='0';
+
+  document.body.appendChild(t);
+
+  t.focus();
+  t.select();
+
+  try{
+    document.execCommand('copy');
+  }catch(e){}
+
+  document.body.removeChild(t);
+
+}
+
+function selectCoins(el){
+
+  document.querySelectorAll('.coin-option')
+    .forEach(function(x){
+      x.classList.remove('selected');
+    });
+
+  el.classList.add('selected');
+
+  var coins=
+    Number(el.dataset.coins)
+    .toLocaleString('fa-IR');
+
+  var price=
+    Number(el.dataset.price)
+    .toLocaleString('fa-IR');
+
+  document.getElementById('coinSummary').innerHTML=
+    '<strong>'+coins+' سکه</strong>' +
+    '<span>قیمت: '+price+' تومان</span>';
+
+}
+
+
+
+(function initComingSoonModal(){
+  var fab = document.getElementById('fabBtn');
+  var overlay = document.getElementById('modalOverlay');
+  var closeButton = document.getElementById('modalOkBtn');
+
+  if(!fab || !overlay || !closeButton) return;
+
+  function closeModal(){
+    overlay.classList.remove('is-open');
+  }
+
+  fab.addEventListener('click', function(){
+    overlay.classList.add('is-open');
+  });
+
+  closeButton.addEventListener('click', closeModal);
+
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) closeModal();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeModal();
+  });
+})();
+
+</script>
+
+
+<button class="fab" id="fabBtn" title="راهنما / اطلاعات">+</button>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-title">🚧 به‌زودی</div>
+    <div class="modal-text">این بخش هنوز آماده نشده و به‌زودی امکانات جدیدی به فروشگاه MM اضافه خواهد شد.</div>
+    <button class="modal-close-btn" id="modalOkBtn">باشه</button>
+  </div>
+</div>
+
+</body>
+</html>
