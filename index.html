@@ -74,7 +74,9 @@ document.getElementById('start').onclick=()=>{document.getElementById('overlay')
 document.getElementById('help').onclick=()=>say('برای ساخت، از ستون سمت راست ساختمان را انتخاب کن و روی خانه‌ی خالی کلیک کن. با WASD دوربین حرکت می‌کند و با چرخ ماوس زوم می‌کنی.');
 window.addEventListener('keydown',e=>{keys[e.code]=true;if(e.code==='Escape'){mode='select';document.querySelectorAll('[data-build]').forEach(x=>x.classList.toggle('active',x.dataset.build==='select'))}if(e.code==='Equal'||e.code==='NumpadAdd')scale=Math.min(1.7,scale*1.1);if(e.code==='Minus'||e.code==='NumpadSubtract')scale=Math.max(.5,scale/1.1)});
 window.addEventListener('keyup',e=>keys[e.code]=false);
-canvas.addEventListener('wheel',e=>{e.preventDefault();scale=Math.max(.5,Math.min(1.8,scale*(e.deltaY<0?1.1:.9)))},{passive:false});
+const wheelArea=document.getElementById('viewport');
+wheelArea.addEventListener('wheel',e=>{e.preventDefault();e.stopPropagation();if(e.shiftKey){camY+=e.deltaY*.9}else if(Math.abs(e.deltaX)>Math.abs(e.deltaY)){camX+=e.deltaX*.9}else{setZoom(scale*(e.deltaY<0?1.14:1/1.14))}},{passive:false});
+wheelArea.addEventListener('pointerenter',()=>{wheelArea.focus?.()});
 function setZoom(v){scale=Math.max(.5,Math.min(2.1,v))}
 document.getElementById("zoomIn").onclick=()=>setZoom(scale*1.18);
 document.getElementById("zoomOut").onclick=()=>setZoom(scale/1.18);
