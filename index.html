@@ -363,7 +363,7 @@ function drawChapterTwoOutside(){
  ctx.fillStyle='#526057';ctx.fillRect(0,348,W,27);ctx.fillStyle='#a49b83';ctx.fillRect(0,369,W,6);ctx.fillStyle='#d0c3a0';ctx.fillRect(0,375,W,3);
  // تابلو و جعبه پس از رسم جدول کشیده می‌شوند تا زیر آن دفن نشوند؛ هر دو روی شانه خاکی‌اند
  ctx.fillStyle='rgba(0,0,0,.28)';ctx.beginPath();ctx.ellipse(390,365,48,5,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.ellipse(567,365,27,5,0,0,Math.PI*2);ctx.fill();
- ctx.fillStyle='#211d18';ctx.fillRect(386,305,8,58);ctx.fillStyle='#786346';ctx.fillRect(345,300,90,27);ctx.strokeStyle='#c1a474';ctx.lineWidth=2;ctx.strokeRect(345,300,90,27);
+ ctx.fillStyle='#211d18';ctx.fillRect(386,305,8,58);ctx.fillStyle='#786346';ctx.fillRect(345,300,90,27);ctx.strokeStyle='#c1a474';ctx.lineWidth=2;ctx.strokeRect(345,300,90,27);ctx.save();ctx.strokeStyle='#f2dfb4';ctx.fillStyle='#f2dfb4';ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(362,313);ctx.lineTo(415,313);ctx.stroke();ctx.beginPath();ctx.moveTo(404,304);ctx.lineTo(416,313);ctx.lineTo(404,322);ctx.stroke();ctx.restore();
  ctx.fillStyle='#272b29';ctx.fillRect(548,328,38,34);ctx.fillStyle='#786c54';ctx.fillRect(544,323,46,7);ctx.fillStyle='#b7a27b';ctx.fillRect(555,333,24,24);ctx.fillStyle='#182126';ctx.fillRect(560,339,14,12);
  // جاده و خط‌کشی در پیش‌زمینه
  ctx.fillStyle='#292f30';ctx.fillRect(0,375,W,165);ctx.fillStyle='#414744';ctx.fillRect(0,383,W,149);ctx.fillStyle='#77766c';ctx.fillRect(0,375,W,4);ctx.fillRect(0,532,W,4);
