@@ -1230,6 +1230,75 @@ button:focus-visible {outline:2px solid #d8b878;outline-offset:2px}
   body:has(#intro.hidden) {padding-bottom:6px!important}
 }
 
+
+/* Mobile: add a dedicated black control shelf below the unchanged game view */
+@media (max-width:700px), (pointer:coarse) {
+  body {background:#000!important;padding:0!important}
+  .wrap {width:100%!important;max-width:none!important;margin:0!important}
+  .panel,
+  .panel:fullscreen {
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-template-rows:auto auto auto auto 104px!important;
+    align-items:center!important;
+    gap:8px!important;
+    padding:10px 12px 12px!important;
+    min-height:100svh!important;
+    height:auto!important;
+    overflow-y:auto!important;
+    background:#000!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+  }
+  .panel > .hud,.panel:fullscreen > .hud {grid-column:1/-1!important;grid-row:1!important}
+  .panel > #stage,.panel:fullscreen > #stage {
+    grid-column:1/-1!important;grid-row:2!important;
+    position:relative!important;z-index:1!important;
+    /* Keep the original 16:9 game canvas dimensions */
+  }
+  .panel > .dialog,.panel:fullscreen > .dialog {
+    grid-column:1/-1!important;grid-row:3!important;
+    position:relative!important;z-index:2!important;margin:0!important
+  }
+  .panel > .choices,.panel:fullscreen > .choices {
+    grid-column:1/-1!important;grid-row:4!important;
+    position:relative!important;z-index:2!important;margin:0!important
+  }
+  .panel > .controls,.panel:fullscreen > .controls,
+  .panel > .actions,.panel:fullscreen > .actions {display:contents!important}
+  .panel .controls .hint,.panel:fullscreen .controls .hint,
+  .panel #mobileHint,.panel:fullscreen #mobileHint {display:none!important}
+  .panel .dpad,.panel:fullscreen .dpad {
+    grid-column:3!important;grid-row:5!important;
+    position:relative!important;inset:auto!important;
+    justify-self:end!important;align-self:center!important;
+    display:grid!important;grid-template-columns:repeat(3,42px)!important;
+    grid-template-rows:repeat(2,38px)!important;gap:4px!important;
+    margin:0!important;pointer-events:auto!important;z-index:3!important
+  }
+  .panel .dpad button,.panel:fullscreen .dpad button {
+    min-width:42px!important;min-height:38px!important;padding:2px!important
+  }
+  .panel #interact,.panel:fullscreen #interact {
+    grid-column:1!important;grid-row:5!important;
+    position:relative!important;inset:auto!important;transform:none!important;
+    justify-self:start!important;align-self:center!important;
+    display:block!important;width:min(100%,116px)!important;min-width:0!important;
+    min-height:50px!important;margin:0!important;padding:6px 5px!important;
+    font-size:12px!important;pointer-events:auto!important;z-index:3!important
+  }
+  .panel #fullscreen,.panel:fullscreen #fullscreen {
+    grid-column:2!important;grid-row:5!important;
+    position:relative!important;inset:auto!important;transform:none!important;
+    justify-self:center!important;align-self:center!important;
+    display:block!important;width:min(100%,116px)!important;min-width:0!important;
+    min-height:50px!important;margin:0!important;padding:6px 5px!important;
+    font-size:12px!important;pointer-events:auto!important;z-index:3!important
+  }
+  .panel #skip,.panel:fullscreen #skip {display:none!important}
+}
+
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
