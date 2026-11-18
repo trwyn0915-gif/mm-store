@@ -92,7 +92,7 @@ function startStory(){audioStart();$('intro').classList.add('hidden');scene='int
 {who:'narrator',text:'آپارات، پس از سال‌ها بحران و ورشکستگی، تمام شرکت را به تونی فروخته است. عمو امیر که روزگاری استریمر شناخته‌شده‌ای بود، حالا شغلش را از دست داده و مدت‌هاست دنبال کاری تازه می‌گردد.'},
 {who:'amir',face:'tired',text:'ده سال... انگار همین دیروز بود که جلوی دوربین می‌نشستم. حالا حتی کسی اسم کانالم رو هم یادش نیست.'},
 {who:'narrator',text:'آن شب، عمو امیر با ماشین در جاده‌ای خلوت حرکت می‌کرد. ساعت از نیمه‌شب گذشته بود و جاده از میان جنگلی تاریک می‌گذشت.'}
-],()=>{scene='drive';driveTravel=0;driveSpeed=0;driveBrakeStart=0;setObjective('به تابلو کنار جاده نگاه کن');toast('برای ادامه، دکمه تعامل را بزن')})}
+],()=>{scene='drive';driveTravel=0;driveBrakeStart=0;driveStart=performance.now();driveSpeed=1;setObjective('در مسیر رستوران رانندگی کن');toast('ماشین در جاده حرکت می‌کند...')})}
 function enterRoadside(){scene='roadside';music('horror');runDialog([
 {who:'narrator',text:'نور چراغ‌های ماشین روی تابلوی زنگ‌زده‌ای افتاد. پشت درخت‌ها ساختمانی قدیمی دیده می‌شد؛ رستورانی که انگار سال‌ها از آن مراقبت نشده بود.'},
 {who:'narrator',text:'روی تابلو با حروفی کم‌رنگ نوشته شده بود: «کارمند لازمیم». یک چراغ بالای ورودی، هر چند ثانیه یک‌بار خاموش و روشن می‌شد.'},
@@ -236,7 +236,7 @@ function drawDrive(){
  for(let i=0;i<18;i++){let x=((i*67+driveTravel*.7)%1120+1120)%1120-80;let h=185+(i%4)*25;ctx.fillStyle=i%2?'#0b1714':'#14211d';ctx.beginPath();ctx.moveTo(x-48,365);ctx.lineTo(x,365-h);ctx.lineTo(x+48,365);ctx.fill();ctx.fillStyle='#211d18';ctx.fillRect(x-7,300-h/2,14,h/2+100)}
  ctx.fillStyle='#252b2c';ctx.fillRect(0,360,W,180);ctx.fillStyle='#414747';ctx.fillRect(0,370,W,160);ctx.fillStyle='#77766c';ctx.fillRect(0,360,W,5);ctx.fillRect(0,525,W,5);
  ctx.strokeStyle='#d1bd8a';ctx.setLineDash([34,30]);ctx.lineDashOffset=-(driveTravel*.58)%64;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(0,455);ctx.lineTo(W,455);ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;
- drawCar(480,465,.98,0);ctx.fillStyle='#d6c59b';ctx.font='bold 18px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی',480,70)
+ drawCar(480,465+Math.sin(performance.now()*.012)*2.2*driveSpeed,.98,0);ctx.fillStyle='#d6c59b';ctx.font='bold 18px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی',480,70)
 }
 function drawRoadsideScene(){
  let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080f13');g.addColorStop(.58,'#14201d');g.addColorStop(1,'#202522');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
@@ -419,7 +419,7 @@ $('begin').onclick=async()=>{
  if(!document.fullscreenElement&&!entered)toast('برای تمام‌صفحه از دکمهٔ «تمام‌صفحه» استفاده کن؛ بازی شروع شد');
  btn.disabled=false;btn.textContent='شروع بازی و ورود به تمام‌صفحه';
 };$('again').onclick=()=>{if(audioCtx){speechSynthesis.cancel();music('normal')}reset();$('chapterTwoEnd').style.display='none'};$('chapterTwoMain').onclick=startChapterTwo;$('chapterTwoEnd').onclick=startChapterTwo;
-document.addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(k==='w'||k==='arrowup')keys.up=true;if(k==='s'||k==='arrowdown')keys.down=true;if(k==='a'||k==='arrowleft')keys.left=true;if(k==='d'||k==='arrowright')keys.right=true;if(k==='e'||k===' '){if(scene==='drive'&&driveStart===0){driveStart=performance.now();driveSpeed=1;driveBrakeStart=0;toast('ماشین در جاده حرکت می‌کند...')}else interact()}});
+document.addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(k==='w'||k==='arrowup')keys.up=true;if(k==='s'||k==='arrowdown')keys.down=true;if(k==='a'||k==='arrowleft')keys.left=true;if(k==='d'||k==='arrowright')keys.right=true;if(k==='e'||k===' '){if(scene==='drive'&&driveStart===0){interact()}else interact()}});
 document.addEventListener('keyup',e=>{let k=e.key.toLowerCase();if(k==='w'||k==='arrowup')keys.up=false;if(k==='s'||k==='arrowdown')keys.down=false;if(k==='a'||k==='arrowleft')keys.left=false;if(k==='d'||k==='arrowright')keys.right=false});
 window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false});
 document.querySelectorAll('[data-k]').forEach(b=>{const k=b.dataset.k;const down=e=>{e.preventDefault();keys[k]=true},up=e=>{e.preventDefault();keys[k]=false};b.addEventListener('pointerdown',down);b.addEventListener('pointerup',up);b.addEventListener('pointerleave',up);b.addEventListener('pointercancel',up)});
