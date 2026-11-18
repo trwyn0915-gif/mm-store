@@ -76,7 +76,7 @@ const mhFollower={x:405,y:340,face:'down'};
 function resetMhFollower(){mhFollower.x=player.x-48;mhFollower.y=player.y+5;mhFollower.face=player.face||'down'}
 function updateMhFollower(dt){if(scene!=='chapterTwoOutside'&&scene!=='chapterTwoStation')return;let bx=0,by=0;if(player.face==='left')bx=1;else if(player.face==='right')bx=-1;else if(player.face==='up')by=1;else by=-1;const tx=player.x+bx*48,ty=player.y+by*35;const dx=tx-mhFollower.x,dy=ty-mhFollower.y;const d=Math.hypot(dx,dy);if(d>0.1){const step=Math.min(d,Math.max(0,dt)*230);mhFollower.x+=dx/d*step;mhFollower.y+=dy/d*step;}mhFollower.face=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down')}
 function drawChapterTwoPair(){if(mhFollower.y<player.y){drawPerson(mhFollower.x,mhFollower.y,'mh','front');drawPlayer()}else{drawPlayer();drawPerson(mhFollower.x,mhFollower.y,'mh')}}
-let mysteriousPresent=false,dialogueCast=new Set(),asgharLocation='counter';let dirt=[],broom=false,cleaned=0,hasKey=false,hasNote=false,breaker=false,doorUnlocked=false,knocks=0,foundRecorder=false,visited=[],doorOpen=false;
+let mysteriousPresent=false,chapterTwoAsgharPresent=false,dialogueCast=new Set(),asgharLocation='counter';let dirt=[],broom=false,cleaned=0,hasKey=false,hasNote=false,breaker=false,doorUnlocked=false,knocks=0,foundRecorder=false,visited=[],doorOpen=false;
 const walls=[{x:0,y:0,w:960,h:26},{x:0,y:0,w:26,h:540},{x:934,y:0,w:26,h:540},{x:0,y:514,w:960,h:26}];
 const furniture=[{x:165,y:130,w:125,h:65,t:'table'},{x:380,y:125,w:130,h:70,t:'table'},{x:650,y:130,w:125,h:65,t:'table'},{x:185,y:320,w:75,h:38,t:'counter'},{x:425,y:320,w:100,h:48,t:'counter'},{x:690,y:320,w:130,h:48,t:'counter'},{x:70,y:230,w:55,h:85,t:'plant'},{x:835,y:200,w:50,h:100,t:'door'}];
 const spots=[{x:315,y:210,done:false},{x:545,y:390,done:false},{x:770,y:245,done:false}];
@@ -334,7 +334,7 @@ function drawPersistentCharacters(){
   drawPerson(p[0],p[1],'asghar');
  }
  // پیام ضبط‌شده/رادیویی اصغر در زیرزمین به معنی حضور فیزیکی او نیست.
- if(scene==='chapterTwoStation'&&dialogueCast.has('asghar'))drawPerson(740,430,'asghar');
+ if(scene==='chapterTwoStation'&&(dialogueCast.has('asghar')||chapterTwoAsgharPresent))drawPerson(740,430,'asghar');
  if(dialogueCast.has('mysterious')){
   if(scene==='chapterTwoStation')drawPerson(860,430,'mysterious');
   else if(scene==='chapterTwoOutside')drawPerson(820,420,'mysterious');
