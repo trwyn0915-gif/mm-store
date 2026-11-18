@@ -120,7 +120,6 @@ function makeObjects(){objects=[
 {id:'kitchen',x:480,y:315,r:48,label:'ورودی آشپزخانه',act:kitchenAction},
 {id:'clock',x:690,y:300,r:48,label:'ساعت دیواری',act:()=>{runDialog([{who:'amir',face:'normal',text:'ساعت روی ۰۰:۴۷ گیر کرده. باتریش هم انگار تازه عوض شده...'}])}},
 {id:'phone',x:735,y:350,r:34,label:'تلفن قدیمی',act:()=>{sfx('creak');runDialog([{who:'amir',face:'surprised',text:'خط تلفن قطعه. ولی چرا چراغش روشنه؟'}, {who:'narrator',text:'گوشی را که برداشت، صدای نفس کوتاهی شنید و تماس قطع شد.'}])}},
-{id:'coldHatch',x:880,y:438,r:38,label:'دریچه سردخانه',act:()=>runDialog([{who:'amir',face:'surprised',text:'این دریچه روی کف سالن چیه؟ انگار راهی به سردخانه‌ست.'}])}
 ];}
 function doorAction(){if(scene==='restaurant'&&cleaned<3){toast('هنوز باید سالن را تمیز کنی');return}if(scene==='restaurant'){if(knocks===0){knocks++;doorOpen=true;sfx('door');music('horror');runDialog([{who:'narrator',text:'سه ضربه محکم به در خورد. صدا آن‌قدر ناگهانی بود که عمو امیر از جا پرید.'},{who:'amir',face:'surprised',text:'این وقت شب؟ اصغر گفت مشتری نداریم...'}, {who:'narrator',text:'عمو امیر به سمت ورودی رفت و در را باز کرد. راهرو خالی بود. فقط مه سردی از میان درخت‌ها وارد سالن شد.'},{who:'amir',face:'surprised',text:'کسی اینجا نیست. پس کی در زد؟'}],()=>{setObjective('به پیشخوان برگرد و کشوی آن را بررسی کن');setTimeout(()=>{if(scene==='restaurant'&&doorOpen){doorOpen=false;sfx('door')}},1200)});}else if(!hasKey){toast('در را باز کردی؛ بیرون هیچ‌کس نیست');}else toast('در قفل شده؛ کلید را برای در زیرزمین نگه دار')}}
 function counterAction(){if(knocks>0&&!hasNote){hasNote=true;sfx('pickup');runDialog([{who:'narrator',text:'داخل کشوی پیشخوان، دفترچه‌ای خیس و یک کلید کوچک پیدا کردی. روی صفحه اول دفترچه نوشته شده بود: «اگر صدای خودت را از اتاق خالی شنیدی، جواب نده.»'},{who:'amir',face:'surprised',text:'این دیگه چه شوخیه؟ اصغر چرا همچین چیزی رو اینجا گذاشته؟'},{who:'narrator',text:'زیر دفترچه، یادداشتی با خطی عجولانه بود: «ام‌اچ را تنها نگذار. او همیشه قبل از بسته شدن در می‌رسد.»'}],()=>{hasKey=true;setObjective('آشپزخانه را بررسی کن؛ دنبال نشانه‌ای از اصغر بگرد')});}else if(hasNote){toast('کشو خالی است؛ فقط دفترچه را داری')}else toast('چند رسید قدیمی و یک خودکار خشک داخل کشوست')}
@@ -196,15 +195,6 @@ for(let x=65;x<920;x+=88){ctx.strokeStyle='#51483e';ctx.beginPath();ctx.moveTo(x
 // پنجره‌ها روی دیوار پشتی
 drawWindows();
 ctx.fillStyle='#f0d5a5';ctx.font='bold 18px Vazirmatn';ctx.textAlign='center';ctx.fillText('رستوران شبانه',480,115);
-// دریچه سردخانه به‌صورت پنل کوتاه و هم‌سطح کف، کنار دیوار راست؛ مسیر سالن را نمی‌بندد.
-ctx.save();
-ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(880,452,39,8,0,0,Math.PI*2);ctx.fill();
-ctx.fillStyle='#3b3028';ctx.fillRect(845,420,70,34);
-ctx.fillStyle='#a77d4d';ctx.fillRect(849,423,62,27);
-ctx.fillStyle='#d5b27e';ctx.fillRect(854,427,52,19);
-ctx.strokeStyle='#59432e';ctx.lineWidth=2;ctx.strokeRect(854,427,52,19);
-ctx.fillStyle='#6c5039';ctx.beginPath();ctx.arc(880,437,2.5,0,Math.PI*2);ctx.fill();
-ctx.restore();
 // ساعت دیواری کمی پایین‌تر از پنجره، کاملاً جدا از قاب آن
 ctx.save();
 ctx.fillStyle='#211b17';ctx.fillRect(655,112,70,70);
