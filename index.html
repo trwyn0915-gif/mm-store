@@ -112,7 +112,7 @@ function enterRestaurant(){scene='restaurant';asgharLocation='counter';player.x=
 {who:'amir',face:'happy',text:'باشه. فعلاً همین کار رو لازم دارم. از کجا شروع کنم؟'},
 {who:'asghar',text:'اول سالن رو تمیز کن. جارو پشت پیشخوانه. سه لکه روی زمین مونده. وقتی کارت تموم شد خبرم کن. من می‌رم آشپزخونه.'},
 {who:'narrator',text:'اصغر بدون اینکه منتظر جواب بماند، از در نیمه‌باز آشپزخانه عبور کرد. صدای قدم‌هایش دور شد و رستوران در سکوت فرو رفت.'}
-],()=>{asgharLocation='kitchen';setObjective('جارو را پشت پیشخوان پیدا کن');toast('با کلید E نزدیک وسایل تعامل کن')})}
+],()=>{asgharLocation='gone';setObjective('جارو را پشت پیشخوان پیدا کن');toast('با کلید E نزدیک وسایل تعامل کن')})}
 function makeObjects(){objects=[
 {id:'broom',x:215,y:385,r:30,done:false,label:'جارو',act:()=>{if(!broom){broom=true;setObjective('سه لکه روی زمین را تمیز کن');toast('جارو را برداشتی')}else toast('جارو دستته')}},
 {id:'door',x:850,y:245,r:42,label:'در ورودی',act:doorAction},
@@ -196,7 +196,7 @@ for(let x=55;x<900;x+=100){ctx.fillStyle='#1c252c';ctx.fillRect(x,55,50,430);ctx
 /* switch box: large, illuminated and clearly marked */
 ctx.fillStyle='#55534a';ctx.fillRect(748,82,116,92);ctx.strokeStyle='#c8b17d';ctx.lineWidth=4;ctx.strokeRect(748,82,116,92);ctx.fillStyle='#171c20';ctx.fillRect(763,99,86,57);ctx.fillStyle=breaker?'#e5d58d':'#7e3434';ctx.fillRect(800,112,18,32);ctx.fillStyle='#f2dba8';ctx.font='bold 15px Vazirmatn';ctx.textAlign='center';ctx.fillText('جعبه برق',806,72);
 /* old photograph */
-ctx.fillStyle='#363b3f';ctx.fillRect(205,125,94,116);ctx.strokeStyle='#aa9a7b';ctx.lineWidth=5;ctx.strokeRect(205,125,94,116);ctx.fillStyle='#aa9a7b';ctx.fillRect(218,139,68,80);drawPerson(251,202,'asghar');
+ctx.fillStyle='#363b3f';ctx.fillRect(205,125,94,116);ctx.strokeStyle='#aa9a7b';ctx.lineWidth=5;ctx.strokeRect(205,125,94,116);ctx.fillStyle='#aa9a7b';ctx.fillRect(218,139,68,80);
 /* large, unmistakable open shift ledger on a table in the clear center aisle */
 ctx.save();
 ctx.fillStyle='#07090bcc';ctx.beginPath();ctx.ellipse(620,414,91,18,0,0,Math.PI*2);ctx.fill();
@@ -329,9 +329,8 @@ function drawChapterTwoOutside(){
 function drawPersistentCharacters(){
  if(scene==='drive'||scene==='intro'||scene==='introStory'||scene==='roadside'||scene==='ending')return;
  // اصغر ابتدا کنار پیشخوان استقبال می‌کند و پس از پایان گفت‌وگوی اول به آشپزخانه می‌رود.
- if(scene==='restaurant'&&(asgharLocation==='kitchen'||dialogueCast.has('asghar'))){
-  const p=asgharLocation==='counter'?[850,425]:[480,155];
-  drawPerson(p[0],p[1],'asghar');
+ if(scene==='restaurant'&&(asgharLocation==='counter'||dialogueCast.has('asghar'))){
+  drawPerson(850,425,'asghar');
  }
  // پیام ضبط‌شده/رادیویی اصغر در زیرزمین به معنی حضور فیزیکی او نیست.
  if(scene==='chapterTwoStation'&&(dialogueCast.has('asghar')||chapterTwoAsgharPresent))drawPerson(740,430,'asghar');
