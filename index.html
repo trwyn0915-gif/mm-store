@@ -666,6 +666,99 @@ button { touch-action:manipulation; }
   .panel > .controls > #interact { order:3!important; }
 }
 
+
+/* MOBILE LANDSCAPE HUD — floating controls over the game, not in a bottom panel */
+@media (max-width:900px) and (orientation:landscape), (pointer:coarse) and (orientation:landscape) {
+  body:has(#intro.hidden) { padding-bottom:0!important; }
+  .panel > .controls,
+  .panel:fullscreen > .controls {
+    position:fixed!important;
+    inset:0!important;
+    width:100vw!important;
+    max-width:none!important;
+    height:100dvh!important;
+    margin:0!important;
+    padding:0 12px max(12px,env(safe-area-inset-bottom))!important;
+    display:flex!important;
+    flex-direction:row!important;
+    flex-wrap:nowrap!important;
+    align-items:flex-end!important;
+    justify-content:space-between!important;
+    gap:10px!important;
+    transform:none!important;
+    background:transparent!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+    pointer-events:none!important;
+    z-index:2147483646!important;
+  }
+  body:has(#intro:not(.hidden)) .panel > .controls { display:none!important; }
+  .panel > .controls > .dpad {
+    order:2!important;
+    flex:0 0 auto!important;
+    margin:0!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,clamp(42px,8.5vh,58px))!important;
+    grid-template-rows:repeat(2,clamp(38px,8vh,54px))!important;
+    gap:4px!important;
+    pointer-events:auto!important;
+  }
+  .panel > .controls > .dpad button {
+    width:clamp(42px,8.5vh,58px)!important;
+    min-width:clamp(42px,8.5vh,58px)!important;
+    height:clamp(38px,8vh,54px)!important;
+    min-height:clamp(38px,8vh,54px)!important;
+    padding:0!important;
+    font-size:clamp(18px,3.2vh,25px)!important;
+    touch-action:none!important;
+    pointer-events:auto!important;
+  }
+  .panel > .controls > .hint { display:none!important; }
+  .panel > .controls > #interact {
+    order:1!important;
+    flex:0 1 150px!important;
+    width:clamp(110px,19vw,170px)!important;
+    min-width:0!important;
+    min-height:clamp(44px,9vh,58px)!important;
+    margin:0!important;
+    pointer-events:auto!important;
+  }
+  .panel > .controls > #fullscreen {
+    order:0!important;
+    flex:0 0 clamp(76px,12vw,112px)!important;
+    width:clamp(76px,12vw,112px)!important;
+    min-width:0!important;
+    min-height:clamp(44px,9vh,58px)!important;
+    margin:0!important;
+    pointer-events:auto!important;
+  }
+  .panel:fullscreen { padding-bottom:0!important; }
+}
+
+/* Phones stay in landscape during gameplay; portrait is blocked if browser lock is unavailable. */
+@media (max-width:900px) and (orientation:portrait) and (pointer:coarse) {
+  body:has(#intro.hidden)::before {
+    content:"برای ادامه بازی، گوشی را افقی بچرخانید";
+    position:fixed;
+    inset:0;
+    z-index:2147483647;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px;
+    text-align:center;
+    direction:rtl;
+    background:#080b10;
+    color:#f0dfbd;
+    font-family:Vazirmatn,Tahoma,sans-serif;
+    font-size:clamp(22px,5vw,34px);
+    font-weight:900;
+    line-height:2;
+  }
+}
+
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
