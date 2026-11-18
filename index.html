@@ -131,6 +131,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
  .controls .dpad{flex:0 0 auto;display:grid;grid-template-columns:repeat(3,38px);grid-template-rows:repeat(2,34px);gap:3px}
  .controls .dpad button{min-width:38px;min-height:34px;padding:0;touch-action:none}
  .controls .hint{display:none!important}
+ body:has(#intro:not(.hidden)) .controls{display:none!important}
  .controls #interact{display:block!important;flex:1 1 auto;min-width:0;min-height:54px;margin:0;padding:8px;font-size:15px}
  .controls #fullscreen{display:block!important;flex:0 0 auto;min-width:78px;min-height:54px;margin:0;padding:7px;font-size:12px}
  .actions{display:flex!important;gap:6px;margin:0}
