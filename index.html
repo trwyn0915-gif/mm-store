@@ -318,7 +318,7 @@ button { touch-action:manipulation; }
 
 
 
-/* Gameplay-only mobile controls: portrait lock and large thumb targets.
+/* Gameplay-only mobile controls: landscape lock and large thumb targets.
    The chapter/home screen above is intentionally left unchanged. */
 @media (max-width:700px) {
   body:has(#intro.hidden) { padding-bottom:190px!important; }
@@ -834,7 +834,7 @@ async function enterGameFullscreen(){
  return !!document.fullscreenElement;
 }
 function updateFullscreenLabel(){const active=document.fullscreenElement===gamePanel;$('fullscreen').textContent=active?'خروج از تمام‌صفحه':'تمام‌صفحه'}
-$('fullscreen').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else if(gamePanel.requestFullscreen){await gamePanel.requestFullscreen();await lockGamePortrait()}else{toast('تمام‌صفحه در این مرورگر پشتیبانی نمی‌شود')}}catch(e){toast('ورود به حالت تمام‌صفحه ممکن نشد')}};
+$('fullscreen').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else if(gamePanel.requestFullscreen){await gamePanel.requestFullscreen();await lockGameLandscape()}else{toast('تمام‌صفحه در این مرورگر پشتیبانی نمی‌شود')}}catch(e){toast('ورود به حالت تمام‌صفحه ممکن نشد')}};
 document.addEventListener('fullscreenchange',()=>{
  updateFullscreenLabel();
  if(!document.fullscreenElement&&screen.orientation&&screen.orientation.unlock){
