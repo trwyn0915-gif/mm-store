@@ -945,8 +945,9 @@ const gamePanel=document.querySelector('.panel');
 const controlBar=document.querySelector('.controls');
 controlBar.appendChild($('interact'));
 controlBar.appendChild($('fullscreen'));
-function updateFullscreenLabel(){const active=document.fullscreenElement===gamePanel;$('fullscreen').textContent=active?'خروج از تمام‌صفحه':'تمام‌صفحه'}
-$('fullscreen').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else if(gamePanel.requestFullscreen){await gamePanel.requestFullscreen()}else{toast('تمام‌صفحه در این مرورگر پشتیبانی نمی‌شود')}}catch(e){toast('ورود به حالت تمام‌صفحه ممکن نشد')}};
+function updateFullscreenLabel(){$('fullscreen').textContent='بازگشت به صفحه اصلی'}
+$('fullscreen').textContent='بازگشت به صفحه اصلی';
+$('fullscreen').onclick=async()=>{try{if(document.fullscreenElement===gamePanel&&document.exitFullscreen){await document.exitFullscreen()}if(window.speechSynthesis)speechSynthesis.cancel();if(audioCtx)music('normal');reset();toast('به صفحه اصلی برگشتی')}catch(e){reset()}};
 document.addEventListener('fullscreenchange',()=>{
  updateFullscreenLabel();
  requestAnimationFrame(()=>{draw();});
