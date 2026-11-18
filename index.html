@@ -529,6 +529,85 @@ button { touch-action:manipulation; }
   font-weight:900;line-height:2;
  }
 }
+
+/* LAST MOBILE CONTROL OVERRIDE — keep movement, interact and fullscreen at viewport bottom */
+@media (max-width:700px) {
+  body:has(#intro.hidden) { padding-bottom:112px!important; }
+  .panel > .controls,
+  .panel:fullscreen > .controls {
+    position:fixed!important;
+    display:flex!important;
+    flex-direction:row!important;
+    flex-wrap:nowrap!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    top:auto!important;
+    bottom:calc(env(safe-area-inset-bottom, 0px) + 8px)!important;
+    left:8px!important;
+    right:8px!important;
+    width:auto!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:7px!important;
+    gap:7px!important;
+    transform:none!important;
+    z-index:2147483646!important;
+    background:#10161ff5!important;
+    border:1px solid #59636d!important;
+    border-radius:13px!important;
+    box-shadow:0 4px 18px #000b!important;
+    box-sizing:border-box!important;
+  }
+  body:has(#intro:not(.hidden)) .panel > .controls { display:none!important; }
+  .panel > .controls > .dpad {
+    display:grid!important;
+    flex:0 0 auto!important;
+    grid-template-columns:repeat(3,44px)!important;
+    grid-template-rows:repeat(2,40px)!important;
+    gap:3px!important;
+    margin:0!important;
+  }
+  .panel > .controls > .dpad button {
+    display:block!important;
+    width:44px!important; min-width:44px!important;
+    height:40px!important; min-height:40px!important;
+    padding:0!important; touch-action:none!important;
+  }
+  .panel > .controls > .hint { display:none!important; }
+  .panel > .controls > #interact {
+    display:block!important;
+    flex:1 1 0!important;
+    width:auto!important; min-width:0!important;
+    min-height:52px!important;
+    margin:0!important;
+    grid-column:auto!important;
+    font-size:15px!important;
+  }
+  .panel > .controls > #fullscreen {
+    display:block!important;
+    flex:0 0 76px!important;
+    width:76px!important; min-width:76px!important;
+    min-height:52px!important;
+    margin:0!important;
+    font-size:12px!important;
+  }
+  .panel:fullscreen { padding-bottom:78px!important; }
+}
+@media (max-width:380px) {
+  .panel > .controls { gap:5px!important; padding:5px!important; }
+  .panel > .controls > .dpad {
+    grid-template-columns:repeat(3,38px)!important;
+    grid-template-rows:repeat(2,36px)!important;
+  }
+  .panel > .controls > .dpad button {
+    width:38px!important; min-width:38px!important;
+    height:36px!important; min-height:36px!important;
+  }
+  .panel > .controls > #fullscreen {
+    flex-basis:66px!important; width:66px!important; min-width:66px!important;
+  }
+}
+
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
