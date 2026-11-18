@@ -133,7 +133,7 @@ function basementObjects(){objects=[
 {id:'badge',x:356,y:445,r:34,label:'کارت کارکنان',act:()=>{if(!breaker){toast('اول برق را وصل کن');return}if(foundBadge){toast('کارت را قبلاً برداشتی');return}foundBadge=true;sfx('pickup');runDialog([{who:'narrator',text:'کارت پرسنلی قدیمی‌ای زیر قفسه افتاده بود. عکس روی کارت محو شده، اما نام ام‌اچ هنوز خوانا بود.'},{who:'amir',face:'tired',text:'چرا کارت این آدم هیچ‌وقت عوض نشده؟ انگار سال‌هاست همین‌جا کار می‌کنه.'}],()=>setObjective('نوار ضبط‌شده دوم را پیدا کن'))}},
 {id:'tape2',x:783,y:445,r:34,label:'ضبط‌صوت دوم',act:()=>{if(!breaker){toast('اول برق را وصل کن');return}if(foundTape){toast('نوار را قبلاً گوش دادی');return}foundTape=true;sfx('pickup');music('suspense');runDialog([{who:'narrator',text:'ضبط‌صوت زیر پارچه‌ای خاک‌گرفته پنهان شده بود. نوار را پخش کردی؛ صدای اصغر با عجله و ترس شنیده شد.'},{who:'asghar',face:'normal',text:'اگر کسی این صدا رو می‌شنوه، یعنی ام‌اچ دوباره شیفت رو شروع کرده. من راه خروج رو پشت دیوار سردخانه پنهان کردم. دنبال دریچه‌ای با علامت سه خط بگرد.'},{who:'amir',face:'surprised',text:'اصغر زنده‌ست؟ پس کجاست؟ باید پیداش کنم.'},{who:'narrator',text:'در انتهای پیام، سه ضربه شنیده شد؛ همان ضربه‌هایی که پیش‌تر به در رستوران خورده بود.'}],()=>setObjective('همه سرنخ‌ها را جمع کن و به پله‌های خروج برگرد'))}}
 ]}
-function startColdStorageChapter(){scene='restaurant';music('horror');setObjective('دیوار سردخانه را پیدا کن');runDialog([{who:'narrator',text:'وقتی به سالن برگشتی، صدای موتور یخچال از آشپزخانه بلندتر از قبل شده بود. حالا می‌دانستی پشت این رستوران، چیزی پنهان است.'},{who:'amir',face:'normal',text:'اصغر گفت راه خروج پشت دیوار سردخانه‌ست. باید قبل از اینکه ام‌اچ برگرده پیداش کنم.'},{who:'narrator',text:'از آشپزخانه صدای سه ضربه آرام آمد؛ اما این بار صدا از داخل دیوار بود.'}],()=>{objects.push({id:'cold',x:557,y:315,r:48,label:'دریچه سردخانه',act:()=>{music('suspense');sfx('slam');runDialog([{who:'narrator',text:'پشت قفسه‌های سردخانه، خط باریکی دور یک پنل فلزی دیده می‌شد. با فشار دادن آن، دیوار کمی عقب رفت.'},{who:'amir',face:'surprised',text:'اینجا یه راه مخفی بوده... اصغر چرا بهم نگفت؟'},{who:'narrator',text:'راه باریکی به اتاق بایگانی می‌رسید. روی زمین رد کفش‌های تازه دیده می‌شد؛ کسی همین چند دقیقه پیش از آن عبور کرده بود.'},{who:'narrator',text:'در اتاق بایگانی، پرونده کارکنان ناپدیدشده روی میز باز مانده بود. آخرین صفحه، گزارشی درباره ام‌اچ داشت: «هرگز پشت سرت را وقتی صدای قدم‌ها قطع شد، نگاه نکن.»'}],()=>{showChoices([{label:'پرونده را با خودت بردار',run:()=>{sfx('pickup');runDialog([{who:'amir',face:'angry',text:'دیگه نمی‌تونم وانمود کنم این فقط یه کار ساده‌ست. باید بفهمم ام‌اچ کیه.'},{who:'narrator',text:'در همان لحظه، صدای قفل شدن در ورودی از دور شنیده شد. کسی به رستوران برگشته بود.'}],()=>{triggerMH()})}}])})}})})}
+function startColdStorageChapter(){scene='restaurant';music('horror');setObjective('دیوار سردخانه را پیدا کن');runDialog([{who:'narrator',text:'وقتی به سالن برگشتی، صدای موتور یخچال از آشپزخانه بلندتر از قبل شده بود. حالا می‌دانستی پشت این رستوران، چیزی پنهان است.'},{who:'amir',face:'normal',text:'اصغر گفت راه خروج پشت دیوار سردخانه‌ست. باید قبل از اینکه ام‌اچ برگرده پیداش کنم.'},{who:'narrator',text:'از آشپزخانه صدای سه ضربه آرام آمد؛ اما این بار صدا از داخل دیوار بود.'}],()=>{objects.push({id:'cold',x:557,y:438,r:48,label:'ورودی سردخانه',act:()=>{music('suspense');sfx('slam');runDialog([{who:'narrator',text:'پشت قفسه‌های سردخانه، خط باریکی دور یک پنل فلزی دیده می‌شد. با فشار دادن آن، دیوار کمی عقب رفت.'},{who:'amir',face:'surprised',text:'اینجا یه راه مخفی بوده... اصغر چرا بهم نگفت؟'},{who:'narrator',text:'راه باریکی به اتاق بایگانی می‌رسید. روی زمین رد کفش‌های تازه دیده می‌شد؛ کسی همین چند دقیقه پیش از آن عبور کرده بود.'},{who:'narrator',text:'در اتاق بایگانی، پرونده کارکنان ناپدیدشده روی میز باز مانده بود. آخرین صفحه، گزارشی درباره ام‌اچ داشت: «هرگز پشت سرت را وقتی صدای قدم‌ها قطع شد، نگاه نکن.»'}],()=>{showChoices([{label:'پرونده را با خودت بردار',run:()=>{sfx('pickup');runDialog([{who:'amir',face:'angry',text:'دیگه نمی‌تونم وانمود کنم این فقط یه کار ساده‌ست. باید بفهمم ام‌اچ کیه.'},{who:'narrator',text:'در همان لحظه، صدای قفل شدن در ورودی از دور شنیده شد. کسی به رستوران برگشته بود.'}],()=>{triggerMH()})}}])})}})})}
 function triggerMH(){scene='reveal';music('horror');runDialog([{who:'narrator',text:'وقتی به سالن برگشتی، در ورودی از داخل قفل بود. پشت یکی از میزها، مردی با هدفون سیاه نشسته بود. انگار از اول آنجا حضور داشت.'},{who:'mh',text:'بالاخره برگشتی عمو امیر. فکر کردم شاید مثل بقیه، قبل از دیدن حقیقت فرار کنی.'},{who:'amir',face:'surprised',text:'ام‌اچ؟ تو اینجا چی کار می‌کنی؟ اصغر کجاست؟'}, {who:'mh',text:'اصغر دیگه صاحب این رستوران نیست. هیچ‌وقت هم نبوده. اون فقط می‌خواست تو رو از اینجا دور نگه داره.'},{who:'amir',face:'tired',text:'پس چرا اسم تو توی دفترچه بود؟ این نوار چی بود؟ چرا گفتن بعد از یک به زیرزمین نرم؟'}, {who:'mh',text:'چون اصغر فهمیده بود. اون فهمیده بود که من هر شب، اینجا رو از نو شروع می‌کنم. آدم‌ها میان، کار می‌کنن، سؤال می‌پرسن... و بعد ناپدید می‌شن.'}],()=>showChoices([{label:'از ام‌اچ حقیقت را بپرس',run:truthPath},{label:'به سمت در فرار کن',run:runPath},{label:'به ام‌اچ پیشنهاد همکاری برای فرار بده',run:allianceEscapePath}]))}
 function allianceEscapePath(){
 music('suspense');
@@ -195,11 +195,18 @@ for(let x=65;x<920;x+=88){ctx.strokeStyle='#51483e';ctx.beginPath();ctx.moveTo(x
 // پنجره‌ها روی دیوار پشتی
 drawWindows();
 ctx.fillStyle='#f0d5a5';ctx.font='bold 18px Vazirmatn';ctx.textAlign='center';ctx.fillText('رستوران شبانه',480,115);
-// دریچه سردخانه روی دیوار پشتی، کنار ورودی آشپزخانه
-ctx.fillStyle='#172329';ctx.fillRect(520,155,74,91);ctx.fillStyle='#786044';ctx.fillRect(524,159,66,83);ctx.fillStyle='#a7a39a';ctx.fillRect(529,164,56,73);ctx.strokeStyle='#d1bd91';ctx.lineWidth=2;ctx.strokeRect(529,164,56,73);
-ctx.strokeStyle='#3f4a4c';ctx.lineWidth=3;for(let yy=179;yy<=218;yy+=13){ctx.beginPath();ctx.moveTo(538,yy);ctx.lineTo(576,yy);ctx.stroke()}
-ctx.fillStyle='#ead4a6';ctx.font='bold 12px Vazirmatn';ctx.textAlign='center';ctx.fillText('سردخانه',557,148);
-ctx.fillStyle='#b89a6c';ctx.fillRect(580,198,4,10);
+// ورودی سردخانه به‌صورت یک درِ زمینی و قابل دسترس روی کف سالن
+ctx.save();
+ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(557,423,54,12,0,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#172329';ctx.fillRect(510,319,94,103);
+ctx.fillStyle='#624832';ctx.fillRect(516,325,82,94);
+ctx.fillStyle='#bd9561';ctx.fillRect(521,330,72,84);
+ctx.fillStyle='#d8c7a5';ctx.fillRect(528,337,58,70);
+ctx.strokeStyle='#49392b';ctx.lineWidth=3;ctx.strokeRect(528,337,58,70);
+ctx.fillStyle='#80603d';ctx.beginPath();ctx.arc(576,374,4,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#ead4a6';ctx.font='bold 12px Vazirmatn';ctx.textAlign='center';ctx.fillText('سردخانه',557,313);
+ctx.fillStyle='#b89a6c';ctx.fillRect(514,418,86,6);
+ctx.restore();
 // ساعت دیواری کمی پایین‌تر از پنجره، کاملاً جدا از قاب آن
 ctx.save();
 ctx.fillStyle='#211b17';ctx.fillRect(655,112,70,70);
@@ -472,6 +479,8 @@ function move(dt){
    }
    // در ورودی و در انبار روی دیوار قرار دارند و از داخل اشیا قابل عبور نیستند.
    if(rectHit(x,y,834,142,76,146)||rectHit(x,y,39,162,91,134))return true;
+   // بدنه ورودی سردخانه روی کف است؛ فقط دورِ خود سازه مانع می‌شود و مسیر سالن باز می‌ماند.
+   if(rectHit(x,y,510,319,94,103))return true;
   }
   return false;
  };
