@@ -173,10 +173,10 @@ const gamePanel=document.querySelector('.panel');
 function updateFullscreenLabel(){const active=document.fullscreenElement===gamePanel;$('fullscreen').textContent=active?'خروج از تمام‌صفحه':'تمام‌صفحه'}
 $('fullscreen').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else if(gamePanel.requestFullscreen){await gamePanel.requestFullscreen()}else{toast('تمام‌صفحه در این مرورگر پشتیبانی نمی‌شود')} }catch(e){toast('ورود به حالت تمام‌صفحه ممکن نشد')}};
 document.addEventListener('fullscreenchange',updateFullscreenLabel);
-function setupSceneObjects(){makeObjects();objects.push({id:'basement',x:145,y:320,r:52,label:'در انبار / زیرزمین',act:basementAction})}
+function setupSceneObjects(){makeObjects();objects.push({id:'basement',x:84,y:230,r:46,label:'در انبار / زیرزمین',act:basementAction})}
 function drawWindows(){for(const x of [135,390,650]){drawOutsideView(x+4,49,97,34);ctx.strokeStyle='#6b5b47';ctx.lineWidth=5;ctx.strokeRect(x,45,105,42);ctx.strokeStyle='#423c34';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+52,47);ctx.lineTo(x+52,85);ctx.stroke()}}
 function drawOutsideView(x,y,w,h){ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();let g=ctx.createLinearGradient(0,y,0,y+h);g.addColorStop(0,'#080f1a');g.addColorStop(1,'#202d2b');ctx.fillStyle=g;ctx.fillRect(x,y,w,h);ctx.fillStyle='#c4c2a4';ctx.globalAlpha=.65;ctx.beginPath();ctx.arc(x+w*.72,y+28,13,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;for(let i=0;i<7;i++){let tx=x+i*19-8,th=55+(i%3)*22;ctx.fillStyle=i%2?'#101b18':'#0a1413';ctx.beginPath();ctx.moveTo(tx,y+h);ctx.lineTo(tx+18,y+h-th);ctx.lineTo(tx+36,y+h);ctx.fill();ctx.fillRect(tx+15,y+h-th/2,7,th/2)}ctx.fillStyle='#343a36';ctx.beginPath();ctx.moveTo(x+w*.42,y+h);ctx.lineTo(x+w*.58,y+h);ctx.lineTo(x+w*.8,y+h*.48);ctx.lineTo(x+w*.2,y+h*.48);ctx.fill();ctx.fillStyle='#b4bdba';ctx.globalAlpha=.16;for(let i=0;i<5;i++){let fx=x+((performance.now()*.012+i*29)%(w+30))-15;ctx.beginPath();ctx.ellipse(fx,y+h*.72+(i%2)*18,24,4,0,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=.24;ctx.strokeStyle='#aab8bd';ctx.lineWidth=1;for(let i=0;i<22;i++){let rx=x+((performance.now()*.075+i*37)%(w+8))-4,ry=y+((performance.now()*.13+i*19)%(h+10))-5;ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(rx-5,ry+12);ctx.stroke()}ctx.globalAlpha=1;ctx.restore()}
-function drawHotspotLabels(){if(!objects.length)return;ctx.save();ctx.textAlign='center';for(const o of objects){if(o.id==='broom'&&broom)continue;const near=Math.hypot(player.x-o.x,player.y-o.y)<o.r+30;const important=['counter','kitchen','phone','basement','door','broom'].includes(o.id);if(!near&&!important)continue;ctx.font='bold '+(near?'14px':'11px')+' Vazirmatn';const label=o.label;const width=ctx.measureText(label).width+18;const yy=o.y-o.r-(near?29:23);ctx.fillStyle=near?'#b58d52':'#202a2e';ctx.strokeStyle='#f0cf91';ctx.lineWidth=near?2:1;ctx.beginPath();ctx.roundRect(o.x-width/2,yy,width,near?25:20,7);ctx.fill();ctx.stroke();ctx.fillStyle=near?'#17120b':'#ffedc8';ctx.fillText(label,o.x,yy+(near?16:14));if(near){ctx.strokeStyle='#e4c58c';ctx.globalAlpha=.75;ctx.beginPath();ctx.arc(o.x,o.y,o.r+5,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1}}ctx.restore()}
+function drawHotspotLabels(){if(!objects.length)return;ctx.save();ctx.textAlign='center';for(const o of objects){if(o.id==='broom'&&broom)continue;const near=Math.hypot(player.x-o.x,player.y-o.y)<o.r+30;const important=['counter','kitchen','phone','basement','door','broom'].includes(o.id);if(!near&&!important)continue;ctx.font='bold '+(near?'14px':'11px')+' Vazirmatn';const label=o.label;const width=ctx.measureText(label).width+18;const yy=o.id==='basement'?o.y-105:o.y-o.r-(near?29:23);ctx.fillStyle=near?'#b58d52':'#202a2e';ctx.strokeStyle='#f0cf91';ctx.lineWidth=near?2:1;ctx.beginPath();ctx.roundRect(o.x-width/2,yy,width,near?25:20,7);ctx.fill();ctx.stroke();ctx.fillStyle=near?'#17120b':'#ffedc8';ctx.fillText(label,o.x,yy+(near?16:14));if(near){ctx.strokeStyle='#e4c58c';ctx.globalAlpha=.75;ctx.beginPath();ctx.arc(o.x,o.y,o.r+5,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1}}ctx.restore()}
 function drawRoom(){ctx.fillStyle='#171d22';ctx.fillRect(0,0,W,H);ctx.fillStyle='#283037';ctx.fillRect(26,26,908,488);ctx.fillStyle='#1b2228';ctx.fillRect(36,36,888,468);
 for(let x=40;x<930;x+=64){ctx.strokeStyle='#2a333a';ctx.beginPath();ctx.moveTo(x,40);ctx.lineTo(x,500);ctx.stroke()}
 for(let y=45;y<510;y+=64){ctx.strokeStyle='#2a333a';ctx.beginPath();ctx.moveTo(35,y);ctx.lineTo(925,y);ctx.stroke()}
@@ -242,13 +242,13 @@ ctx.fillStyle='#b58a58';ctx.fillRect(840,148,64,134);
 if(doorOpen){drawOutsideView(847,155,50,120);ctx.fillStyle='#4a3427';ctx.beginPath();ctx.moveTo(840,149);ctx.lineTo(862,160);ctx.lineTo(862,275);ctx.lineTo(840,282);ctx.closePath();ctx.fill();ctx.strokeStyle='#d1a875';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#e1c18b';ctx.beginPath();ctx.arc(858,213,3,0,Math.PI*2);ctx.fill()}
 else{ctx.fillStyle='#d8d9d1';ctx.fillRect(847,155,50,120);ctx.strokeStyle='#62452f';ctx.lineWidth=3;ctx.strokeRect(847,155,50,120);ctx.fillStyle='#28211a';ctx.beginPath();ctx.arc(887,211,4,0,Math.PI*2);ctx.fill()}
 // در انبار قدیمی روی دیوار چپ؛ با قاب، دستگیره و تابلو مشخص
-ctx.fillStyle='#211a16';ctx.fillRect(34,166,94,142);
-ctx.fillStyle='#78563a';ctx.fillRect(40,172,82,130);
-ctx.fillStyle='#342b25';ctx.fillRect(48,180,66,114);
-ctx.strokeStyle='#c39a69';ctx.lineWidth=3;ctx.strokeRect(48,180,66,114);
-ctx.fillStyle='#d6b77f';ctx.beginPath();ctx.arc(101,238,4,0,Math.PI*2);ctx.fill();
-ctx.fillStyle='#241b13';ctx.fillRect(43,145,76,19);
-ctx.fillStyle='#ffe0a8';ctx.font='bold 12px Vazirmatn';ctx.textAlign='center';ctx.fillText('انبار',81,159);
+ctx.fillStyle='#211a16';ctx.fillRect(34,146,94,142);
+ctx.fillStyle='#78563a';ctx.fillRect(40,152,82,130);
+ctx.fillStyle='#342b25';ctx.fillRect(48,160,66,114);
+ctx.strokeStyle='#c39a69';ctx.lineWidth=3;ctx.strokeRect(48,160,66,114);
+ctx.fillStyle='#d6b77f';ctx.beginPath();ctx.arc(101,218,4,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#241b13';ctx.fillRect(43,125,76,19);
+ctx.fillStyle='#ffe0a8';ctx.font='bold 12px Vazirmatn';ctx.textAlign='center';ctx.fillText('انبار',81,139);
 if(!broom){ctx.save();ctx.translate(145,430);ctx.strokeStyle='#bd945d';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-10,-23);ctx.lineTo(12,18);ctx.stroke();ctx.fillStyle='#b18a55';ctx.fillRect(0,14,30,7);ctx.restore()}
 spots.forEach((s,i)=>{if(!s.done){
  // لکه‌های نامنظم چربی و خرده‌ریز روی کف؛ با کنتراست کافی برای تشخیص
