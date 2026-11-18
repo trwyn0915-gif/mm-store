@@ -122,8 +122,9 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
  .panel>.actions{order:5;display:flex!important}
  #stage canvas{display:block;width:100%;height:auto;max-width:100%;aspect-ratio:16/9}
  .controls{
-  position:sticky!important;top:auto!important;bottom:5px!important;left:auto!important;right:auto!important;
-  transform:none!important;z-index:20!important;display:flex!important;flex-direction:row;
+  position:fixed!important;top:auto!important;bottom:max(10px,env(safe-area-inset-bottom))!important;
+  left:max(8px,env(safe-area-inset-left))!important;right:max(8px,env(safe-area-inset-right))!important;
+  transform:none!important;z-index:1000!important;display:flex!important;flex-direction:row;
   align-items:center;justify-content:space-between;gap:8px;width:100%!important;
   margin:0!important;padding:7px!important;border:1px solid #59636d;border-radius:13px;
   background:#10161ff5;box-shadow:0 4px 16px #0009;pointer-events:auto;
@@ -154,7 +155,12 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
  .panel:fullscreen>.dialog .dialogfoot button{min-height:34px;padding:4px 14px}
  .panel:fullscreen>.choices{order:3!important;flex:0 0 auto!important;max-height:18dvh;overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:0}
  .panel:fullscreen>.choices button{min-height:38px;padding:5px 7px;font-size:11px}
- .panel:fullscreen>.controls{order:4!important;position:relative!important;inset:auto!important;flex:0 0 auto!important;bottom:auto!important;z-index:30!important}
+ .panel:fullscreen>.controls{
+  order:4!important;position:fixed!important;top:auto!important;
+  left:max(8px,env(safe-area-inset-left))!important;right:max(8px,env(safe-area-inset-right))!important;
+  bottom:max(8px,env(safe-area-inset-bottom))!important;inset-inline:auto!important;
+  flex:0 0 auto!important;z-index:1000!important
+ }
  .panel:fullscreen>.actions{order:5!important;flex:0 0 auto!important}
  .panel:fullscreen .controls .dpad{grid-template-columns:repeat(3,36px);grid-template-rows:repeat(2,30px)}
  .panel:fullscreen .controls #interact,.panel:fullscreen .controls #fullscreen{min-height:48px}
