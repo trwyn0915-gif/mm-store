@@ -195,6 +195,11 @@ for(let x=65;x<920;x+=88){ctx.strokeStyle='#51483e';ctx.beginPath();ctx.moveTo(x
 // پنجره‌ها روی دیوار پشتی
 drawWindows();
 ctx.fillStyle='#f0d5a5';ctx.font='bold 18px Vazirmatn';ctx.textAlign='center';ctx.fillText('رستوران شبانه',480,115);
+// دریچه سردخانه روی دیوار پشتی، کنار ورودی آشپزخانه
+ctx.fillStyle='#172329';ctx.fillRect(520,155,74,91);ctx.fillStyle='#786044';ctx.fillRect(524,159,66,83);ctx.fillStyle='#a7a39a';ctx.fillRect(529,164,56,73);ctx.strokeStyle='#d1bd91';ctx.lineWidth=2;ctx.strokeRect(529,164,56,73);
+ctx.strokeStyle='#3f4a4c';ctx.lineWidth=3;for(let yy=179;yy<=218;yy+=13){ctx.beginPath();ctx.moveTo(538,yy);ctx.lineTo(576,yy);ctx.stroke()}
+ctx.fillStyle='#ead4a6';ctx.font='bold 12px Vazirmatn';ctx.textAlign='center';ctx.fillText('سردخانه',557,148);
+ctx.fillStyle='#b89a6c';ctx.fillRect(580,198,4,10);
 // ساعت دیواری روی دیوار پشتی؛ نقطه تعامل آن روی کف و جدا از ورودی آشپزخانه است
 ctx.save();
 ctx.fillStyle='#211b17';ctx.fillRect(655,82,70,70);
@@ -294,8 +299,20 @@ for(let y=315;y<510;y+=42){ctx.strokeStyle='#858079';ctx.lineWidth=1.4;ctx.begin
 for(let x=70;x<920;x+=92){ctx.strokeStyle='#4b5152';ctx.beginPath();ctx.moveTo(x,285);ctx.lineTo(x-8,510);ctx.stroke()}
 // قفسه فلزی روی دیوار پشتی
 ctx.save();ctx.fillStyle='#11191e';ctx.fillRect(82,91,210,166);ctx.strokeStyle='#a4b0b2';ctx.lineWidth=7;ctx.strokeRect(82,91,210,166);ctx.fillStyle='#64757a';ctx.fillRect(88,97,198,7);ctx.fillRect(88,149,198,7);ctx.fillRect(88,201,198,7);ctx.fillRect(88,250,198,7);ctx.fillStyle='#9b805a';ctx.fillRect(99,107,76,35);ctx.fillRect(190,107,82,35);ctx.fillStyle='#6d665a';ctx.fillRect(99,160,80,34);ctx.fillStyle='#aa9067';ctx.fillRect(190,160,82,34);ctx.fillStyle='#7b7467';ctx.fillRect(100,212,74,31);ctx.fillRect(190,212,82,31);ctx.fillStyle='#f0d9ac';ctx.font='bold 16px Vazirmatn';ctx.textAlign='center';ctx.fillText('قفسه فلزی',187,78);ctx.restore();
-// عکس قاب‌شده روی دیوار
-ctx.fillStyle='#1b2023';ctx.fillRect(335,88,82,112);ctx.fillStyle='#a8875c';ctx.fillRect(341,94,70,100);ctx.fillStyle='#b9aa8d';ctx.fillRect(348,101,56,86);
+// عکس قدیمی کارکنان؛ تصویر واقعی داخل قاب با رنگ سپیا
+ctx.fillStyle='#1b2023';ctx.fillRect(335,88,82,112);ctx.fillStyle='#a8875c';ctx.fillRect(341,94,70,100);
+const oldPhoto=ctx.createLinearGradient(348,101,404,187);oldPhoto.addColorStop(0,'#d5c39b');oldPhoto.addColorStop(1,'#8b7654');ctx.fillStyle=oldPhoto;ctx.fillRect(348,101,56,86);
+ctx.save();ctx.beginPath();ctx.rect(348,101,56,86);ctx.clip();
+// پس‌زمینه محو و خط‌وخش‌های عکس
+ctx.fillStyle='rgba(70,54,35,.16)';ctx.fillRect(348,157,56,30);ctx.strokeStyle='rgba(74,57,37,.22)';ctx.lineWidth=1;for(let k=0;k<7;k++){ctx.beginPath();ctx.moveTo(350+k*8,103);ctx.lineTo(345+k*8,185);ctx.stroke()}
+// سه کارمند در عکس دسته‌جمعی
+for(const p of [{x:361,y:130},{x:376,y:125},{x:391,y:132}]){
+ ctx.fillStyle='#594936';ctx.beginPath();ctx.arc(p.x,p.y,6,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#796447';ctx.beginPath();ctx.moveTo(p.x-9,p.y+27);ctx.quadraticCurveTo(p.x-8,p.y+10,p.x,p.y+12);ctx.quadraticCurveTo(p.x+9,p.y+10,p.x+10,p.y+27);ctx.closePath();ctx.fill();
+ ctx.fillStyle='rgba(232,213,170,.55)';ctx.fillRect(p.x-2,p.y+17,4,7);
+}
+ctx.fillStyle='rgba(48,37,25,.68)';ctx.font='bold 6px Vazirmatn';ctx.textAlign='center';ctx.fillText('NIGHT SHIFT · 1998',376,181);
+ctx.restore();
 // جعبه برق کوچک و نصب‌شده روی دیوار
 ctx.fillStyle='#55534a';ctx.fillRect(765,112,100,82);ctx.strokeStyle='#c8b17d';ctx.lineWidth=4;ctx.strokeRect(765,112,100,82);ctx.fillStyle='#171c20';ctx.fillRect(778,125,74,55);ctx.fillStyle=breaker?'#e5d58d':'#7e3434';ctx.fillRect(806,139,18,28);ctx.fillStyle='#f2dba8';ctx.font='bold 14px Vazirmatn';ctx.fillText('جعبه برق',815,101);
 // در خروج روی دیوار، با نقطه تعامل در کف جلوی آن
