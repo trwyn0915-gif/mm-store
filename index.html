@@ -439,7 +439,7 @@ function move(dt){
  const rectHit=(x,y,rx,ry,rw,rh,pad=radius)=>x>rx-pad&&x<rx+rw+pad&&y>ry-pad&&y<ry+rh+pad;
  const blocked=(x,y)=>{
   if(scene==='chapterTwoOutside')return x<45||x>915||y<370||y>510;
-  if(scene==='basement'){if(x<45||x>915||y<285||y>490)return true;if(y<305&&(x<400||x>560))return true;if(rectHit(x,y,535,374,170,58)||rectHit(x,y,728,410,108,30))return true;return false;}
+  if(scene==='basement'){if(x<45||x>915||y<285||y>490)return true;/* دیوار فقط تا لبه واقعی دیوار پشتی مانع است؛ مسیر عرضی کف باز می‌ماند. */if(rectHit(x,y,535,374,170,58)||rectHit(x,y,728,410,108,30))return true;return false;}
   if(x<45||x>915||y<50||y>490)return true;
   if(scene==='restaurant'||scene==='reveal'||scene==='final'){
    // دیوار پشتی فقط در محدوده واقعی خودش مانع است؛ دهانه آشپزخانه باز می‌ماند.
