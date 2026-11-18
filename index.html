@@ -23,6 +23,60 @@ canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;touch-action:none}
 #toast{position:absolute;left:50%;top:12px;transform:translateX(-50%);padding:7px 13px;border:1px solid #62543d;border-radius:30px;background:#0b0e12e8;color:#e8d6b4;font-size:12px;z-index:3;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}#toast.on{opacity:1}
 .footer{text-align:center;color:#707981;font-size:11px;margin:12px 0 3px}
 @media(max-width:600px){.hint{font-size:12px;padding:8px 10px}body{padding:6px}.panel{padding:7px}.dialog{padding:8px;gap:8px;min-height:105px}.portrait{flex-basis:78px;width:78px;height:78px}.line{font-size:12px;line-height:1.8;min-height:42px}.speaker{font-size:12px}.tiny{font-size:10px}.controls{align-items:center}.hint{font-size:10px}.dpad{grid-template-columns:repeat(3,38px);grid-template-rows:repeat(2,34px)}.interact{min-width:78px;padding:9px 10px}}
+
+/* Responsive layout: desktop keyboard + comfortable mobile touch */
+@media(max-width:700px){
+ body{padding:4px}
+ .wrap{width:100%;max-width:none}
+ .top{gap:5px;margin-bottom:6px}
+ .brand{font-size:clamp(17px,5vw,23px)}
+ .subtitle,.tag{font-size:10px}
+ .panel{padding:6px;border-radius:12px}
+ .hud{gap:5px;padding:0 0 7px}
+ .pill{font-size:10px;padding:5px 8px}
+ #stage{width:100%;border-radius:9px}
+ #stage canvas{width:100%;height:auto;aspect-ratio:16/9;display:block}
+ .dialog{margin-top:7px;gap:7px;padding:8px;min-height:0;align-items:flex-start}
+ .portrait{flex:0 0 64px;width:64px;height:64px}
+ .dialogbody{min-width:0}
+ .line{font-size:13px;line-height:1.75;min-height:0}
+ .speaker{font-size:12px}
+ .dialogfoot{margin-top:6px}
+ .dialogfoot button{min-height:40px;padding:8px 18px}
+ .choices{display:grid;grid-template-columns:1fr;gap:7px;margin-top:7px}
+ .choices button{width:100%;min-height:44px}
+ .actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+ .actions button{min-height:46px;padding:9px 10px;font-size:14px}
+ #interact{grid-column:1/-1;min-height:52px;font-size:16px}
+ .controls{display:grid;grid-template-columns:auto minmax(0,1fr);gap:9px;align-items:center;margin-top:8px}
+ .dpad{grid-template-columns:repeat(3,46px);grid-template-rows:repeat(2,42px);gap:5px}
+ .dpad button{font-size:19px;touch-action:none;user-select:none;-webkit-user-select:none}
+ .hint{font-size:10px;line-height:1.7;padding:8px 9px;min-width:0}
+ .footer{font-size:10px;margin:8px 0 2px}
+ .overlay{padding:7px}
+ .chapter-menu{padding:5px 2px}
+ .chapter-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+ .chapter-tile{min-height:66px}
+ .chapter-number{font-size:19px}
+ .chapter-name{font-size:10px}
+}
+@media(max-width:700px) and (orientation:landscape){
+ body{padding:2px}
+ .top{margin-bottom:3px}
+ .top .subtitle,.top .tag{display:none}
+ .panel{padding:4px}
+ .hud{padding-bottom:4px}
+ #stage canvas{max-height:43dvh;width:100%;height:auto;object-fit:contain}
+ .dialog{margin-top:4px;padding:5px;gap:6px}
+ .portrait{flex-basis:48px;width:48px;height:48px}
+ .line{font-size:11px;line-height:1.5}
+ .actions{margin-top:4px}
+ .actions button{min-height:38px}
+ #interact{min-height:42px}
+ .controls{margin-top:4px}
+ .dpad{grid-template-columns:repeat(3,38px);grid-template-rows:repeat(2,32px)}
+ .hint{font-size:9px;padding:5px 7px}
+}
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
@@ -170,6 +224,7 @@ if(scene==='basement'&&!breaker){basementAction();return}
 toast('چیزی برای تعامل نزدیکت نیست')}
 $('interact').onclick=interact;
 const gamePanel=document.querySelector('.panel');
+const isMobileLayout=()=>window.matchMedia('(max-width:700px), (pointer:coarse)').matches;
 function updateFullscreenLabel(){const active=document.fullscreenElement===gamePanel;$('fullscreen').textContent=active?'خروج از تمام‌صفحه':'تمام‌صفحه'}
 $('fullscreen').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else if(gamePanel.requestFullscreen){await gamePanel.requestFullscreen()}else{toast('تمام‌صفحه در این مرورگر پشتیبانی نمی‌شود')} }catch(e){toast('ورود به حالت تمام‌صفحه ممکن نشد')}};
 document.addEventListener('fullscreenchange',updateFullscreenLabel);
@@ -492,7 +547,7 @@ function move(dt){
 function update(dt){if(scene==='introStory'||scene==='drive'){roadMotion+=dt*150;driveTravel=roadMotion;driveSpeed=1}if(scene==='drive'&&driveStart){let dialogActive=$('dialog').classList.contains('show')||choicesOpen;let elapsed=performance.now()-driveStart;if(!dialogActive&&elapsed>4700&&!driveBrakeStart){driveBrakeStart=performance.now();sfx('brake');toast('عمو امیر ترمز می‌گیرد...')}if(driveBrakeStart){driveSpeed=Math.max(0,1-(performance.now()-driveBrakeStart)/1400);if(performance.now()-driveBrakeStart>=1400){driveStart=0;driveBrakeStart=0;driveSpeed=0;enterRoadside()}}driveTravel+=dt*driveSpeed*150}if(scene==='restaurant'&&cleaned===3&&knocks===0){}if(scene==='basement'&&breaker&&scene!=='reveal'){}if((scene==='restaurant'||scene==='basement'||scene==='chapterTwoOutside')&&!$('dialog').classList.contains('show')&&!choicesOpen&&performance.now()-lastAtmosphere>26000){lastAtmosphere=performance.now();if(Math.random()>.45){shadowStart=performance.now();shadowUntil=shadowStart+1400;shadowOrigin=player.x+(Math.random()>.5?190:-190);sfx('creak');toast('سایه‌ای از گوشه چشم رد شد...')}else{sfx('wind');toast('باد سردی از لای پنجره‌ها گذشت...')}}move(dt);updateMhFollower(dt);let near=nearObject();$('interact').textContent='تعامل / E';$('clock').textContent=scene==='basement'?'ساعت ۰۱:۱۳':scene==='reveal'||scene==='final'?'ساعت ۰۱:۲۷':'ساعت ۰۰:۴۷'}
 let driveStart=0,last=0,driveTravel=0,driveSpeed=0,driveBrakeStart=0,roadMotion=0;function loop(t){let dt=Math.min(.04,(t-last)/1000||0);last=t;update(dt);draw();requestAnimationFrame(loop)}
 async function startChapterTwo(){mysteriousPresent=false;
- try{if(!document.fullscreenElement&&gamePanel.requestFullscreen){await gamePanel.requestFullscreen()}}catch(e){toast('این مرورگر اجازه ورود خودکار به تمام‌صفحه را نداد؛ می‌توانی از دکمه تمام‌صفحه استفاده کنی')}
+ try{if(!isMobileLayout()&&!document.fullscreenElement&&gamePanel.requestFullscreen){await gamePanel.requestFullscreen()}}catch(e){toast('این مرورگر اجازه ورود خودکار به تمام‌صفحه را نداد؛ می‌توانی از دکمه تمام‌صفحه استفاده کنی')}
  audioStart();if(window.speechSynthesis)speechSynthesis.cancel();ending=false;roadMotion=0;driveTravel=0;driveSpeed=1;driveStart=0;driveBrakeStart=0;scene='introStory';$('intro').classList.add('hidden');$('ending').classList.add('hidden');$('chapterTwoEnd').style.display='none';$('dialog').classList.remove('show');$('choices').innerHTML='';music('suspense');$('chapter').textContent='پرونده: فرار از مه · فصل دوم';setObjective('ادامه مسیر عمو امیر و ام‌اچ');
  runDialog([
  {who:'narrator',text:'فصل دوم؛ چند ساعت از فرار عمو امیر و ام‌اچ گذشته است. جاده جنگلی آرام‌آرام روشن می‌شود، اما صدای ضبط‌صوت هنوز قطع نشده است.'},
@@ -628,7 +683,7 @@ $('begin').onclick=async()=>{
  const btn=$('begin');btn.disabled=true;btn.textContent='در حال آماده‌سازی...';
  let entered=false;
  try{
-  if(!document.fullscreenElement&&gamePanel.requestFullscreen){await gamePanel.requestFullscreen();entered=true}
+  if(!isMobileLayout()&&!document.fullscreenElement&&gamePanel.requestFullscreen){await gamePanel.requestFullscreen();entered=true}
  }catch(e){}
  startStory();driveStart=0;
  if(!document.fullscreenElement&&!entered)toast('برای تمام‌صفحه از دکمهٔ «تمام‌صفحه» استفاده کن؛ بازی شروع شد');
