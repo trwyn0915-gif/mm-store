@@ -608,6 +608,57 @@ button { touch-action:manipulation; }
   }
 }
 
+
+/* DESKTOP CONTROL ORDER — put the full control row below the game, not above it */
+@media (min-width:701px) {
+  .panel {
+    display:flex!important;
+    flex-direction:column!important;
+  }
+  .panel > .hud { order:0!important; }
+  .panel > #stage { order:1!important; }
+  .panel > .dialog { order:2!important; }
+  .panel > .choices { order:3!important; }
+  .panel > .controls {
+    order:4!important;
+    position:relative!important;
+    inset:auto!important;
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    width:100%!important;
+    margin:10px 0 0!important;
+    padding:8px!important;
+    transform:none!important;
+    z-index:2!important;
+    background:#10161f!important;
+    border:1px solid #59636d!important;
+    border-radius:12px!important;
+    box-sizing:border-box!important;
+  }
+  .panel > .controls > .dpad { flex:0 0 auto!important; }
+  .panel > .controls > .hint { display:block!important; flex:1 1 auto!important; }
+  .panel > .controls > #interact {
+    display:block!important;
+    flex:0 0 150px!important;
+    width:150px!important;
+    min-width:150px!important;
+    min-height:48px!important;
+    margin:0!important;
+    grid-column:auto!important;
+  }
+  .panel > .controls > #fullscreen {
+    display:block!important;
+    flex:0 0 125px!important;
+    width:125px!important;
+    min-width:125px!important;
+    min-height:48px!important;
+    margin:0!important;
+  }
+  .panel > .actions { order:5!important; }
+}
+
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
