@@ -969,6 +969,33 @@ button { touch-action:manipulation; }
   }
 }
 
+
+/* Desktop portrait visibility fix: keep character faces visible beside dialogue */
+@media (min-width:701px) {
+  .panel .dialog.show {
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+  }
+  .panel .dialog.show .portrait {
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    position:relative!important;
+    flex:0 0 112px!important;
+    width:112px!important;
+    height:112px!important;
+    min-width:112px!important;
+    min-height:112px!important;
+    max-width:112px!important;
+    max-height:112px!important;
+  }
+  .panel:fullscreen > .dialog.show .portrait {
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+  }
+}
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
