@@ -944,6 +944,31 @@ button { touch-action:manipulation; }
 .panel:fullscreen > .controls #fullscreen {display:none!important}
 .panel:fullscreen > .actions {display:none!important}
 
+
+/* Restore speaker portraits in landscape fullscreen dialogue */
+@media (max-width:900px) and (orientation:landscape) and (pointer:coarse) {
+  .panel:fullscreen > .dialog.show {
+    display:flex!important;flex-direction:row!important;
+    align-items:center!important;gap:9px!important;
+    max-height:22dvh!important;min-height:0!important;
+  }
+  .panel:fullscreen > .dialog .portrait {
+    display:block!important;visibility:visible!important;opacity:1!important;
+    position:relative!important;flex:0 0 68px!important;
+    width:68px!important;height:68px!important;
+    min-width:68px!important;min-height:68px!important;
+    max-width:68px!important;max-height:68px!important;
+    border-radius:9px!important;background-color:#0a0c10!important;
+  }
+  .panel:fullscreen > .dialog .dialogbody {
+    flex:1 1 0!important;min-width:0!important;width:auto!important;
+  }
+  .panel:fullscreen > .dialog .line {
+    font-size:clamp(12px,2.2vh,16px)!important;
+    line-height:1.45!important;
+  }
+}
+
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
