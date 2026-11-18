@@ -1415,3 +1415,15 @@ document.addEventListener('pointerup',()=>{for(const k in keys)keys[k]=false});
 reset();requestAnimationFrame(loop);
 })();
 </script></body></html>
+
+/* Keep all gameplay controls hidden on the chapter-selection home screen. */
+body:has(#intro:not(.hidden)) .panel > .controls,
+body:has(#intro:not(.hidden)) .panel > .actions {
+  display:none!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+body:has(#intro.hidden) .panel > .controls {
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
