@@ -90,7 +90,7 @@ function line(entry){const who=entry.who||'narrator';sceneSpeaker=who;$('dialog'
 function runDialog(lines,done){dialogue=lines;di=0;dialogueCast=new Set(lines.map(entry=>entry.who).filter(who=>who==='asghar'||who==='mysterious'));afterDialog=done||null;line(dialogue[di]);}
 function nextLine(){if(!$('dialog').classList.contains('show'))return;if(typing){clearInterval(typeTimer);$('line').textContent=fullLine;typing=false;$('next').textContent='ادامه';return}di++;if(di<dialogue.length)line(dialogue[di]);else hideDialog()}
 $('next').onclick=nextLine;$('dialog').onclick=e=>{if(e.target.id!=='next'&&!choicesOpen)nextLine()};
-function end(title,text){ending=true;scene='ending';music('horror');$('endingTitle').textContent=title;$('endingText').textContent=text;$('ending').classList.remove('hidden');$('dialog').classList.remove('show');sceneSpeaker=null;$('choices').innerHTML='';$('chapterTwoEnd').style.display='inline-block';}
+function end(title,text,unlockChapterTwo=false){ending=true;scene='ending';music('horror');$('endingTitle').textContent=title;$('endingText').textContent=text;$('ending').classList.remove('hidden');$('dialog').classList.remove('show');sceneSpeaker=null;$('choices').innerHTML='';$('chapterTwoEnd').style.display=unlockChapterTwo?'inline-block':'none';}
 function startStory(){audioStart();$('intro').classList.add('hidden');scene='drive';roadMotion=0;driveTravel=0;driveBrakeStart=0;driveStart=performance.now();driveSpeed=1;setObjective('در مسیر رستوران رانندگی کن');music('drive');runDialog([
 {who:'narrator',text:'ده سال از قطعی سراسری اینترنت در ایران گذشته است. دنیا آرام‌آرام شکل تازه‌ای به خودش گرفته؛ ارتباط‌ها خاموش شده‌اند و خیلی از کسب‌وکارهای اینترنتی دیگر وجود ندارند.'},
 {who:'narrator',text:'آپارات، پس از سال‌ها بحران و ورشکستگی، تمام شرکت را به تونی فروخته است. عمو امیر که روزگاری استریمر شناخته‌شده‌ای بود، حالا شغلش را از دست داده و مدت‌هاست دنبال کاری تازه می‌گردد.'},
@@ -155,7 +155,7 @@ runDialog([
 {who:'mh',text:'فکر نکن با بیرون اومدن از اینجا همه‌چیز تموم شده. باید حقیقت رو به بقیه بگیم.'},
 {who:'amir',face:'tired',text:'می‌دونم. این بار هیچ‌چیزی رو پنهان نمی‌کنیم.'},
 {who:'narrator',text:'عمو امیر و ام‌اچ در امتداد جاده به سمت نزدیک‌ترین آبادی راه افتادند. در جیب امیر، نوار ضبط‌صوت هنوز روشن بود و صدای آرام اصغر از آن شنیده می‌شد: «اگه این پیام رو می‌شنوید، یعنی بالاخره یکی راه خروج رو پیدا کرده...»'}
-],()=>end('پایان فصل اول: خروج از مه','عمو امیر و ام‌اچ از تونل خدماتی فرار کردند. آن‌ها تصمیم گرفتند مدارک رستوران را تحویل دهند و حقیقت ناپدید شدن کارکنان را آشکار کنند. اما پیام آخر اصغر نشان می‌داد راز این مکان هنوز تمام نشده است. فصل دوم از همین‌جا ادامه پیدا می‌کند.'));
+],()=>end('پایان فصل اول: خروج از مه','عمو امیر و ام‌اچ از تونل خدماتی فرار کردند. آن‌ها تصمیم گرفتند مدارک رستوران را تحویل دهند و حقیقت ناپدید شدن کارکنان را آشکار کنند. اما پیام آخر اصغر نشان می‌داد راز این مکان هنوز تمام نشده است. فصل دوم از همین‌جا ادامه پیدا می‌کند.',true));
 }
 function truthPath(){runDialog([{who:'amir',face:'angry',text:'تو با اصغر چه کار کردی؟ اون کجاست؟'}, {who:'mh',text:'اصغر آخرین کسی بود که سعی کرد این رستوران رو ببنده. اینجا یه راز قدیمی داره؛ من نمی‌تونستم بذارم کسی ازش حرف بزنه.'},{who:'narrator',text:'ام‌اچ بلند شد. صدای قدم‌هایش در سالن خالی پیچید. عمو امیر تازه متوجه شد که در خروجی دیگر دستگیره ندارد.'},{who:'amir',face:'surprised',text:'این در... چرا باز نمی‌شه؟'}, {who:'mh',text:'چون شیفت تو هنوز تموم نشده.'}],()=>finalScene())}
 function runPath(){runDialog([{who:'narrator',text:'عمو امیر به سمت در دوید. چراغ‌ها یکی‌یکی خاموش شدند و راهرو در تاریکی فرو رفت.'},{who:'amir',face:'surprised',text:'کمک! یکی در رو باز کنه!'}, {who:'mh',text:'فرار نکن. این راهرو همیشه به همین سالن برمی‌گرده.'}],()=>finalScene())}
@@ -477,7 +477,7 @@ function chapterTwoFinalChoice(){
  ],()=>end('پایان فصل دوم: مسیر پشتی','عمو امیر و ام‌اچ از تونل قدیمی خارج شدند و مدارک را به جاده پشتی رساندند. پیام اصغر نشان می‌داد که او هم در راه است. راز ایستگاه هنوز تمام نشده، اما این بار آن‌ها با نقشه و مدرک از جنگل بیرون رفتند.'))}
  ]));
 }
-function reset(){lastAtmosphere=performance.now();shadowUntil=0;scene='intro';ending=false;doorOpen=false;player.x=450;player.y=340;broom=false;cleaned=0;hasKey=false;hasNote=false;breaker=false;doorUnlocked=false;knocks=0;foundRecorder=false;foundLedger=false;foundBadge=false;foundTape=false;spots.forEach(s=>s.done=false);$('intro').classList.remove('hidden');$('ending').classList.add('hidden');$('dialog').classList.remove('show');$('choices').innerHTML='';setObjective('شروع ماجرا');$('chapter').textContent='پرونده: آخرین شیفت';setupSceneObjects();music('normal');draw()}
+function reset(){lastAtmosphere=performance.now();shadowUntil=0;scene='intro';ending=false;$('chapterTwoEnd').style.display='none';doorOpen=false;player.x=450;player.y=340;broom=false;cleaned=0;hasKey=false;hasNote=false;breaker=false;doorUnlocked=false;knocks=0;foundRecorder=false;foundLedger=false;foundBadge=false;foundTape=false;spots.forEach(s=>s.done=false);$('intro').classList.remove('hidden');$('ending').classList.add('hidden');$('dialog').classList.remove('show');$('choices').innerHTML='';setObjective('شروع ماجرا');$('chapter').textContent='پرونده: آخرین شیفت';setupSceneObjects();music('normal');draw()}
 $('begin').onclick=async()=>{
  const btn=$('begin');btn.disabled=true;btn.textContent='در حال آماده‌سازی...';
  let entered=false;
