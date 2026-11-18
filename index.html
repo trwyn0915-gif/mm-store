@@ -107,6 +107,28 @@ canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;touch-action:none}
  .panel:fullscreen #stage{min-height:0}
  .panel:fullscreen #stage canvas{width:100%;height:auto;max-height:100%;object-fit:contain}
 }
+
+/* Floating mobile movement pad: stays on-screen without page scrolling */
+@media(max-width:700px){
+ .controls{
+  position:fixed!important;
+  left:max(8px,env(safe-area-inset-left));
+  top:50%;
+  right:auto;
+  bottom:auto;
+  transform:translateY(-50%);
+  z-index:30;
+  display:block!important;
+  width:max-content;
+  margin:0!important;
+  padding:0;
+  pointer-events:none;
+ }
+ .controls .dpad{pointer-events:auto;filter:drop-shadow(0 3px 8px #000b)}
+ .controls .dpad button{min-width:38px;min-height:34px;touch-action:none}
+ .controls .hint{display:none!important}
+ body:has(#intro:not(.hidden)) .controls{display:none!important}
+}
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
