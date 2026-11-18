@@ -664,9 +664,10 @@ button { touch-action:manipulation; }
   .panel > .controls {
     direction:ltr!important;
   }
-  .panel > .controls > .dpad { order:0!important; }
-  .panel > .controls > #fullscreen { order:1!important; }
-  .panel > .controls > #interact { order:2!important; }
+  /* Right-to-left: movement pad, interact, fullscreen */
+  .panel > .controls > .dpad { order:2!important; }
+  .panel > .controls > #interact { order:1!important; }
+  .panel > .controls > #fullscreen { order:0!important; }
 }
 @media (min-width:701px) {
   .panel > .controls {
