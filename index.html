@@ -1152,12 +1152,90 @@ button:focus-visible {outline:2px solid #d8b878;outline-offset:2px}
   .panel:fullscreen > .actions #skip {display:none!important}
 }
 
+
+/* Mobile: keep every control in its own row below the dialogue and subtitles.
+   No floating overlays and no tutorial/hint banner. */
+@media (max-width:700px), (pointer:coarse) {
+  .panel,
+  .panel:fullscreen {
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-template-rows:auto auto auto auto auto!important;
+    align-items:center!important;
+    gap:8px!important;
+    overflow:visible!important;
+  }
+  .panel > .hud,
+  .panel:fullscreen > .hud {
+    grid-column:1/-1!important;grid-row:1!important;
+  }
+  .panel > #stage,
+  .panel:fullscreen > #stage {
+    grid-column:1/-1!important;grid-row:2!important;
+    position:relative!important;z-index:1!important;
+  }
+  .panel > .dialog,
+  .panel:fullscreen > .dialog {
+    grid-column:1/-1!important;grid-row:3!important;
+    position:relative!important;z-index:2!important;
+    margin:0!important;
+  }
+  .panel > .choices,
+  .panel:fullscreen > .choices {
+    grid-column:1/-1!important;grid-row:4!important;
+    position:relative!important;z-index:2!important;
+    margin:0!important;
+  }
+  .panel > .controls,
+  .panel:fullscreen > .controls,
+  .panel > .actions,
+  .panel:fullscreen > .actions {
+    display:contents!important;
+  }
+  .panel .controls .hint,
+  .panel:fullscreen .controls .hint,
+  .panel #mobileHint,
+  .panel:fullscreen #mobileHint {
+    display:none!important;
+  }
+  .panel .dpad,
+  .panel:fullscreen .dpad {
+    grid-column:3!important;grid-row:5!important;
+    position:relative!important;inset:auto!important;
+    justify-self:end!important;align-self:center!important;
+    display:grid!important;grid-template-columns:repeat(3,38px)!important;
+    grid-template-rows:repeat(2,34px)!important;gap:3px!important;
+    margin:0!important;pointer-events:auto!important;z-index:3!important;
+  }
+  .panel #interact,
+  .panel:fullscreen #interact {
+    grid-column:1!important;grid-row:5!important;
+    position:relative!important;inset:auto!important;
+    transform:none!important;justify-self:start!important;align-self:center!important;
+    display:block!important;width:min(100%,112px)!important;min-width:0!important;
+    min-height:48px!important;margin:0!important;padding:6px 4px!important;
+    font-size:12px!important;pointer-events:auto!important;z-index:3!important;
+  }
+  .panel #fullscreen,
+  .panel:fullscreen #fullscreen {
+    grid-column:2!important;grid-row:5!important;
+    position:relative!important;inset:auto!important;
+    transform:none!important;justify-self:center!important;align-self:center!important;
+    display:block!important;width:min(100%,112px)!important;min-width:0!important;
+    min-height:48px!important;margin:0!important;padding:6px 4px!important;
+    font-size:12px!important;pointer-events:auto!important;z-index:3!important;
+  }
+  .panel #skip,
+  .panel:fullscreen #skip {display:none!important}
+  body:has(#intro.hidden) {padding-bottom:6px!important}
+}
+
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
 <section class="panel">
 <div class="hud"><span class="pill" id="chapter">پرونده: آخرین شیفت</span><span class="pill" id="objective">هدف: شروع ماجرا</span><span class="pill" id="clock">ساعت ۰۰:۴۷</span></div>
-<div class="controls"><div class="hint" id="mobileHint">برای حرکت از دکمه‌های جهت‌دار استفاده کن؛ برای بررسی و ادامه، دکمه تعامل را بزن.</div><div class="dpad"><button data-k="up">▲</button><button data-k="left">◀</button><button data-k="down">▼</button><button data-k="right">▶</button></div></div>
+<div class="controls"><div class="dpad"><button data-k="up">▲</button><button data-k="left">◀</button><button data-k="down">▼</button><button data-k="right">▶</button></div></div>
 <div id="stage"><canvas id="game" width="960" height="540" aria-label="بازی داستانی دوبعدی"></canvas><div id="toast"></div>
 <div class="overlay" id="intro"><div class="titlecard chapter-menu"><div class="rip">RIP</div><h1>عمو امیر</h1><p>یک داستان تعاملی ترسناک؛ فصل موردنظرت را انتخاب کن.</p><a class="creator-link" href="https://trwyn0915-gif.github.io/mm-clan-site-2026">پنل سازنده بازی</a><div class="chapter-grid"><button class="chapter-tile primary" id="begin"><span class="chapter-number">۱</span><span class="chapter-name">فصل اول</span><span class="chapter-state">قابل بازی</span></button><button class="chapter-tile" id="chapterTwoMain"><span class="chapter-number">۲</span><span class="chapter-name">فصل دوم</span><span class="chapter-state">قابل بازی</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 3 قفل است"><span class="chapter-number">۳</span><span class="chapter-name">فصل ۳</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 4 قفل است"><span class="chapter-number">۴</span><span class="chapter-name">فصل ۴</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 5 قفل است"><span class="chapter-number">۵</span><span class="chapter-name">فصل ۵</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 6 قفل است"><span class="chapter-number">۶</span><span class="chapter-name">فصل ۶</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 7 قفل است"><span class="chapter-number">۷</span><span class="chapter-name">فصل ۷</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 8 قفل است"><span class="chapter-number">۸</span><span class="chapter-name">فصل ۸</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 9 قفل است"><span class="chapter-number">۹</span><span class="chapter-name">فصل ۹</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 10 قفل است"><span class="chapter-number">۱۰</span><span class="chapter-name">فصل ۱۰</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 11 قفل است"><span class="chapter-number">۱۱</span><span class="chapter-name">فصل ۱۱</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 12 قفل است"><span class="chapter-number">۱۲</span><span class="chapter-name">فصل ۱۲</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 13 قفل است"><span class="chapter-number">۱۳</span><span class="chapter-name">فصل ۱۳</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 14 قفل است"><span class="chapter-number">۱۴</span><span class="chapter-name">فصل ۱۴</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 15 قفل است"><span class="chapter-number">۱۵</span><span class="chapter-name">فصل ۱۵</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 16 قفل است"><span class="chapter-number">۱۶</span><span class="chapter-name">فصل ۱۶</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 17 قفل است"><span class="chapter-number">۱۷</span><span class="chapter-name">فصل ۱۷</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 18 قفل است"><span class="chapter-number">۱۸</span><span class="chapter-name">فصل ۱۸</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 19 قفل است"><span class="chapter-number">۱۹</span><span class="chapter-name">فصل ۱۹</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 20 قفل است"><span class="chapter-number">۲۰</span><span class="chapter-name">فصل ۲۰</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 21 قفل است"><span class="chapter-number">۲۱</span><span class="chapter-name">فصل ۲۱</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 22 قفل است"><span class="chapter-number">۲۲</span><span class="chapter-name">فصل ۲۲</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 23 قفل است"><span class="chapter-number">۲۳</span><span class="chapter-name">فصل ۲۳</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 24 قفل است"><span class="chapter-number">۲۴</span><span class="chapter-name">فصل ۲۴</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 25 قفل است"><span class="chapter-number">۲۵</span><span class="chapter-name">فصل ۲۵</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 26 قفل است"><span class="chapter-number">۲۶</span><span class="chapter-name">فصل ۲۶</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 27 قفل است"><span class="chapter-number">۲۷</span><span class="chapter-name">فصل ۲۷</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 28 قفل است"><span class="chapter-number">۲۸</span><span class="chapter-name">فصل ۲۸</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 29 قفل است"><span class="chapter-number">۲۹</span><span class="chapter-name">فصل ۲۹</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button><button class="chapter-tile locked" type="button" disabled aria-label="فصل 30 قفل است"><span class="chapter-number">۳۰</span><span class="chapter-name">فصل ۳۰</span><span class="chapter-state"><span aria-hidden="true">🔒</span> قفل</span></button></div><div class="chapter-note">فقط فصل‌های اول و دوم در حال حاضر قابل بازی هستند؛ فصل‌های بعدی به‌زودی باز می‌شوند.</div></div></div>
 <div class="overlay hidden" id="ending"><div class="titlecard"><div class="rip" style="font-size:58px">پایان</div><h1 id="endingTitle">آخرین شیفت</h1><p id="endingText"></p><button class="primary" id="chapterTwoEnd" style="display:none">ادامه داستان: ورود به فصل دوم</button><div style="height:9px"></div><button id="again">بازگشت به صفحه اصلی</button></div></div>
