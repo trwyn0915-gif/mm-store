@@ -220,7 +220,8 @@ for(const x of [350,525]){
  ctx.fillStyle='#b78959';ctx.fillRect(x,282,82,8);
  ctx.fillStyle='#d2a873';ctx.fillRect(x+5,292,72,4);
 }
-ctx.fillStyle='#f0d7a8';ctx.font='bold 13px Vazirmatn';ctx.fillText('پیشخوان',390,350);
+ctx.fillStyle='#f0d7a8';ctx.font='bold 13px Vazirmatn';
+// نام پیشخوان فقط از برچسب تعاملی نمایش داده می‌شود تا نوشته تکراری نباشد.
 ctx.fillText('ورودی آشپزخانه',480,185);
 // میزها روی کف سالن با پایه و صندلی
 for(const f of furniture){if(f.t!=='table')continue;
