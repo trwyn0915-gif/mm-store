@@ -176,20 +176,57 @@ document.addEventListener('fullscreenchange',updateFullscreenLabel);
 function setupSceneObjects(){makeObjects();objects.push({id:'basement',x:80,y:440,r:48,label:'در زیرزمین',act:basementAction})}
 function drawWindows(){for(const x of [135,390,650]){drawOutsideView(x+4,49,97,34);ctx.strokeStyle='#6b5b47';ctx.lineWidth=5;ctx.strokeRect(x,45,105,42);ctx.strokeStyle='#423c34';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+52,47);ctx.lineTo(x+52,85);ctx.stroke()}}
 function drawOutsideView(x,y,w,h){ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();let g=ctx.createLinearGradient(0,y,0,y+h);g.addColorStop(0,'#080f1a');g.addColorStop(1,'#202d2b');ctx.fillStyle=g;ctx.fillRect(x,y,w,h);ctx.fillStyle='#c4c2a4';ctx.globalAlpha=.65;ctx.beginPath();ctx.arc(x+w*.72,y+28,13,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;for(let i=0;i<7;i++){let tx=x+i*19-8,th=55+(i%3)*22;ctx.fillStyle=i%2?'#101b18':'#0a1413';ctx.beginPath();ctx.moveTo(tx,y+h);ctx.lineTo(tx+18,y+h-th);ctx.lineTo(tx+36,y+h);ctx.fill();ctx.fillRect(tx+15,y+h-th/2,7,th/2)}ctx.fillStyle='#343a36';ctx.beginPath();ctx.moveTo(x+w*.42,y+h);ctx.lineTo(x+w*.58,y+h);ctx.lineTo(x+w*.8,y+h*.48);ctx.lineTo(x+w*.2,y+h*.48);ctx.fill();ctx.fillStyle='#b4bdba';ctx.globalAlpha=.16;for(let i=0;i<5;i++){let fx=x+((performance.now()*.012+i*29)%(w+30))-15;ctx.beginPath();ctx.ellipse(fx,y+h*.72+(i%2)*18,24,4,0,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=.24;ctx.strokeStyle='#aab8bd';ctx.lineWidth=1;for(let i=0;i<22;i++){let rx=x+((performance.now()*.075+i*37)%(w+8))-4,ry=y+((performance.now()*.13+i*19)%(h+10))-5;ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(rx-5,ry+12);ctx.stroke()}ctx.globalAlpha=1;ctx.restore()}
-function drawHotspotLabels(){if(!objects.length)return;ctx.save();ctx.font='bold 13px Vazirmatn';ctx.textAlign='center';for(const o of objects){if(false)continue;const near=Math.hypot(player.x-o.x,player.y-o.y)<o.r+24;const label=o.label;const width=ctx.measureText(label).width+18;ctx.fillStyle=near?'#b58d52':'#080b0dcc';ctx.strokeStyle=near?'#f0cf91':'#665b48';ctx.lineWidth=near?2:1;ctx.beginPath();ctx.roundRect(o.x-width/2,o.y-o.r-27,width,23,7);ctx.fill();ctx.stroke();ctx.fillStyle=near?'#17120b':'#e1d6c1';ctx.fillText(label,o.x,o.y-o.r-11);if(near){ctx.strokeStyle='#e4c58c';ctx.globalAlpha=.75;ctx.beginPath();ctx.arc(o.x,o.y,o.r+5,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1}}ctx.restore()}
+function drawHotspotLabels(){if(!objects.length)return;ctx.save();ctx.font='bold 14px Vazirmatn';ctx.textAlign='center';for(const o of objects){const near=Math.hypot(player.x-o.x,player.y-o.y)<o.r+24;if(!near)continue;const label=o.label;const width=ctx.measureText(label).width+22;ctx.fillStyle='#b58d52';ctx.strokeStyle='#f0cf91';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(o.x-width/2,o.y-o.r-29,width,25,8);ctx.fill();ctx.stroke();ctx.fillStyle='#17120b';ctx.fillText(label,o.x,o.y-o.r-11);ctx.strokeStyle='#e4c58c';ctx.globalAlpha=.75;ctx.beginPath();ctx.arc(o.x,o.y,o.r+5,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1}ctx.restore()}
 function drawRoom(){ctx.fillStyle='#171d22';ctx.fillRect(0,0,W,H);ctx.fillStyle='#283037';ctx.fillRect(26,26,908,488);ctx.fillStyle='#1b2228';ctx.fillRect(36,36,888,468);
 for(let x=40;x<930;x+=64){ctx.strokeStyle='#2a333a';ctx.beginPath();ctx.moveTo(x,40);ctx.lineTo(x,500);ctx.stroke()}
 for(let y=45;y<510;y+=64){ctx.strokeStyle='#2a333a';ctx.beginPath();ctx.moveTo(35,y);ctx.lineTo(925,y);ctx.stroke()}
 ctx.fillStyle='#444039';ctx.fillRect(26,26,908,15);ctx.fillRect(26,499,908,15);
 if(scene==='restaurant'||scene==='reveal'||scene==='final'){
-ctx.fillStyle='#382f29';ctx.fillRect(90,92,790,15);ctx.fillStyle='#b79a70';ctx.font='bold 19px Vazirmatn';ctx.textAlign='center';ctx.fillText('رستوران شبانه',480,83);drawWindows();
-furniture.forEach(f=>{if(f.t==='door'&&scene!=='restaurant')return;ctx.fillStyle=f.t==='table'?'#654b39':f.t==='plant'?'#31523e':f.t==='door'?'#43372f':'#51443a';ctx.fillRect(f.x,f.y,f.w,f.h);ctx.fillStyle='#92704d';ctx.fillRect(f.x+5,f.y+5,f.w-10,6);if(f.t==='table'){ctx.fillStyle='#282d31';ctx.fillRect(f.x+10,f.y+f.h+5,18,12);ctx.fillRect(f.x+f.w-28,f.y+f.h+5,18,12)}});
-if(doorOpen){drawOutsideView(695,175,225,190);ctx.fillStyle='#0a0c0f88';ctx.fillRect(695,175,225,190);ctx.strokeStyle='#98764e';ctx.lineWidth=8;ctx.strokeRect(695,175,225,190);ctx.fillStyle='#c9b98a';ctx.fillRect(695,175,7,190);ctx.fillStyle='#d6c28d';ctx.font='bold 13px Vazirmatn';ctx.textAlign='center';ctx.fillText('بیرون رستوران · جنگل',807,164)}else{ctx.fillStyle='#5c4635';ctx.fillRect(820,220,75,110);ctx.fillStyle='#b79a70';ctx.fillRect(828,228,59,94);ctx.fillStyle='#211b17';ctx.beginPath();ctx.arc(875,274,4,0,7);ctx.fill()}
-ctx.fillStyle='#45352b';ctx.fillRect(155,300,150,48);ctx.fillStyle='#b99a6c';ctx.fillRect(155,300,150,7);ctx.fillStyle='#c5aa7c';ctx.font='bold 13px Vazirmatn';ctx.textAlign='center';ctx.fillText('پیشخوان',230,293);ctx.fillStyle='#e0c18c';ctx.font='bold 16px Vazirmatn';ctx.fillText('آشپزخانه',480,115);ctx.fillText('انباری / زیرزمین',105,490);ctx.fillStyle='#332a21';ctx.fillRect(425,45,110,31);ctx.strokeStyle='#9a805b';ctx.strokeRect(425,45,110,31);ctx.fillStyle='#f0d7a8';ctx.font='bold 14px Vazirmatn';ctx.fillText('ورودی آشپزخانه',480,66);ctx.fillStyle='#332a21';ctx.fillRect(55,445,110,31);ctx.strokeStyle='#9a805b';ctx.strokeRect(55,445,110,31);ctx.fillStyle='#f0d7a8';ctx.fillText('درب انباری',110,466);
-if(!broom){ctx.fillStyle='#d4bd91';ctx.font='bold 13px Vazirmatn';ctx.textAlign='center';ctx.fillText('جارو',220,360);ctx.strokeStyle='#b28b52';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(205,365);ctx.lineTo(228,410);ctx.stroke();ctx.fillStyle='#ad8b56';ctx.fillRect(215,405,30,8)}
-spots.forEach(s=>{if(!s.done){ctx.fillStyle='#5b5a50';ctx.beginPath();ctx.ellipse(s.x,s.y,20,9,-.2,0,Math.PI*2);ctx.fill();ctx.fillStyle='#77756a';ctx.beginPath();ctx.arc(s.x-7,s.y-2,3,0,7);ctx.fill()}});
+// سالن رستوران: دیوار گرم، کف شطرنجی ملایم و نورهای منظم
+ctx.fillStyle='#20272b';ctx.fillRect(26,26,908,488);
+const wall=ctx.createLinearGradient(0,35,0,310);wall.addColorStop(0,'#34434a');wall.addColorStop(1,'#202b30');ctx.fillStyle=wall;ctx.fillRect(36,36,888,270);
+for(let x=48;x<925;x+=88){ctx.fillStyle='#405057';ctx.fillRect(x,42,3,254);ctx.fillStyle='#29363c';ctx.fillRect(x+4,42,2,254)}
+ctx.fillStyle='#6b5039';ctx.fillRect(42,294,876,14);ctx.fillStyle='#c19a67';ctx.fillRect(42,294,876,4);
+const floor=ctx.createLinearGradient(0,310,0,510);floor.addColorStop(0,'#51463b');floor.addColorStop(1,'#292d2e');ctx.fillStyle=floor;ctx.fillRect(36,308,888,196);
+for(let y=330;y<510;y+=43){ctx.strokeStyle='#665746';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(38,y);ctx.lineTo(922,y);ctx.stroke()}
+for(let x=55;x<930;x+=90){ctx.strokeStyle='#403a33';ctx.beginPath();ctx.moveTo(x,310);ctx.lineTo(x-12,510);ctx.stroke()}
+ctx.fillStyle='#30251e';ctx.fillRect(90,92,790,15);ctx.fillStyle='#c39b69';ctx.fillRect(90,92,790,4);
+ctx.fillStyle='#f0d5a5';ctx.font='bold 19px Vazirmatn';ctx.textAlign='center';ctx.fillText('رستوران شبانه',480,80);
+drawWindows();
+// نورهای سقفی و قاب‌های دیواری
+for(const x of [250,480,710]){ctx.fillStyle='#f5d9a5';ctx.globalAlpha=.16;ctx.beginPath();ctx.ellipse(x,115,92,48,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;ctx.fillStyle='#d4b17c';ctx.fillRect(x-32,47,64,5)}
+// میزها با سطح چوبی، لبه و پایه
+furniture.forEach(f=>{
+ if(f.t==='door')return;
+ if(f.t==='table'){
+  ctx.fillStyle='#171b1c';ctx.beginPath();ctx.ellipse(f.x+f.w/2,f.y+f.h+20,f.w*.48,13,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#392b22';ctx.fillRect(f.x+12,f.y+f.h-2,9,28);ctx.fillRect(f.x+f.w-21,f.y+f.h-2,9,28);
+  ctx.fillStyle='#79563b';ctx.fillRect(f.x,f.y,f.w,f.h-5);ctx.fillStyle='#b18456';ctx.fillRect(f.x,f.y,f.w,7);
+  ctx.strokeStyle='#c49a68';ctx.lineWidth=2;ctx.strokeRect(f.x+2,f.y+2,f.w-4,f.h-9);
+  ctx.fillStyle='#9b7958';ctx.fillRect(f.x+14,f.y+17,f.w-28,3);
+ }else if(f.t==='counter'){
+  ctx.fillStyle='#171a1b';ctx.fillRect(f.x+5,f.y+f.h-2,f.w-10,12);
+  ctx.fillStyle='#60432f';ctx.fillRect(f.x,f.y,f.w,f.h);ctx.fillStyle='#c39a69';ctx.fillRect(f.x-2,f.y-5,f.w+4,8);
+  ctx.fillStyle='#8e6848';ctx.fillRect(f.x+8,f.y+12,f.w-16,4);
+ }else if(f.t==='plant'){
+  ctx.fillStyle='#30271f';ctx.fillRect(f.x+8,f.y+f.h-14,f.w-16,18);ctx.fillStyle='#47634a';
+  for(let i=0;i<5;i++){ctx.beginPath();ctx.ellipse(f.x+f.w/2+(i-2)*8,f.y+25-Math.abs(i-2)*5,10,28,(i-2)*.16,0,Math.PI*2);ctx.fill()}
+ }
+});
+// پیشخوان اصلی و پنجره آشپزخانه
+ctx.fillStyle='#29211b';ctx.fillRect(155,285,150,62);ctx.fillStyle='#a77b50';ctx.fillRect(155,285,150,8);ctx.fillStyle='#6b4932';ctx.fillRect(163,296,134,43);
+ctx.fillStyle='#e5c18c';ctx.font='bold 13px Vazirmatn';ctx.fillText('پیشخوان',230,278);
+ctx.fillStyle='#201a16';ctx.fillRect(425,42,110,42);ctx.strokeStyle='#c59b65';ctx.lineWidth=3;ctx.strokeRect(425,42,110,42);ctx.fillStyle='#f1d8ac';ctx.font='bold 13px Vazirmatn';ctx.fillText('آشپزخانه',480,68);
+ctx.fillStyle='#29211b';ctx.fillRect(55,445,110,31);ctx.strokeStyle='#a98558';ctx.strokeRect(55,445,110,31);ctx.fillStyle='#f0d7a8';ctx.font='bold 12px Vazirmatn';ctx.fillText('انباری',110,466);
+// در ورودی و شیشه نورگیر
+if(doorOpen){drawOutsideView(695,175,225,190);ctx.fillStyle='#0a0c0f88';ctx.fillRect(695,175,225,190);ctx.strokeStyle='#98764e';ctx.lineWidth=8;ctx.strokeRect(695,175,225,190);ctx.fillStyle='#d6c28d';ctx.font='bold 13px Vazirmatn';ctx.fillText('جنگل',807,164)}
+else{ctx.fillStyle='#392c22';ctx.fillRect(820,220,75,110);ctx.fillStyle='#d8b77e';ctx.fillRect(828,228,59,94);ctx.fillStyle='#6b8290';ctx.fillRect(834,235,46,78);ctx.fillStyle='#29211a';ctx.beginPath();ctx.arc(875,274,4,0,7);ctx.fill()}
+if(!broom){ctx.save();ctx.translate(220,386);ctx.strokeStyle='#bd945d';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-10,-23);ctx.lineTo(12,18);ctx.stroke();ctx.fillStyle='#b18a55';ctx.fillRect(0,14,30,7);ctx.restore()}
+spots.forEach(s=>{if(!s.done){ctx.fillStyle='#858078';ctx.globalAlpha=.62;ctx.beginPath();ctx.ellipse(s.x,s.y,17,7,-.2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}});
 if(knocks>0){ctx.fillStyle='#a9c2c5';ctx.globalAlpha=.13;ctx.fillRect(900,220,32,130);ctx.globalAlpha=1}
-if(scene==='reveal'||scene==='final'){drawPerson(650,405,'mh');}drawHotspotLabels();if(shadowUntil>performance.now()){const q=(performance.now()-shadowStart)/1400,sx=shadowOrigin+Math.sin(q*5)*115;ctx.save();ctx.globalAlpha=.42*(1-q);ctx.fillStyle='#020304';ctx.beginPath();ctx.ellipse(sx,235,24,43,0,0,Math.PI*2);ctx.fill();ctx.fillRect(sx-18,260,36,75);ctx.beginPath();ctx.ellipse(sx,213,18,20,0,0,Math.PI*2);ctx.fill();ctx.restore()}
+if(scene==='reveal'||scene==='final')drawPerson(650,405,'mh');
+drawHotspotLabels();
+if(shadowUntil>performance.now()){const q=(performance.now()-shadowStart)/1400,sx=shadowOrigin+Math.sin(q*5)*115;ctx.save();ctx.globalAlpha=.42*(1-q);ctx.fillStyle='#020304';ctx.beginPath();ctx.ellipse(sx,235,24,43,0,0,Math.PI*2);ctx.fill();ctx.fillRect(sx-18,260,36,75);ctx.beginPath();ctx.ellipse(sx,213,18,20,0,0,Math.PI*2);ctx.fill();ctx.restore()}
 }else if(scene==='basement'){
 ctx.fillStyle='#0c1116';ctx.fillRect(26,26,908,488);
 for(let x=55;x<900;x+=100){ctx.fillStyle='#1c252c';ctx.fillRect(x,55,50,430);ctx.strokeStyle='#3e4a52';ctx.lineWidth=3;ctx.strokeRect(x,55,50,430);ctx.strokeStyle='#53606a';ctx.beginPath();ctx.moveTo(x,170);ctx.lineTo(x+50,170);ctx.moveTo(x,300);ctx.lineTo(x+50,300);ctx.stroke()}
