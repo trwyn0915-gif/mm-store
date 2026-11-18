@@ -226,14 +226,14 @@ function drawPlayer(){ctx.save();ctx.translate(player.x,player.y);ctx.fillStyle=
 function drawCar(x,y,scale=1,angle=0){ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.scale(scale,scale);ctx.shadowColor='#000';ctx.shadowBlur=18;ctx.fillStyle='#080b0d';ctx.beginPath();ctx.ellipse(0,42,112,17,0,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#11191e';ctx.beginPath();ctx.moveTo(-112,20);ctx.lineTo(-100,-18);ctx.quadraticCurveTo(-94,-31,-65,-34);ctx.lineTo(-42,-70);ctx.quadraticCurveTo(-30,-84,0,-84);ctx.lineTo(48,-80);ctx.quadraticCurveTo(67,-76,83,-37);ctx.lineTo(103,-25);ctx.quadraticCurveTo(116,-18,116,5);ctx.lineTo(108,28);ctx.quadraticCurveTo(0,42,-108,28);ctx.closePath();ctx.fill();ctx.strokeStyle='#59666b';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#344b55';ctx.beginPath();ctx.moveTo(-52,-36);ctx.lineTo(-30,-68);ctx.quadraticCurveTo(-20,-76,0,-75);ctx.lineTo(35,-72);ctx.lineTo(51,-37);ctx.closePath();ctx.fill();ctx.strokeStyle='#71848a';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#243740';ctx.beginPath();ctx.moveTo(4,-74);ctx.lineTo(35,-71);ctx.lineTo(49,-38);ctx.lineTo(4,-38);ctx.closePath();ctx.fill();ctx.strokeStyle='#11191d';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,-76);ctx.lineTo(0,-36);ctx.stroke();ctx.fillStyle='#090d10';for(const wx of [-73,72]){ctx.beginPath();ctx.ellipse(wx,22,20,24,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#657178';ctx.beginPath();ctx.ellipse(wx,22,10,14,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#090d10'}ctx.fillStyle='#e7d8aa';ctx.shadowColor='#f5e1a8';ctx.shadowBlur=18;ctx.fillRect(-104,-8,13,9);ctx.fillRect(91,-8,13,9);ctx.shadowBlur=0;ctx.fillStyle='#8e3d32';ctx.fillRect(-105,14,10,8);ctx.fillRect(96,14,10,8);ctx.fillStyle='#27343a';ctx.fillRect(-20,28,42,5);ctx.restore()}
 function drawEndingScene(){
  let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080f18');g.addColorStop(.65,'#17221f');g.addColorStop(1,'#090e0e');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
- for(let i=0;i<22;i++){let x=(i*97)%1000,h=170+(i%5)*38;ctx.fillStyle=i%2?'#0b1714':'#111d19';ctx.beginPath();ctx.moveTo(x-58,420);ctx.lineTo(x,420-h);ctx.lineTo(x+58,420);ctx.fill();ctx.fillStyle='#171812';ctx.fillRect(x-7,370-h/2,14,h/2+70)}
+ for(let i=0;i<22;i++){let x=(i*97)%1000,h=170+(i%5)*38;ctx.fillStyle=i%2?'#0b1714':'#111d19';ctx.beginPath();ctx.moveTo(x-58,420);ctx.lineTo(x,420-h);ctx.lineTo(x+58,420);ctx.fill();}
  ctx.fillStyle='#292f2e';ctx.fillRect(0,360,W,180);ctx.fillStyle='#424844';ctx.fillRect(0,370,W,160);ctx.fillStyle='#77766c';ctx.fillRect(0,360,W,5);ctx.fillRect(0,525,W,5);
  ctx.strokeStyle='#b4a37c';ctx.setLineDash([34,30]);ctx.lineDashOffset=-(performance.now()*.045)%64;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,455);ctx.lineTo(W,455);ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;drawCar(480,465,.88,0);
  ctx.fillStyle='#c5c0a5';ctx.globalAlpha=.16;for(let i=0;i<7;i++){ctx.beginPath();ctx.ellipse((i*151+performance.now()*.012)%1000,350+(i%3)*35,95,12,0,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;ctx.fillStyle='#d8cba8';ctx.font='bold 16px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی · سپیده‌دم',480,70)
 }
 function drawDrive(){
  let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080d13');g.addColorStop(1,'#252c2a');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
- for(let i=0;i<18;i++){let x=((i*67+roadMotion*.7)%1120+1120)%1120-80;let h=185+(i%4)*25;ctx.fillStyle=i%2?'#0b1714':'#14211d';ctx.beginPath();ctx.moveTo(x-48,365);ctx.lineTo(x,365-h);ctx.lineTo(x+48,365);ctx.fill();ctx.fillStyle='#211d18';ctx.fillRect(x-7,300-h/2,14,h/2+100)}
+ for(let i=0;i<18;i++){let x=((i*67+roadMotion*.7)%1120+1120)%1120-80;let h=185+(i%4)*25;ctx.fillStyle=i%2?'#0b1714':'#14211d';ctx.beginPath();ctx.moveTo(x-48,365);ctx.lineTo(x,365-h);ctx.lineTo(x+48,365);ctx.fill();}
  ctx.fillStyle='#252b2c';ctx.fillRect(0,360,W,180);ctx.fillStyle='#414747';ctx.fillRect(0,370,W,160);ctx.fillStyle='#77766c';ctx.fillRect(0,360,W,5);ctx.fillRect(0,525,W,5);
  ctx.strokeStyle='#d1bd8a';ctx.setLineDash([34,30]);ctx.lineDashOffset=-(roadMotion*.58)%64;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(0,455);ctx.lineTo(W,455);ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;
  drawCar(480,465+Math.sin(performance.now()*.012)*2.2*driveSpeed,.98,0);ctx.fillStyle='#d6c59b';ctx.font='bold 18px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی',480,70)
@@ -241,7 +241,7 @@ function drawDrive(){
 function drawRoadsideScene(){
  let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080f13');g.addColorStop(.58,'#14201d');g.addColorStop(1,'#202522');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
  // جنگل ثابت در پس‌زمینه
- for(let i=0;i<22;i++){let x=(i*53)%1040-35,h=190+(i%5)*32;ctx.fillStyle=i%3===0?'#0b1714':'#111d19';ctx.beginPath();ctx.moveTo(x-52,375);ctx.lineTo(x,375-h);ctx.lineTo(x+52,375);ctx.closePath();ctx.fill();ctx.fillStyle='#201d17';ctx.fillRect(x-7,300-h/2,14,h/2+110)}
+ for(let i=0;i<22;i++){let x=(i*53)%1040-35,h=190+(i%5)*32;ctx.fillStyle=i%3===0?'#0b1714':'#111d19';ctx.beginPath();ctx.moveTo(x-52,375);ctx.lineTo(x,375-h);ctx.lineTo(x+52,375);ctx.closePath();ctx.fill();}
  // جاده و خط‌کشی کاملاً ثابت
  ctx.fillStyle='#292f30';ctx.fillRect(0,365,W,175);ctx.fillStyle='#454a47';ctx.fillRect(0,374,W,155);ctx.fillStyle='#858176';ctx.fillRect(0,365,W,5);ctx.fillRect(0,527,W,4);
  ctx.strokeStyle='#cbb98b';ctx.setLineDash([34,30]);ctx.lineDashOffset=0;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,455);ctx.lineTo(W,455);ctx.stroke();ctx.setLineDash([]);
@@ -265,7 +265,7 @@ function drawChapterTwoStation(){ctx.fillStyle='#10171d';ctx.fillRect(0,0,W,H);c
 function drawChapterTwoOutside(){
  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080d13');g.addColorStop(1,'#252c2a');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
  // همان فرم و رنگ درختان فصل اول؛ همه پشت جاده
- for(let i=0;i<18;i++){const x=((i*67)%1120+1120)%1120-80,h=185+(i%4)*25;ctx.fillStyle=i%2?'#0b1714':'#14211d';ctx.beginPath();ctx.moveTo(x-48,365);ctx.lineTo(x,365-h);ctx.lineTo(x+48,365);ctx.closePath();ctx.fill();ctx.fillStyle='#211d18';ctx.fillRect(x-7,300-h/2,14,h/2+100)}
+ for(let i=0;i<18;i++){const x=((i*67)%1120+1120)%1120-80,h=185+(i%4)*25;ctx.fillStyle=i%2?'#0b1714':'#14211d';ctx.beginPath();ctx.moveTo(x-48,365);ctx.lineTo(x,365-h);ctx.lineTo(x+48,365);ctx.closePath();ctx.fill();}
  // حاشیه خاکی زیر درختان
  ctx.fillStyle='#26372d';ctx.fillRect(0,348,W,24);
  // ساختمان ایستگاه با پایه و پله‌ای که تا سطح زمین ادامه دارد
