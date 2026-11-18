@@ -659,6 +659,25 @@ button { touch-action:manipulation; }
   .panel > .actions { order:5!important; }
 }
 
+/* CONTROL SIDES — movement stays left; interaction stays on the right */
+@media (max-width:700px) {
+  .panel > .controls {
+    direction:ltr!important;
+  }
+  .panel > .controls > .dpad { order:0!important; }
+  .panel > .controls > #fullscreen { order:1!important; }
+  .panel > .controls > #interact { order:2!important; }
+}
+@media (min-width:701px) {
+  .panel > .controls {
+    direction:ltr!important;
+  }
+  .panel > .controls > .dpad { order:0!important; }
+  .panel > .controls > .hint { order:1!important; direction:rtl!important; text-align:right!important; }
+  .panel > .controls > #fullscreen { order:2!important; }
+  .panel > .controls > #interact { order:3!important; }
+}
+
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
