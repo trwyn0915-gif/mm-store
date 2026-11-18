@@ -415,14 +415,14 @@ function drawPersistentCharacters(){
  if(scene==='drive'||scene==='intro'||scene==='introStory'||scene==='roadside'||scene==='ending')return;
  // اصغر ابتدا کنار پیشخوان استقبال می‌کند و پس از پایان گفت‌وگوی اول به آشپزخانه می‌رود.
  if(scene==='restaurant'&&(asgharLocation==='counter'||dialogueCast.has('asghar'))){
-  drawPerson(480,275,'asghar');
+  drawPerson(480,350,'asghar');
  }
  // پیام ضبط‌شده/رادیویی اصغر در زیرزمین به معنی حضور فیزیکی او نیست.
  if(scene==='chapterTwoStation'&&(dialogueCast.has('asghar')||chapterTwoAsgharPresent))drawPerson(740,430,'asghar');
  if(dialogueCast.has('mysterious')){
   if(scene==='chapterTwoStation')drawPerson(860,430,'mysterious');
   else if(scene==='chapterTwoOutside')drawPerson(820,420,'mysterious');
-  else if(scene==='restaurant'||scene==='reveal'||scene==='final')drawPerson(480,275,'mysterious');
+  else if(scene==='restaurant'||scene==='reveal'||scene==='final')drawPerson(480,350,'mysterious');
  }
 }
 function draw(){ctx.clearRect(0,0,W,H);if(scene==='drive'){drawDrive();return}if(scene==='intro'||scene==='introStory'){drawDrive();return}if(scene==='roadside'){drawRoadsideScene();return}if(scene==='ending'){drawEndingScene();return}if(scene==='chapterTwoOutside'){drawChapterTwoOutside();drawChapterTwoPair();drawHotspotLabels();return}if(scene==='chapterTwoStation'){drawChapterTwoStation();drawChapterTwoPair();drawPersistentCharacters();return}drawRoom();drawPlayer();drawPersistentCharacters();if(scene==='restaurant'&&broom&&cleaned<3){ctx.save();ctx.translate(player.x+13,player.y+2);ctx.rotate(player.face==='left'?-0.45:player.face==='up'?0.18:0.35);ctx.strokeStyle='#c49c5c';ctx.lineWidth=4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(8,24);ctx.stroke();ctx.fillStyle='#b18a55';ctx.fillRect(2,21,14,5);ctx.restore()}if(scene==='basement'&&breaker){ctx.fillStyle='#d7d09a';ctx.shadowColor='#e8dca0';ctx.shadowBlur=25;ctx.fillRect(800,130,10,10);ctx.shadowBlur=0}}
