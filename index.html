@@ -793,6 +793,19 @@ button { touch-action:manipulation; }
   .controls #fullscreen {display:none!important}
   #stage canvas {max-height:none!important;height:auto!important;aspect-ratio:16/9!important}
 }
+
+/* Hide gameplay controls on the chapter-selection home screen. */
+body:has(#intro:not(.hidden)) .panel > .controls,
+body:has(#intro:not(.hidden)) .panel > .actions {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+body:has(#intro.hidden) .panel > .controls,
+body:has(#intro.hidden) .panel > .actions {
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
@@ -1415,15 +1428,3 @@ document.addEventListener('pointerup',()=>{for(const k in keys)keys[k]=false});
 reset();requestAnimationFrame(loop);
 })();
 </script></body></html>
-
-/* Keep all gameplay controls hidden on the chapter-selection home screen. */
-body:has(#intro:not(.hidden)) .panel > .controls,
-body:has(#intro:not(.hidden)) .panel > .actions {
-  display:none!important;
-  visibility:hidden!important;
-  pointer-events:none!important;
-}
-body:has(#intro.hidden) .panel > .controls {
-  visibility:visible!important;
-  pointer-events:auto!important;
-}
