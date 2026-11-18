@@ -75,7 +75,7 @@ const player={x:450,y:340,r:13,speed:185,face:'down',moving:false};
 const mhFollower={x:405,y:340,face:'down'};
 function resetMhFollower(){mhFollower.x=player.x-48;mhFollower.y=player.y+5;mhFollower.face=player.face||'down'}
 function updateMhFollower(dt){if(scene!=='chapterTwoOutside'&&scene!=='chapterTwoStation')return;let bx=0,by=0;if(player.face==='left')bx=1;else if(player.face==='right')bx=-1;else if(player.face==='up')by=1;else by=-1;const tx=player.x+bx*48,ty=player.y+by*35;const dx=tx-mhFollower.x,dy=ty-mhFollower.y;const d=Math.hypot(dx,dy);if(d>0.1){const step=Math.min(d,Math.max(0,dt)*230);mhFollower.x+=dx/d*step;mhFollower.y+=dy/d*step;}mhFollower.face=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down')}
-function drawChapterTwoPair(){if(mhFollower.y<player.y){drawPerson(mhFollower.x,mhFollower.y,'mh');drawPlayer()}else{drawPlayer();drawPerson(mhFollower.x,mhFollower.y,'mh')}}
+function drawChapterTwoPair(){if(mhFollower.y<player.y){drawPerson(mhFollower.x,mhFollower.y,'mh','front');drawPlayer()}else{drawPlayer();drawPerson(mhFollower.x,mhFollower.y,'mh')}}
 let mysteriousPresent=false;let dirt=[],broom=false,cleaned=0,hasKey=false,hasNote=false,breaker=false,doorUnlocked=false,knocks=0,foundRecorder=false,visited=[],doorOpen=false;
 const walls=[{x:0,y:0,w:960,h:26},{x:0,y:0,w:26,h:540},{x:934,y:0,w:26,h:540},{x:0,y:514,w:960,h:26}];
 const furniture=[{x:165,y:130,w:125,h:65,t:'table'},{x:380,y:125,w:130,h:70,t:'table'},{x:650,y:130,w:125,h:65,t:'table'},{x:185,y:320,w:75,h:38,t:'counter'},{x:425,y:320,w:100,h:48,t:'counter'},{x:690,y:320,w:130,h:48,t:'counter'},{x:70,y:230,w:55,h:85,t:'plant'},{x:835,y:200,w:50,h:100,t:'door'}];
@@ -225,34 +225,34 @@ ctx.fillStyle='#342c25';ctx.fillRect(408,425,124,74);ctx.strokeStyle='#c3a574';c
 drawHotspotLabels();
 }
 }
-function drawPerson(x,y,kind,face='down'){
+function drawPerson(x,y,kind,face='front'){
  ctx.save();ctx.translate(x,y);
  const palette={amir:'#a4b5b8',asghar:'#c18d68',mysterious:'#343b48',mh:'#222831'};
  const shirt=palette[kind]||palette.amir;
- // پایه‌ی یکسان برای تمام شخصیت‌ها: بدن بیضی، سر گرد و اندازه‌های دقیقاً برابر با عمو امیر
+ // فرم پایه و تناسبات یکسان برای تمام شخصیت‌ها
  ctx.fillStyle='#0008';ctx.beginPath();ctx.ellipse(0,10,15,7,0,0,Math.PI*2);ctx.fill();
  ctx.fillStyle=shirt;ctx.beginPath();ctx.ellipse(0,1,11,15,0,0,Math.PI*2);ctx.fill();
  ctx.fillStyle='#d9ad8a';ctx.beginPath();ctx.arc(0,-13,9,0,Math.PI*2);ctx.fill();
- // مو برای همه با همان اندازه و فرم
  ctx.fillStyle=kind==='asghar'?'#5b4638':kind==='mysterious'?'#171b22':kind==='mh'?'#171319':'#25201f';
  ctx.beginPath();ctx.arc(0,-18,9,Math.PI,Math.PI*2);ctx.fill();
- // چشم و جهت نگاه
- ctx.fillStyle='#1b1b1b';
- if(face==='left')ctx.fillRect(-8,-14,3,2);else if(face==='right')ctx.fillRect(5,-14,3,2);else ctx.fillRect(3,-14,2,2);
- // فقط نشانه‌های کوچک هویتی؛ فرم سر و بدن تغییر نمی‌کند
+ // همه از روبه‌رو دیده می‌شوند: دو چشم هم‌اندازه و دهان مشخص
+ ctx.fillStyle='#171717';
+ ctx.beginPath();ctx.arc(-3.5,-14,1.35,0,Math.PI*2);ctx.arc(3.5,-14,1.35,0,Math.PI*2);ctx.fill();
+ ctx.strokeStyle='#51352d';ctx.lineWidth=1.5;ctx.lineCap='round';
+ ctx.beginPath();ctx.moveTo(-2.5,-8);ctx.quadraticCurveTo(0,-6,2.5,-8);ctx.stroke();
  if(kind==='asghar'){
   ctx.fillStyle='#eee9dc';ctx.beginPath();ctx.arc(0,-22,9,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(-9,-22,18,3);
   ctx.fillStyle='#68452f';ctx.beginPath();ctx.arc(0,-9,4,0,Math.PI);ctx.fill();
   ctx.fillStyle='#f0e8d8';ctx.fillRect(-2,0,4,8);
  }else if(kind==='mysterious'){
-  ctx.fillStyle='#111820';ctx.fillRect(-7,-16,14,5);
-  ctx.fillStyle='#d7dce0';ctx.fillRect(-5,-15,2,1);ctx.fillRect(3,-15,2,1);
+  ctx.fillStyle='#111820';ctx.fillRect(-7,-11,14,5);
+  ctx.fillStyle='#d7dce0';ctx.fillRect(-5,-10,2,1);ctx.fillRect(3,-10,2,1);
  }else if(kind==='mh'){
   ctx.fillStyle='#21191a';ctx.beginPath();ctx.arc(0,-9,4,0,Math.PI);ctx.fill();
  }
  ctx.restore();
 }
-function drawPlayer(){drawPerson(player.x,player.y,'amir',player.face)}
+function drawPlayer(){drawPerson(player.x,player.y,'amir','front')}
 function drawCar(x,y,scale=1,angle=0){ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.scale(scale,scale);ctx.shadowColor='#000';ctx.shadowBlur=18;ctx.fillStyle='#080b0d';ctx.beginPath();ctx.ellipse(0,42,112,17,0,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#11191e';ctx.beginPath();ctx.moveTo(-112,20);ctx.lineTo(-100,-18);ctx.quadraticCurveTo(-94,-31,-65,-34);ctx.lineTo(-42,-70);ctx.quadraticCurveTo(-30,-84,0,-84);ctx.lineTo(48,-80);ctx.quadraticCurveTo(67,-76,83,-37);ctx.lineTo(103,-25);ctx.quadraticCurveTo(116,-18,116,5);ctx.lineTo(108,28);ctx.quadraticCurveTo(0,42,-108,28);ctx.closePath();ctx.fill();ctx.strokeStyle='#59666b';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#344b55';ctx.beginPath();ctx.moveTo(-52,-36);ctx.lineTo(-30,-68);ctx.quadraticCurveTo(-20,-76,0,-75);ctx.lineTo(35,-72);ctx.lineTo(51,-37);ctx.closePath();ctx.fill();ctx.strokeStyle='#71848a';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#243740';ctx.beginPath();ctx.moveTo(4,-74);ctx.lineTo(35,-71);ctx.lineTo(49,-38);ctx.lineTo(4,-38);ctx.closePath();ctx.fill();ctx.strokeStyle='#11191d';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,-76);ctx.lineTo(0,-36);ctx.stroke();ctx.fillStyle='#090d10';for(const wx of [-73,72]){ctx.beginPath();ctx.ellipse(wx,22,20,24,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#657178';ctx.beginPath();ctx.ellipse(wx,22,10,14,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#090d10'}ctx.fillStyle='#e7d8aa';ctx.shadowColor='#f5e1a8';ctx.shadowBlur=18;ctx.fillRect(-104,-8,13,9);ctx.fillRect(91,-8,13,9);ctx.shadowBlur=0;ctx.fillStyle='#8e3d32';ctx.fillRect(-105,14,10,8);ctx.fillRect(96,14,10,8);ctx.fillStyle='#27343a';ctx.fillRect(-20,28,42,5);ctx.restore()}
 function drawEndingScene(){
  let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080f18');g.addColorStop(.65,'#17221f');g.addColorStop(1,'#090e0e');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
