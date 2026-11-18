@@ -68,7 +68,8 @@ function narrator(text){
   else{setTimeout(speak,450)}
  }catch(e){toast('پخش صدای راوی ممکن نشد')}
 }
-let foundLedger=false,foundBadge=false,foundTape=false;\nlet scene='intro',dialogue=[],di=0,typing=false,typeTimer=null,fullLine='',afterDialog=null,choicesOpen=false,ending=false;
+let foundLedger=false,foundBadge=false,foundTape=false;
+let scene='intro',dialogue=[],di=0,typing=false,typeTimer=null,fullLine='',afterDialog=null,choicesOpen=false,ending=false;
 const keys={up:false,down:false,left:false,right:false};
 const player={x:450,y:340,r:13,speed:185,face:'down',moving:false};
 let dirt=[],broom=false,cleaned=0,hasKey=false,hasNote=false,breaker=false,doorUnlocked=false,knocks=0,foundRecorder=false,visited=[],doorOpen=false;
