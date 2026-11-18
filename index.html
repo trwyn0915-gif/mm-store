@@ -119,7 +119,7 @@ function makeObjects(){objects=[
 {id:'counter',x:395,y:350,r:48,label:'کشوی پیشخوان',act:counterAction},
 {id:'kitchen',x:480,y:315,r:48,label:'ورودی آشپزخانه',act:kitchenAction},
 {id:'clock',x:490,y:315,r:42,label:'ساعت دیواری',act:()=>{runDialog([{who:'amir',face:'normal',text:'ساعت روی ۰۰:۴۷ گیر کرده. باتریش هم انگار تازه عوض شده...'}])}},
-{id:'phone',x:850,y:350,r:34,label:'تلفن قدیمی',act:()=>{sfx('creak');runDialog([{who:'amir',face:'surprised',text:'خط تلفن قطعه. ولی چرا چراغش روشنه؟'}, {who:'narrator',text:'گوشی را که برداشت، صدای نفس کوتاهی شنید و تماس قطع شد.'}])}}
+{id:'phone',x:735,y:350,r:34,label:'تلفن قدیمی',act:()=>{sfx('creak');runDialog([{who:'amir',face:'surprised',text:'خط تلفن قطعه. ولی چرا چراغش روشنه؟'}, {who:'narrator',text:'گوشی را که برداشت، صدای نفس کوتاهی شنید و تماس قطع شد.'}])}}
 ];}
 function doorAction(){if(scene==='restaurant'&&cleaned<3){toast('هنوز باید سالن را تمیز کنی');return}if(scene==='restaurant'){if(knocks===0){knocks++;doorOpen=true;sfx('door');music('horror');runDialog([{who:'narrator',text:'سه ضربه محکم به در خورد. صدا آن‌قدر ناگهانی بود که عمو امیر از جا پرید.'},{who:'amir',face:'surprised',text:'این وقت شب؟ اصغر گفت مشتری نداریم...'}, {who:'narrator',text:'عمو امیر به سمت ورودی رفت و در را باز کرد. راهرو خالی بود. فقط مه سردی از میان درخت‌ها وارد سالن شد.'},{who:'amir',face:'surprised',text:'کسی اینجا نیست. پس کی در زد؟'}],()=>{setObjective('به پیشخوان برگرد و کشوی آن را بررسی کن');setTimeout(()=>{if(scene==='restaurant'&&doorOpen){doorOpen=false;sfx('door')}},1200)});}else if(!hasKey){toast('در را باز کردی؛ بیرون هیچ‌کس نیست');}else toast('در قفل شده؛ کلید را برای در زیرزمین نگه دار')}}
 function counterAction(){if(knocks>0&&!hasNote){hasNote=true;sfx('pickup');runDialog([{who:'narrator',text:'داخل کشوی پیشخوان، دفترچه‌ای خیس و یک کلید کوچک پیدا کردی. روی صفحه اول دفترچه نوشته شده بود: «اگر صدای خودت را از اتاق خالی شنیدی، جواب نده.»'},{who:'amir',face:'surprised',text:'این دیگه چه شوخیه؟ اصغر چرا همچین چیزی رو اینجا گذاشته؟'},{who:'narrator',text:'زیر دفترچه، یادداشتی با خطی عجولانه بود: «ام‌اچ را تنها نگذار. او همیشه قبل از بسته شدن در می‌رسد.»'}],()=>{hasKey=true;setObjective('آشپزخانه را بررسی کن؛ دنبال نشانه‌ای از اصغر بگرد')});}else if(hasNote){toast('کشو خالی است؛ فقط دفترچه را داری')}else toast('چند رسید قدیمی و یک خودکار خشک داخل کشوست')}
@@ -229,11 +229,11 @@ ctx.fillRect(f.x+10,f.y+f.h+7,5,12);ctx.fillRect(f.x+f.w-29,f.y+f.h+7,5,12);
 }
 // گلدان کنار دیوار
 // تلفن قدیمی واقعی روی میز کناری سمت راست
-ctx.save();ctx.fillStyle='#332820';ctx.beginPath();ctx.ellipse(850,354,28,8,0,0,Math.PI*2);ctx.fill();
-ctx.fillStyle='#6b4b32';ctx.fillRect(825,327,50,24);ctx.fillStyle='#b98a56';ctx.fillRect(828,329,44,18);
-ctx.fillStyle='#2b2520';ctx.fillRect(835,332,30,11);
-ctx.strokeStyle='#e0c18a';ctx.lineWidth=4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(839,329);ctx.quadraticCurveTo(825,304,843,307);ctx.quadraticCurveTo(870,302,864,329);ctx.stroke();
-ctx.fillStyle='#e6c98f';ctx.beginPath();ctx.arc(850,339,3,0,Math.PI*2);ctx.fill();ctx.restore();
+ctx.save();ctx.fillStyle='#332820';ctx.beginPath();ctx.ellipse(735,354,28,8,0,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#6b4b32';ctx.fillRect(710,327,50,24);ctx.fillStyle='#b98a56';ctx.fillRect(713,329,44,18);
+ctx.fillStyle='#2b2520';ctx.fillRect(720,332,30,11);
+ctx.strokeStyle='#e0c18a';ctx.lineWidth=4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(724,329);ctx.quadraticCurveTo(710,304,728,307);ctx.quadraticCurveTo(755,302,749,329);ctx.stroke();
+ctx.fillStyle='#e6c98f';ctx.beginPath();ctx.arc(735,339,3,0,Math.PI*2);ctx.fill();ctx.restore();
 ctx.fillStyle='#493326';ctx.fillRect(72,424,40,18);ctx.fillStyle='#47634a';
 for(let i=0;i<5;i++){ctx.beginPath();ctx.ellipse(92+(i-2)*8,405-Math.abs(i-2)*4,9,23,(i-2)*.14,0,Math.PI*2);ctx.fill()}
 // در ورودی روی دیوار سمت راست اتاق
