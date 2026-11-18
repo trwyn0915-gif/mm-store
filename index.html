@@ -76,7 +76,7 @@ const mhFollower={x:405,y:340,face:'down'};
 function resetMhFollower(){mhFollower.x=player.x-48;mhFollower.y=player.y+5;mhFollower.face=player.face||'down'}
 function updateMhFollower(dt){if(scene!=='chapterTwoOutside'&&scene!=='chapterTwoStation')return;let bx=0,by=0;if(player.face==='left')bx=1;else if(player.face==='right')bx=-1;else if(player.face==='up')by=1;else by=-1;const tx=player.x+bx*48,ty=player.y+by*35;const dx=tx-mhFollower.x,dy=ty-mhFollower.y;const d=Math.hypot(dx,dy);if(d>0.1){const step=Math.min(d,Math.max(0,dt)*230);mhFollower.x+=dx/d*step;mhFollower.y+=dy/d*step;}mhFollower.face=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down')}
 function drawChapterTwoPair(){if(mhFollower.y<player.y){drawPerson(mhFollower.x,mhFollower.y,'mh','front');drawPlayer()}else{drawPlayer();drawPerson(mhFollower.x,mhFollower.y,'mh')}}
-let mysteriousPresent=false,dialogueCast=new Set();let dirt=[],broom=false,cleaned=0,hasKey=false,hasNote=false,breaker=false,doorUnlocked=false,knocks=0,foundRecorder=false,visited=[],doorOpen=false;
+let mysteriousPresent=false,dialogueCast=new Set(),asgharLocation='counter';let dirt=[],broom=false,cleaned=0,hasKey=false,hasNote=false,breaker=false,doorUnlocked=false,knocks=0,foundRecorder=false,visited=[],doorOpen=false;
 const walls=[{x:0,y:0,w:960,h:26},{x:0,y:0,w:26,h:540},{x:934,y:0,w:26,h:540},{x:0,y:514,w:960,h:26}];
 const furniture=[{x:165,y:130,w:125,h:65,t:'table'},{x:380,y:125,w:130,h:70,t:'table'},{x:650,y:130,w:125,h:65,t:'table'},{x:185,y:320,w:75,h:38,t:'counter'},{x:425,y:320,w:100,h:48,t:'counter'},{x:690,y:320,w:130,h:48,t:'counter'},{x:70,y:230,w:55,h:85,t:'plant'},{x:835,y:200,w:50,h:100,t:'door'}];
 const spots=[{x:315,y:210,done:false},{x:545,y:390,done:false},{x:770,y:245,done:false}];
@@ -102,7 +102,7 @@ function enterRoadside(){scene='roadside';music('horror');runDialog([
 {who:'narrator',text:'روی تابلو با حروفی کم‌رنگ نوشته شده بود: «کارمند لازمیم». یک چراغ بالای ورودی، هر چند ثانیه یک‌بار خاموش و روشن می‌شد.'},
 {who:'amir',face:'surprised',text:'رستوران وسط جنگل؟ اینجا اصلاً آنتن هم نمی‌ده... ولی شاید تنها فرصت کار پیدا کردنم همین باشه.'}
 ],()=>showChoices([{label:'وارد رستوران بشوم',run:enterRestaurant},{label:'برگردم و بروم',run:()=>end('پایان: جاده بی‌انتها','عمو امیر از کنار رستوران گذشت. خستگی و ناامیدی، ادامه راه را برایش ناممکن کرد. صبح روز بعد ماشین خاموش او را در حاشیه جاده پیدا کردند؛ از آن شب دیگر خبری از او نشد.')}]))}
-function enterRestaurant(){scene='restaurant';player.x=450;player.y=420;music('normal');setObjective('با اصغر، صاحب رستوران، صحبت کن');runDialog([
+function enterRestaurant(){scene='restaurant';asgharLocation='counter';player.x=450;player.y=420;music('normal');setObjective('با اصغر، صاحب رستوران، صحبت کن');runDialog([
 {who:'narrator',text:'عمو امیر ماشین را کنار جاده پارک کرد و وارد رستوران شد. زنگ بالای در با صدایی گرفته تکان خورد. بوی چربی مانده و چوب نم‌کشیده در فضا پیچیده بود.'},
 {who:'asghar',face:'happy',text:'بالاخره یکی پیدا شد! در رو ببند پسرجان. این ساعت مشتری نداریم، فقط آدم‌هایی میان که دنبال کارن یا راه رو گم کردن.'},
 {who:'amir',face:'normal',text:'سلام. آگهی استخدام رو دیدم. من دنبال یه کار ثابت می‌گردم. قبلاً استریم می‌کردم، ولی دیگه اون کار وجود نداره.'},
@@ -112,7 +112,7 @@ function enterRestaurant(){scene='restaurant';player.x=450;player.y=420;music('n
 {who:'amir',face:'happy',text:'باشه. فعلاً همین کار رو لازم دارم. از کجا شروع کنم؟'},
 {who:'asghar',text:'اول سالن رو تمیز کن. جارو پشت پیشخوانه. سه لکه روی زمین مونده. وقتی کارت تموم شد خبرم کن. من می‌رم آشپزخونه.'},
 {who:'narrator',text:'اصغر بدون اینکه منتظر جواب بماند، از در نیمه‌باز آشپزخانه عبور کرد. صدای قدم‌هایش دور شد و رستوران در سکوت فرو رفت.'}
-],()=>{setObjective('جارو را پشت پیشخوان پیدا کن');toast('با کلید E نزدیک وسایل تعامل کن')})}
+],()=>{asgharLocation='kitchen';setObjective('جارو را پشت پیشخوان پیدا کن');toast('با کلید E نزدیک وسایل تعامل کن')})}
 function makeObjects(){objects=[
 {id:'broom',x:215,y:385,r:30,done:false,label:'جارو',act:()=>{if(!broom){broom=true;setObjective('سه لکه روی زمین را تمیز کن');toast('جارو را برداشتی')}else toast('جارو دستته')}},
 {id:'door',x:850,y:245,r:42,label:'در ورودی',act:doorAction},
@@ -327,20 +327,18 @@ function drawChapterTwoOutside(){
  ctx.fillStyle='rgba(190,204,194,.045)';ctx.fillRect(0,348,W,27);
 }
 function drawPersistentCharacters(){
- // هر شخصیتی که در همین گفت‌وگو حضور دارد، تا پایان کل مکالمه روی صحنه می‌ماند؛
- // تغییر نوبت از اصغر/مرد مرموز به عمو امیر باعث حذف شخصیت نمی‌شود.
  if(scene==='drive'||scene==='intro'||scene==='introStory'||scene==='roadside'||scene==='ending')return;
- if(dialogueCast.has('asghar')){
-  if(scene==='restaurant')drawPerson(480,155,'asghar');
-  else if(scene==='basement')drawPerson(850,425,'asghar');
-  else if(scene==='chapterTwoOutside')drawPerson(820,420,'asghar');
-  else if(scene==='chapterTwoStation')drawPerson(740,430,'asghar');
-  else if(scene==='reveal'||scene==='final')drawPerson(820,425,'asghar');
+ // اصغر ابتدا کنار پیشخوان استقبال می‌کند و پس از پایان گفت‌وگوی اول به آشپزخانه می‌رود.
+ if(scene==='restaurant'&&(asgharLocation==='kitchen'||dialogueCast.has('asghar'))){
+  const p=asgharLocation==='counter'?[850,425]:[480,155];
+  drawPerson(p[0],p[1],'asghar');
  }
+ // پیام ضبط‌شده/رادیویی اصغر در زیرزمین به معنی حضور فیزیکی او نیست.
+ if(scene==='chapterTwoStation'&&dialogueCast.has('asghar'))drawPerson(740,430,'asghar');
  if(dialogueCast.has('mysterious')){
   if(scene==='chapterTwoStation')drawPerson(860,430,'mysterious');
   else if(scene==='chapterTwoOutside')drawPerson(820,420,'mysterious');
-  else if(scene==='restaurant'||scene==='basement'||scene==='reveal'||scene==='final')drawPerson(850,425,'mysterious');
+  else if(scene==='restaurant'||scene==='reveal'||scene==='final')drawPerson(850,425,'mysterious');
  }
 }
 function draw(){ctx.clearRect(0,0,W,H);if(scene==='drive'){drawDrive();return}if(scene==='intro'||scene==='introStory'){drawDrive();return}if(scene==='roadside'){drawRoadsideScene();return}if(scene==='ending'){drawEndingScene();return}if(scene==='chapterTwoOutside'){drawChapterTwoOutside();drawChapterTwoPair();drawHotspotLabels();return}if(scene==='chapterTwoStation'){drawChapterTwoStation();drawChapterTwoPair();drawPersistentCharacters();return}drawRoom();drawPlayer();drawPersistentCharacters();if(scene==='restaurant'&&broom){ctx.fillStyle='#c49c5c';ctx.strokeStyle='#c49c5c';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(player.x+13,player.y+3);ctx.lineTo(player.x+20,player.y+29);ctx.stroke()}if(scene==='basement'&&breaker){ctx.fillStyle='#d7d09a';ctx.shadowColor='#e8dca0';ctx.shadowBlur=25;ctx.fillRect(800,130,10,10);ctx.shadowBlur=0}}
