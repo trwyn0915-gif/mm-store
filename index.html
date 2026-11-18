@@ -78,7 +78,7 @@ function updateMhFollower(dt){if(scene!=='chapterTwoOutside'&&scene!=='chapterTw
 function drawChapterTwoPair(){if(mhFollower.y<player.y){drawPerson(mhFollower.x,mhFollower.y,'mh','front');drawPlayer()}else{drawPlayer();drawPerson(mhFollower.x,mhFollower.y,'mh')}}
 let mysteriousPresent=false,chapterTwoAsgharPresent=false,dialogueCast=new Set(),asgharLocation='counter';let dirt=[],broom=false,cleaned=0,hasKey=false,hasNote=false,breaker=false,doorUnlocked=false,knocks=0,foundRecorder=false,visited=[],doorOpen=false;
 const walls=[{x:0,y:0,w:960,h:26},{x:0,y:0,w:26,h:540},{x:934,y:0,w:26,h:540},{x:0,y:514,w:960,h:26}];
-const furniture=[{x:155,y:350,w:130,h:62,t:'table'},{x:405,y:350,w:130,h:62,t:'table'},{x:655,y:350,w:130,h:62,t:'table'},{x:355,y:285,w:250,h:48,t:'counter'},{x:65,y:360,w:55,h:85,t:'plant'},{x:835,y:200,w:50,h:100,t:'door'}];
+const furniture=[{x:145,y:365,w:130,h:62,t:'table'},{x:685,y:365,w:130,h:62,t:'table'},{x:355,y:285,w:250,h:48,t:'counter'},{x:65,y:360,w:55,h:85,t:'plant'},{x:835,y:142,w:76,h:146,t:'door'}];
 const spots=[{x:300,y:450,done:false},{x:555,y:445,done:false},{x:755,y:450,done:false}];
 let objects=[];
 function setObjective(s){$('objective').textContent='هدف: '+s}
@@ -116,8 +116,8 @@ function enterRestaurant(){scene='restaurant';asgharLocation='counter';player.x=
 function makeObjects(){objects=[
 {id:'broom',x:145,y:430,r:30,done:false,label:'جارو',act:()=>{if(!broom){broom=true;setObjective('سه لکه روی زمین را تمیز کن');toast('جارو را برداشتی')}else toast('جارو دستته')}},
 {id:'door',x:870,y:215,r:42,label:'در ورودی',act:doorAction},
-{id:'counter',x:480,y:330,r:48,label:'پیشخوان',act:counterAction},
-{id:'kitchen',x:480,y:260,r:52,label:'آشپزخانه',act:kitchenAction},
+{id:'counter',x:480,y:365,r:42,label:'پیشخوان',act:counterAction},
+{id:'kitchen',x:480,y:245,r:42,label:'آشپزخانه',act:kitchenAction},
 {id:'clock',x:490,y:145,r:35,label:'ساعت دیواری',act:()=>{runDialog([{who:'amir',face:'normal',text:'ساعت روی ۰۰:۴۷ گیر کرده. باتریش هم انگار تازه عوض شده...'}])}},
 {id:'phone',x:760,y:300,r:35,label:'تلفن قدیمی',act:()=>{sfx('creak');runDialog([{who:'amir',face:'surprised',text:'خط تلفن قطعه. ولی چرا چراغش روشنه؟'}, {who:'narrator',text:'گوشی را که برداشت، صدای نفس کوتاهی شنید و تماس قطع شد.'}])}}
 ];}
@@ -173,7 +173,7 @@ const gamePanel=document.querySelector('.panel');
 function updateFullscreenLabel(){const active=document.fullscreenElement===gamePanel;$('fullscreen').textContent=active?'خروج از تمام‌صفحه':'تمام‌صفحه'}
 $('fullscreen').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else if(gamePanel.requestFullscreen){await gamePanel.requestFullscreen()}else{toast('تمام‌صفحه در این مرورگر پشتیبانی نمی‌شود')} }catch(e){toast('ورود به حالت تمام‌صفحه ممکن نشد')}};
 document.addEventListener('fullscreenchange',updateFullscreenLabel);
-function setupSceneObjects(){makeObjects();objects.push({id:'basement',x:80,y:440,r:48,label:'در زیرزمین',act:basementAction})}
+function setupSceneObjects(){makeObjects();objects.push({id:'basement',x:88,y:230,r:42,label:'در زیرزمین',act:basementAction})}
 function drawWindows(){for(const x of [135,390,650]){drawOutsideView(x+4,49,97,34);ctx.strokeStyle='#6b5b47';ctx.lineWidth=5;ctx.strokeRect(x,45,105,42);ctx.strokeStyle='#423c34';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+52,47);ctx.lineTo(x+52,85);ctx.stroke()}}
 function drawOutsideView(x,y,w,h){ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();let g=ctx.createLinearGradient(0,y,0,y+h);g.addColorStop(0,'#080f1a');g.addColorStop(1,'#202d2b');ctx.fillStyle=g;ctx.fillRect(x,y,w,h);ctx.fillStyle='#c4c2a4';ctx.globalAlpha=.65;ctx.beginPath();ctx.arc(x+w*.72,y+28,13,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;for(let i=0;i<7;i++){let tx=x+i*19-8,th=55+(i%3)*22;ctx.fillStyle=i%2?'#101b18':'#0a1413';ctx.beginPath();ctx.moveTo(tx,y+h);ctx.lineTo(tx+18,y+h-th);ctx.lineTo(tx+36,y+h);ctx.fill();ctx.fillRect(tx+15,y+h-th/2,7,th/2)}ctx.fillStyle='#343a36';ctx.beginPath();ctx.moveTo(x+w*.42,y+h);ctx.lineTo(x+w*.58,y+h);ctx.lineTo(x+w*.8,y+h*.48);ctx.lineTo(x+w*.2,y+h*.48);ctx.fill();ctx.fillStyle='#b4bdba';ctx.globalAlpha=.16;for(let i=0;i<5;i++){let fx=x+((performance.now()*.012+i*29)%(w+30))-15;ctx.beginPath();ctx.ellipse(fx,y+h*.72+(i%2)*18,24,4,0,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=.24;ctx.strokeStyle='#aab8bd';ctx.lineWidth=1;for(let i=0;i<22;i++){let rx=x+((performance.now()*.075+i*37)%(w+8))-4,ry=y+((performance.now()*.13+i*19)%(h+10))-5;ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(rx-5,ry+12);ctx.stroke()}ctx.globalAlpha=1;ctx.restore()}
 function drawHotspotLabels(){if(!objects.length)return;ctx.save();ctx.font='bold 14px Vazirmatn';ctx.textAlign='center';for(const o of objects){if(o.id==='broom'&&broom)continue;const near=Math.hypot(player.x-o.x,player.y-o.y)<o.r+24;if(!near)continue;const label=o.label;const width=ctx.measureText(label).width+22;ctx.fillStyle='#b58d52';ctx.strokeStyle='#f0cf91';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(o.x-width/2,o.y-o.r-29,width,25,8);ctx.fill();ctx.stroke();ctx.fillStyle='#17120b';ctx.fillText(label,o.x,o.y-o.r-11);ctx.strokeStyle='#e4c58c';ctx.globalAlpha=.75;ctx.beginPath();ctx.arc(o.x,o.y,o.r+5,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1}ctx.restore()}
@@ -195,6 +195,8 @@ for(let x=65;x<920;x+=88){ctx.strokeStyle='#51483e';ctx.beginPath();ctx.moveTo(x
 // پنجره‌ها روی دیوار پشتی
 drawWindows();
 ctx.fillStyle='#f0d5a5';ctx.font='bold 18px Vazirmatn';ctx.textAlign='center';ctx.fillText('رستوران شبانه',480,115);
+// در زیرزمین، واضح و متصل به دیوار چپ
+ctx.fillStyle='#211c19';ctx.fillRect(39,174,91,132);ctx.fillStyle='#76563a';ctx.fillRect(45,180,79,120);ctx.fillStyle='#d2ad78';ctx.fillRect(51,186,67,108);ctx.fillStyle='#263238';ctx.fillRect(58,193,53,94);ctx.strokeStyle='#e4c58c';ctx.lineWidth=3;ctx.strokeRect(51,186,67,108);ctx.fillStyle='#d8bd86';ctx.beginPath();ctx.arc(101,243,4,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f1d9a9';ctx.font='bold 12px Vazirmatn';ctx.fillText('زیرزمین',84,163);
 // نورهای سقفی روی کف، نه روی میزها
 for(const x of [250,480,710]){ctx.fillStyle='#f5d9a5';ctx.globalAlpha=.11;ctx.beginPath();ctx.ellipse(x,315,95,35,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}
 // ورودی آشپزخانه در دیوار انتهایی؛ فضای پشت آن تاریک و قابل تشخیص
