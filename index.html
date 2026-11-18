@@ -76,7 +76,7 @@ const mhFollower={x:405,y:340,face:'down'};
 function resetMhFollower(){mhFollower.x=player.x-48;mhFollower.y=player.y+5;mhFollower.face=player.face||'down'}
 function updateMhFollower(dt){if(scene!=='chapterTwoOutside'&&scene!=='chapterTwoStation')return;let bx=0,by=0;if(player.face==='left')bx=1;else if(player.face==='right')bx=-1;else if(player.face==='up')by=1;else by=-1;const tx=player.x+bx*48,ty=player.y+by*35;const dx=tx-mhFollower.x,dy=ty-mhFollower.y;const d=Math.hypot(dx,dy);if(d>0.1){const step=Math.min(d,Math.max(0,dt)*230);mhFollower.x+=dx/d*step;mhFollower.y+=dy/d*step;}mhFollower.face=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down')}
 function drawChapterTwoPair(){if(mhFollower.y<player.y){drawPerson(mhFollower.x,mhFollower.y,'mh','front');drawPlayer()}else{drawPlayer();drawPerson(mhFollower.x,mhFollower.y,'mh')}}
-let mysteriousPresent=false;let dirt=[],broom=false,cleaned=0,hasKey=false,hasNote=false,breaker=false,doorUnlocked=false,knocks=0,foundRecorder=false,visited=[],doorOpen=false;
+let mysteriousPresent=false,dialogueCast=new Set();let dirt=[],broom=false,cleaned=0,hasKey=false,hasNote=false,breaker=false,doorUnlocked=false,knocks=0,foundRecorder=false,visited=[],doorOpen=false;
 const walls=[{x:0,y:0,w:960,h:26},{x:0,y:0,w:26,h:540},{x:934,y:0,w:26,h:540},{x:0,y:514,w:960,h:26}];
 const furniture=[{x:165,y:130,w:125,h:65,t:'table'},{x:380,y:125,w:130,h:70,t:'table'},{x:650,y:130,w:125,h:65,t:'table'},{x:185,y:320,w:75,h:38,t:'counter'},{x:425,y:320,w:100,h:48,t:'counter'},{x:690,y:320,w:130,h:48,t:'counter'},{x:70,y:230,w:55,h:85,t:'plant'},{x:835,y:200,w:50,h:100,t:'door'}];
 const spots=[{x:315,y:210,done:false},{x:545,y:390,done:false},{x:770,y:245,done:false}];
@@ -85,9 +85,9 @@ function setObjective(s){$('objective').textContent='هدف: '+s}
 function toast(s){$('toast').textContent=s;$('toast').classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.remove('on'),1900)}
 function portrait(who,face){const p=$('portrait');p.className='portrait '+who+(who==='amir'?' '+(face||'normal'):'');const cast={mysterious:'assets/mard-marmooz.jpg?v=2',mh:"https://d2ol7oe51mr4n9.cloudfront.net/user_3K50FCJs1msSTbBAWUvYyhaT9CO/e69dda41-0b11-4f5c-846d-6ba709ce575f.png",asgharHappy:"https://d2ol7oe51mr4n9.cloudfront.net/user_3K50FCJs1msSTbBAWUvYyhaT9CO/510987dd-aee2-47ca-81f9-61a0276c81eb.png",asgharNormal:"https://d2ol7oe51mr4n9.cloudfront.net/user_3K50FCJs1msSTbBAWUvYyhaT9CO/f5e40f3b-94d9-4d9a-8b53-d7af8646019d.png",amirAngry:"https://d2ol7oe51mr4n9.cloudfront.net/user_3K50FCJs1msSTbBAWUvYyhaT9CO/bc980142-558a-4398-a161-c19c9483b8d0.png",amirCrying:"https://d2ol7oe51mr4n9.cloudfront.net/user_3K50FCJs1msSTbBAWUvYyhaT9CO/84d2ad91-9d46-4515-b9c2-82c3482a1e71.png",amirHappy:"https://d2ol7oe51mr4n9.cloudfront.net/user_3K50FCJs1msSTbBAWUvYyhaT9CO/e74ffa34-f7e5-4bf5-90fb-849b64bf83aa.png"};let src='';if(who==='mysterious')src=cast.mysterious;else if(who==='mh')src=cast.mh;else if(who==='asghar')src=face==='happy'?cast.asgharHappy:cast.asgharNormal;else if(who==='amir'&&face==='angry')src=cast.amirAngry;else if(who==='amir'&&face==='crying')src=cast.amirCrying;else if(who==='amir'&&face==='happy')src=cast.amirHappy;p.style.backgroundImage=src?'url("'+src+'")':'';p.style.backgroundSize=src?'cover':'';p.style.backgroundPosition=src?'center':'';}
 function showChoices(items){const c=$('choices');c.innerHTML='';items.forEach(it=>{const b=document.createElement('button');b.className='choice primary';b.textContent=it.label;b.onclick=()=>{sfx('click');c.innerHTML='';choicesOpen=false;it.run()};c.appendChild(b)});choicesOpen=true}
-function hideDialog(){ $('dialog').classList.remove('show');sceneSpeaker=null; $('choices').innerHTML='';choicesOpen=false; if(afterDialog){const fn=afterDialog;afterDialog=null;fn()} }
+function hideDialog(){ $('dialog').classList.remove('show');sceneSpeaker=null;dialogueCast.clear(); $('choices').innerHTML='';choicesOpen=false; if(afterDialog){const fn=afterDialog;afterDialog=null;fn()} }
 function line(entry){const who=entry.who||'narrator';sceneSpeaker=who;$('dialog').classList.add('show');$('speaker').textContent=entry.name||({narrator:'راوی',amir:'عمو امیر',asghar:'اصغر',mh:'ام‌اچ',mysterious:'مرد مرموز'}[who]);$('speaker').className='speaker '+who;portrait(who,entry.face||'normal');$('dialogHint').textContent=who==='narrator'?'صدای راوی':'گفت‌وگو';fullLine=entry.text;typing=true;$('line').textContent='';$('next').textContent='نمایش کامل';clearInterval(typeTimer);let i=0;typeTimer=setInterval(()=>{i++;$('line').textContent=fullLine.slice(0,i);if(i%4===0)sfx('type');if(i>=fullLine.length){clearInterval(typeTimer);typing=false;$('next').textContent='ادامه'}},22);if(who==='narrator')narrator(entry.text);else{sfx('click')}}
-function runDialog(lines,done){dialogue=lines;di=0;afterDialog=done||null;line(dialogue[di]);}
+function runDialog(lines,done){dialogue=lines;di=0;dialogueCast=new Set(lines.map(entry=>entry.who).filter(who=>who==='asghar'||who==='mysterious'));afterDialog=done||null;line(dialogue[di]);}
 function nextLine(){if(!$('dialog').classList.contains('show'))return;if(typing){clearInterval(typeTimer);$('line').textContent=fullLine;typing=false;$('next').textContent='ادامه';return}di++;if(di<dialogue.length)line(dialogue[di]);else hideDialog()}
 $('next').onclick=nextLine;$('dialog').onclick=e=>{if(e.target.id!=='next'&&!choicesOpen)nextLine()};
 function end(title,text){ending=true;scene='ending';music('horror');$('endingTitle').textContent=title;$('endingText').textContent=text;$('ending').classList.remove('hidden');$('dialog').classList.remove('show');sceneSpeaker=null;$('choices').innerHTML='';$('chapterTwoEnd').style.display='inline-block';}
@@ -327,8 +327,21 @@ function drawChapterTwoOutside(){
  ctx.fillStyle='rgba(190,204,194,.045)';ctx.fillRect(0,348,W,27);
 }
 function drawPersistentCharacters(){
- if(scene==='restaurant')drawPerson(480,155,'asghar');
- if(scene==='chapterTwoStation'&&mysteriousPresent)drawPerson(860,430,'mysterious');
+ // هر شخصیتی که در همین گفت‌وگو حضور دارد، تا پایان کل مکالمه روی صحنه می‌ماند؛
+ // تغییر نوبت از اصغر/مرد مرموز به عمو امیر باعث حذف شخصیت نمی‌شود.
+ if(scene==='drive'||scene==='intro'||scene==='introStory'||scene==='roadside'||scene==='ending')return;
+ if(dialogueCast.has('asghar')){
+  if(scene==='restaurant')drawPerson(480,155,'asghar');
+  else if(scene==='basement')drawPerson(850,425,'asghar');
+  else if(scene==='chapterTwoOutside')drawPerson(820,420,'asghar');
+  else if(scene==='chapterTwoStation')drawPerson(850,430,'asghar');
+  else if(scene==='reveal'||scene==='final')drawPerson(820,425,'asghar');
+ }
+ if(dialogueCast.has('mysterious')){
+  if(scene==='chapterTwoStation')drawPerson(850,430,'mysterious');
+  else if(scene==='chapterTwoOutside')drawPerson(820,420,'mysterious');
+  else if(scene==='restaurant'||scene==='basement'||scene==='reveal'||scene==='final')drawPerson(850,425,'mysterious');
+ }
 }
 function draw(){ctx.clearRect(0,0,W,H);if(scene==='drive'){drawDrive();return}if(scene==='intro'||scene==='introStory'){drawDrive();return}if(scene==='roadside'){drawRoadsideScene();return}if(scene==='ending'){drawEndingScene();return}if(scene==='chapterTwoOutside'){drawChapterTwoOutside();drawChapterTwoPair();drawHotspotLabels();return}if(scene==='chapterTwoStation'){drawChapterTwoStation();drawChapterTwoPair();drawPersistentCharacters();return}drawRoom();drawPlayer();drawPersistentCharacters();if(scene==='restaurant'&&broom){ctx.fillStyle='#c49c5c';ctx.strokeStyle='#c49c5c';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(player.x+13,player.y+3);ctx.lineTo(player.x+20,player.y+29);ctx.stroke()}if(scene==='basement'&&breaker){ctx.fillStyle='#d7d09a';ctx.shadowColor='#e8dca0';ctx.shadowBlur=25;ctx.fillRect(800,130,10,10);ctx.shadowBlur=0}}
 function nearObject(){let n=null,dmin=1e9;for(const o of objects){let d=Math.hypot(player.x-o.x,player.y-o.y);if(d<o.r+20&&d<dmin){n=o;dmin=d}}return n}
