@@ -475,8 +475,9 @@ function move(dt){
   if(scene==='basement'){if(x<45||x>915||y<285||y>490)return true;/* دیوار فقط تا لبه واقعی دیوار پشتی مانع است؛ مسیر عرضی کف باز می‌ماند. */if(rectHit(x,y,535,374,170,58)||rectHit(x,y,728,410,108,30))return true;return false;}
   if(x<45||x>915||y<50||y>490)return true;
   if(scene==='restaurant'||scene==='reveal'||scene==='final'){
-   // دیوار پشتی فقط در محدوده واقعی خودش مانع است؛ دهانه آشپزخانه باز می‌ماند.
-   const kitchenPass=x>445&&x<512;
+   // دیوار پشتی یک مانع پیوسته است؛ فقط دهانه واقعی چهارچوب آشپزخانه اجازه عبور می‌دهد.
+   // بازیکن نمی‌تواند از کناره‌ها یا از بالای دیوار وارد آشپزخانه شود.
+   const kitchenPass=x>438&&x<522&&y>225&&y<320;
    if(y<320&&!kitchenPass)return true;
    // دو تکه پیشخوان؛ فاصله وسط برای عبور به ورودی آشپزخانه باز است.
    if(rectHit(x,y,350,282,82,43)||rectHit(x,y,525,282,82,43))return true;
