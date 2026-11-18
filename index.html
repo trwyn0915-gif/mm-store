@@ -232,7 +232,27 @@ ctx.fillStyle='#b58a58';ctx.fillRect(840,148,64,134);
 if(doorOpen){drawOutsideView(847,155,50,120);ctx.fillStyle='#4a3427';ctx.beginPath();ctx.moveTo(840,149);ctx.lineTo(862,160);ctx.lineTo(862,275);ctx.lineTo(840,282);ctx.closePath();ctx.fill();ctx.strokeStyle='#d1a875';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#e1c18b';ctx.beginPath();ctx.arc(858,213,3,0,Math.PI*2);ctx.fill()}
 else{ctx.fillStyle='#d8d9d1';ctx.fillRect(847,155,50,120);ctx.strokeStyle='#62452f';ctx.lineWidth=3;ctx.strokeRect(847,155,50,120);ctx.fillStyle='#28211a';ctx.beginPath();ctx.arc(887,211,4,0,Math.PI*2);ctx.fill()}
 if(!broom){ctx.save();ctx.translate(145,430);ctx.strokeStyle='#bd945d';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-10,-23);ctx.lineTo(12,18);ctx.stroke();ctx.fillStyle='#b18a55';ctx.fillRect(0,14,30,7);ctx.restore()}
-spots.forEach(s=>{if(!s.done){ctx.fillStyle='#858078';ctx.globalAlpha=.62;ctx.beginPath();ctx.ellipse(s.x,s.y,17,7,-.2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}});
+spots.forEach((s,i)=>{if(!s.done){
+ // لکه‌های نامنظم چربی و خرده‌ریز روی کف؛ با کنتراست کافی برای تشخیص
+ ctx.save();
+ ctx.fillStyle='rgba(0,0,0,.32)';ctx.beginPath();ctx.ellipse(s.x+2,s.y+5,25,10,-.12,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#34271f';ctx.globalAlpha=.88;ctx.beginPath();
+ ctx.moveTo(s.x-23,s.y+1);ctx.bezierCurveTo(s.x-25,s.y-8,s.x-12,s.y-13,s.x-5,s.y-9);
+ ctx.bezierCurveTo(s.x+2,s.y-16,s.x+20,s.y-8,s.x+22,s.y);
+ ctx.bezierCurveTo(s.x+25,s.y+8,s.x+8,s.y+12,s.x+1,s.y+8);
+ ctx.bezierCurveTo(s.x-9,s.y+14,s.x-22,s.y+10,s.x-23,s.y+1);ctx.fill();
+ ctx.globalAlpha=.7;ctx.fillStyle='#8a6541';
+ ctx.beginPath();ctx.ellipse(s.x-8,s.y-2,8,3,-.25,0,Math.PI*2);ctx.fill();
+ ctx.beginPath();ctx.ellipse(s.x+9,s.y+4,6,2,.2,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#30251e';for(const [dx,dy,rad] of [[-27,-5,2],[25,-7,2.5],[-17,12,1.8],[18,12,2]]){ctx.beginPath();ctx.arc(s.x+dx,s.y+dy,rad,0,Math.PI*2);ctx.fill()}
+ // برچسب واضح تا بازیکن لکه را با سایه کف اشتباه نگیرد
+ const pulse=.82+Math.sin(performance.now()/260+i)*.12;
+ ctx.globalAlpha=pulse;ctx.font='bold 11px Vazirmatn';ctx.textAlign='center';
+ ctx.fillStyle='#201710';ctx.beginPath();ctx.roundRect(s.x-34,s.y-35,68,19,6);ctx.fill();
+ ctx.strokeStyle='#e2b66f';ctx.lineWidth=1.5;ctx.stroke();
+ ctx.fillStyle='#ffe0a8';ctx.fillText('لکه کثیفی',s.x,s.y-22);
+ ctx.restore();
+}});
 if(knocks>0){ctx.fillStyle='#a9c2c5';ctx.globalAlpha=.13;ctx.fillRect(900,220,22,110);ctx.globalAlpha=1}
 if(scene==='reveal'||scene==='final')drawPerson(650,405,'mh');
 drawHotspotLabels();
