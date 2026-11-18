@@ -108,58 +108,73 @@ canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;touch-action:none}
  .panel:fullscreen #stage canvas{width:100%;height:auto;max-height:100%;object-fit:contain}
 }
 
-/* Mobile controls: one fixed bottom bar with movement + interaction */
-html,body{max-width:100%;overflow-x:hidden}
+/* Unified responsive game layout: controls remain in-flow and survive rotation */
+html,body{width:100%;max-width:100%;overflow-x:hidden}
 @media(max-width:700px){
- body{width:100%;padding:4px}
+ body{padding:4px}
  .wrap{width:100%;max-width:100%;min-width:0}
- .panel{width:100%;min-width:0;overflow:hidden}
- #stage{width:100%;max-width:100%;min-width:0}
- #stage canvas{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:16/9}
+ .panel{width:100%;min-width:0;overflow:visible;display:flex;flex-direction:column;gap:7px;padding:6px}
+ .panel>.hud{order:0}
+ .panel>#stage{order:1;width:100%;max-width:100%;min-width:0;flex:0 0 auto}
+ .panel>.dialog{order:2}
+ .panel>.choices{order:3}
+ .panel>.controls{order:4}
+ .panel>.actions{order:5;display:flex!important}
+ #stage canvas{display:block;width:100%;height:auto;max-width:100%;aspect-ratio:16/9}
  .controls{
-  position:fixed!important;
-  left:max(8px,env(safe-area-inset-left));
-  right:max(8px,env(safe-area-inset-right));
-  top:auto!important;
-  bottom:max(8px,env(safe-area-inset-bottom))!important;
-  transform:none!important;
-  z-index:100!important;
-  display:flex!important;
-  flex-direction:row;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  width:auto!important;
-  margin:0!important;
-  padding:7px 9px!important;
-  border:1px solid #59636d;
-  border-radius:14px;
-  background:#10161fee;
-  box-shadow:0 5px 22px #000b;
-  pointer-events:none;
+  position:sticky!important;top:auto!important;bottom:5px!important;left:auto!important;right:auto!important;
+  transform:none!important;z-index:20!important;display:flex!important;flex-direction:row;
+  align-items:center;justify-content:space-between;gap:8px;width:100%!important;
+  margin:0!important;padding:7px!important;border:1px solid #59636d;border-radius:13px;
+  background:#10161ff5;box-shadow:0 4px 16px #0009;pointer-events:auto;
  }
- .controls .dpad{pointer-events:auto;flex:0 0 auto;filter:drop-shadow(0 2px 5px #000b)}
- .controls .dpad button{min-width:38px;min-height:34px;touch-action:none}
- .controls #interact{display:block!important;pointer-events:auto;flex:1 1 auto;min-width:112px;min-height:58px;margin:0;font-size:17px}
+ .controls .dpad{flex:0 0 auto;display:grid;grid-template-columns:repeat(3,38px);grid-template-rows:repeat(2,34px);gap:3px}
+ .controls .dpad button{min-width:38px;min-height:34px;padding:0;touch-action:none}
  .controls .hint{display:none!important}
- .actions{display:none!important}
- body:has(#intro:not(.hidden)) .controls{display:none!important}
+ .controls #interact{display:block!important;flex:1 1 auto;min-width:0;min-height:54px;margin:0;padding:8px;font-size:15px}
+ .controls #fullscreen{display:block!important;flex:0 0 auto;min-width:78px;min-height:54px;margin:0;padding:7px;font-size:12px}
+ .actions{display:flex!important;gap:6px;margin:0}
+ .actions:empty{display:none!important}
+ .actions button{min-height:40px}
  .panel:fullscreen{
-  width:100vw!important;height:100dvh!important;max-width:100vw!important;
-  margin:0!important;padding:5px!important;gap:4px;overflow:hidden!important;
+  position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;
+  max-width:100vw!important;margin:0!important;padding:max(5px,env(safe-area-inset-top)) 6px max(5px,env(safe-area-inset-bottom))!important;
+  gap:5px!important;overflow:hidden!important;border:0!important;border-radius:0!important;
+  display:flex!important;flex-direction:column!important;background:#090c10;
  }
- .panel:fullscreen .controls{
-  position:fixed!important;left:8px!important;right:8px!important;
-  bottom:max(8px,env(safe-area-inset-bottom))!important;top:auto!important;
-  flex:0 0 auto!important;z-index:100!important;
- }
- .panel:fullscreen #stage{width:100%;min-width:0;min-height:0;overflow:hidden}
- .panel:fullscreen #stage canvas{width:100%;max-width:100%;height:100%;max-height:100%;object-fit:contain}
+ .panel:fullscreen>.hud{order:0!important;flex:0 0 auto!important;gap:4px;padding:0 0 2px}
+ .panel:fullscreen>#stage{order:1!important;flex:1 1 0!important;min-height:0!important;width:100%!important;display:flex;align-items:center;justify-content:center;overflow:hidden}
+ .panel:fullscreen>#stage canvas{width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;aspect-ratio:auto!important;object-fit:contain}
+ .panel:fullscreen>.dialog{order:2!important;flex:0 0 auto!important;max-height:20dvh;overflow:auto;margin:0;padding:5px 8px;min-height:0}
+ .panel:fullscreen>.dialog .portrait{display:none}
+ .panel:fullscreen>.dialog .speaker{font-size:11px;margin:0}
+ .panel:fullscreen>.dialog .line{font-size:12px;line-height:1.5;min-height:0}
+ .panel:fullscreen>.dialog .dialogfoot{margin-top:2px}
+ .panel:fullscreen>.dialog .dialogfoot button{min-height:34px;padding:4px 14px}
+ .panel:fullscreen>.choices{order:3!important;flex:0 0 auto!important;max-height:18dvh;overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:0}
+ .panel:fullscreen>.choices button{min-height:38px;padding:5px 7px;font-size:11px}
+ .panel:fullscreen>.controls{order:4!important;position:relative!important;inset:auto!important;flex:0 0 auto!important;bottom:auto!important;z-index:30!important}
+ .panel:fullscreen>.actions{order:5!important;flex:0 0 auto!important}
+ .panel:fullscreen .controls .dpad{grid-template-columns:repeat(3,36px);grid-template-rows:repeat(2,30px)}
+ .panel:fullscreen .controls #interact,.panel:fullscreen .controls #fullscreen{min-height:48px}
 }
 @media(max-width:700px) and (orientation:landscape){
- .panel:fullscreen .controls{padding:4px 7px!important}
- .panel:fullscreen .controls #interact{min-height:44px;font-size:15px}
- .panel:fullscreen .dpad{grid-template-columns:repeat(3,35px);grid-template-rows:repeat(2,29px)}
+ .panel:fullscreen{gap:3px!important;padding:3px 6px!important}
+ .panel:fullscreen>.hud .pill{font-size:9px;padding:3px 6px}
+ .panel:fullscreen>.dialog{max-height:15dvh;padding:3px 7px}
+ .panel:fullscreen>.dialog .line{font-size:11px}
+ .panel:fullscreen>.choices{max-height:15dvh}
+ .panel:fullscreen>.controls{padding:4px 6px}
+ .panel:fullscreen .controls .dpad{grid-template-columns:repeat(3,34px);grid-template-rows:repeat(2,27px)}
+ .panel:fullscreen .controls #interact,.panel:fullscreen .controls #fullscreen{min-height:42px}
+}
+@media(max-width:380px){
+ .controls{gap:5px;padding:5px}
+ .controls .dpad{grid-template-columns:repeat(3,34px);grid-template-rows:repeat(2,31px)}
+ .controls .dpad button{min-width:34px;min-height:31px}
+ .controls #fullscreen{min-width:66px;font-size:11px}
+ .controls #interact{font-size:13px}
+ .panel:fullscreen>.choices{grid-template-columns:1fr}
 }
 </style></head>
 <body><main class="wrap">
@@ -310,7 +325,9 @@ toast('چیزی برای تعامل نزدیکت نیست')}
 $('interact').onclick=interact;
 const gamePanel=document.querySelector('.panel');
 // Keep the interaction button beside the mobile movement pad, not below the game.
-document.querySelector('.controls').appendChild($('interact'));
+const controlBar=document.querySelector('.controls');
+controlBar.appendChild($('interact'));
+controlBar.appendChild($('fullscreen'));
 const isMobileLayout=()=>window.matchMedia('(max-width:700px), (pointer:coarse)').matches;
 async function enterGameFullscreen(){
  if(!document.fullscreenElement&&gamePanel.requestFullscreen){
@@ -323,7 +340,13 @@ async function enterGameFullscreen(){
 }
 function updateFullscreenLabel(){const active=document.fullscreenElement===gamePanel;$('fullscreen').textContent=active?'خروج از تمام‌صفحه':'تمام‌صفحه'}
 $('fullscreen').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else if(gamePanel.requestFullscreen){await gamePanel.requestFullscreen()}else{toast('تمام‌صفحه در این مرورگر پشتیبانی نمی‌شود')} }catch(e){toast('ورود به حالت تمام‌صفحه ممکن نشد')}};
-document.addEventListener('fullscreenchange',updateFullscreenLabel);
+document.addEventListener('fullscreenchange',()=>{
+ updateFullscreenLabel();
+ if(!document.fullscreenElement&&screen.orientation&&screen.orientation.unlock){
+  try{screen.orientation.unlock()}catch(e){}
+ }
+ requestAnimationFrame(()=>{draw();});
+});
 function setupSceneObjects(){makeObjects();objects.push({id:'basement',x:112,y:330,r:58,label:'در انبار / زیرزمین',act:basementAction})}
 function drawWindows(){for(const x of [135,390,650]){drawOutsideView(x+4,49,97,34);ctx.strokeStyle='#6b5b47';ctx.lineWidth=5;ctx.strokeRect(x,45,105,42);ctx.strokeStyle='#423c34';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+52,47);ctx.lineTo(x+52,85);ctx.stroke()}}
 function drawOutsideView(x,y,w,h){ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();let g=ctx.createLinearGradient(0,y,0,y+h);g.addColorStop(0,'#080f1a');g.addColorStop(1,'#202d2b');ctx.fillStyle=g;ctx.fillRect(x,y,w,h);ctx.fillStyle='#c4c2a4';ctx.globalAlpha=.65;ctx.beginPath();ctx.arc(x+w*.72,y+28,13,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;for(let i=0;i<7;i++){let tx=x+i*19-8,th=55+(i%3)*22;ctx.fillStyle=i%2?'#101b18':'#0a1413';ctx.beginPath();ctx.moveTo(tx,y+h);ctx.lineTo(tx+18,y+h-th);ctx.lineTo(tx+36,y+h);ctx.fill();ctx.fillRect(tx+15,y+h-th/2,7,th/2)}ctx.fillStyle='#343a36';ctx.beginPath();ctx.moveTo(x+w*.42,y+h);ctx.lineTo(x+w*.58,y+h);ctx.lineTo(x+w*.8,y+h*.48);ctx.lineTo(x+w*.2,y+h*.48);ctx.fill();ctx.fillStyle='#b4bdba';ctx.globalAlpha=.16;for(let i=0;i<5;i++){let fx=x+((performance.now()*.012+i*29)%(w+30))-15;ctx.beginPath();ctx.ellipse(fx,y+h*.72+(i%2)*18,24,4,0,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=.24;ctx.strokeStyle='#aab8bd';ctx.lineWidth=1;for(let i=0;i<22;i++){let rx=x+((performance.now()*.075+i*37)%(w+8))-4,ry=y+((performance.now()*.13+i*19)%(h+10))-5;ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(rx-5,ry+12);ctx.stroke()}ctx.globalAlpha=1;ctx.restore()}
@@ -776,11 +799,12 @@ function chapterTwoFinalChoice(){
 }
 function reset(){lastAtmosphere=performance.now();shadowUntil=0;powerOut=false;scene='intro';ending=false;$('chapterTwoEnd').style.display='none';doorOpen=false;player.x=450;player.y=340;broom=false;cleaned=0;hasKey=false;hasNote=false;breaker=false;doorUnlocked=false;knocks=0;foundRecorder=false;foundLedger=false;foundBadge=false;foundTape=false;spots.forEach(s=>s.done=false);$('intro').classList.remove('hidden');$('ending').classList.add('hidden');$('dialog').classList.remove('show');$('choices').innerHTML='';setObjective('شروع ماجرا');$('chapter').textContent='پرونده: آخرین شیفت';setupSceneObjects();music('normal');draw()}
 $('begin').onclick=async()=>{
- const btn=$('begin');btn.disabled=true;btn.textContent='در حال آماده‌سازی...';
- const entered=await enterGameFullscreen();
- startStory();driveStart=0;
- if(!entered)toast('اگر صفحه بزرگ نشد، از دکمه تمام‌صفحه استفاده کن؛ در صورت نیاز گوشی را افقی بچرخان');
- btn.disabled=false;btn.textContent='شروع بازی و ورود به تمام‌صفحه';
+ const btn=$('begin');btn.disabled=true;
+ try{
+  const entered=await enterGameFullscreen();
+  startStory();driveStart=0;
+  if(!entered)toast('بازی شروع شد؛ برای تمام‌صفحه از دکمه پایین صفحه استفاده کن');
+ }finally{btn.disabled=false}
 };$('again').onclick=()=>{if(audioCtx){speechSynthesis.cancel();music('normal')}reset();$('chapterTwoEnd').style.display='none'};$('chapterTwoMain').onclick=startChapterTwo;$('chapterTwoEnd').onclick=startChapterTwo;
 document.addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(k==='w'||k==='arrowup')keys.up=true;if(k==='s'||k==='arrowdown')keys.down=true;if(k==='a'||k==='arrowleft')keys.left=true;if(k==='d'||k==='arrowright')keys.right=true;if(k==='e'||k===' '){if(scene==='drive'&&driveStart===0){interact()}else interact()}});
 document.addEventListener('keyup',e=>{let k=e.key.toLowerCase();if(k==='w'||k==='arrowup')keys.up=false;if(k==='s'||k==='arrowdown')keys.down=false;if(k==='a'||k==='arrowleft')keys.left=false;if(k==='d'||k==='arrowright')keys.right=false});
