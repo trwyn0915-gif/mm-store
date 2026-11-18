@@ -233,7 +233,7 @@ function drawEndingScene(){
 }
 function drawDrive(){
  let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080d13');g.addColorStop(1,'#252c2a');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
- for(let i=0;i<12;i++){let x=((i*103-performance.now()*.055)%1080+1080)%1080-60;ctx.fillStyle='#101a17';ctx.beginPath();ctx.moveTo(x,365);ctx.lineTo(x+38,90+(i%3)*24);ctx.lineTo(x+82,365);ctx.fill();ctx.fillRect(x+29,330,13,58)}
+ for(let i=0;i<12;i++){let x=((i*103+performance.now()*.055)%1080+1080)%1080-60;ctx.fillStyle='#101a17';ctx.beginPath();ctx.moveTo(x,365);ctx.lineTo(x+38,90+(i%3)*24);ctx.lineTo(x+82,365);ctx.fill();ctx.fillRect(x+29,330,13,58)}
  // جاده کاملاً افقی و سرتاسری؛ بدون لبه‌های مورب و پرسپکتیو
  ctx.fillStyle='#252b2c';ctx.fillRect(0,360,W,180);
  ctx.fillStyle='#414747';ctx.fillRect(0,370,W,160);
