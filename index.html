@@ -19,10 +19,10 @@ canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;touch-action:none}
 .portrait.amir.normal{background-position:0 0}.portrait.amir.surprised{background-position:50% 0}.portrait.amir.tired{background-position:100% 0}.portrait{background-repeat:no-repeat;background-color:#080a0d}
 .dialogbody{flex:1;min-width:0}.speaker{font-weight:900;font-size:14px;margin-bottom:5px}.speaker.narrator{color:#d5b77c}.speaker.amir{color:#8fd1e3}.speaker.asghar{color:#9acb9e}.speaker.mh{color:#c4a2df}.speaker.mysterious{color:#e58a82}.line{font-size:14px;line-height:2;color:#e3e5e6;min-height:55px}.dialogfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}.tiny{font-size:11px;color:#89939b}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.actions button{font-size:13px}.choices{display:flex;gap:9px;flex-wrap:wrap;margin-top:9px}
 .controls{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px}.dpad{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,38px);gap:4px;direction:ltr}.dpad button{padding:0;border-radius:8px;background:#202830;border-color:#49545e;box-shadow:0 2px 0 #080a0d}.dpad [data-k=up]{grid-column:2}.dpad [data-k=left]{grid-column:1;grid-row:2}.dpad [data-k=down]{grid-column:2;grid-row:2}.dpad [data-k=right]{grid-column:3;grid-row:2}
-.hint{font-size:11px;line-height:1.8;color:#9da5ab;max-width:550px}.interact{min-width:100px;background:#ad8c58;color:#101216;border-color:#d4b57c}
+.hint{font-size:14px;line-height:1.9;color:#f1e6d2;max-width:600px;background:#172027;border:1px solid #8c7652;border-radius:10px;padding:10px 14px;font-weight:700;box-shadow:0 3px 12px #0008}.interact{min-width:100px;background:#ad8c58;color:#101216;border-color:#d4b57c}
 #toast{position:absolute;left:50%;top:12px;transform:translateX(-50%);padding:7px 13px;border:1px solid #62543d;border-radius:30px;background:#0b0e12e8;color:#e8d6b4;font-size:12px;z-index:3;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}#toast.on{opacity:1}
 .footer{text-align:center;color:#707981;font-size:11px;margin:12px 0 3px}
-@media(max-width:600px){body{padding:6px}.panel{padding:7px}.dialog{padding:8px;gap:8px;min-height:105px}.portrait{flex-basis:78px;width:78px;height:78px}.line{font-size:12px;line-height:1.8;min-height:42px}.speaker{font-size:12px}.tiny{font-size:10px}.controls{align-items:center}.hint{font-size:10px}.dpad{grid-template-columns:repeat(3,38px);grid-template-rows:repeat(2,34px)}.interact{min-width:78px;padding:9px 10px}}
+@media(max-width:600px){.hint{font-size:12px;padding:8px 10px}body{padding:6px}.panel{padding:7px}.dialog{padding:8px;gap:8px;min-height:105px}.portrait{flex-basis:78px;width:78px;height:78px}.line{font-size:12px;line-height:1.8;min-height:42px}.speaker{font-size:12px}.tiny{font-size:10px}.controls{align-items:center}.hint{font-size:10px}.dpad{grid-template-columns:repeat(3,38px);grid-template-rows:repeat(2,34px)}.interact{min-width:78px;padding:9px 10px}}
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
@@ -102,7 +102,7 @@ function enterRoadside(){scene='roadside';music('horror');runDialog([
 {who:'narrator',text:'روی تابلو با حروفی کم‌رنگ نوشته شده بود: «کارمند لازمیم». یک چراغ بالای ورودی، هر چند ثانیه یک‌بار خاموش و روشن می‌شد.'},
 {who:'amir',face:'surprised',text:'رستوران وسط جنگل؟ اینجا اصلاً آنتن هم نمی‌ده... ولی شاید تنها فرصت کار پیدا کردنم همین باشه.'}
 ],()=>showChoices([{label:'وارد رستوران بشوم',run:enterRestaurant},{label:'برگردم و بروم',run:()=>end('پایان: جاده بی‌انتها','عمو امیر از کنار رستوران گذشت. خستگی و ناامیدی، ادامه راه را برایش ناممکن کرد. صبح روز بعد ماشین خاموش او را در حاشیه جاده پیدا کردند؛ از آن شب دیگر خبری از او نشد.')}]))}
-function enterRestaurant(){scene='restaurant';asgharLocation='counter';player.x=450;player.y=420;music('normal');setObjective('با اصغر، صاحب رستوران، صحبت کن');runDialog([
+function enterRestaurant(){scene='restaurant';asgharLocation='counter';player.x=480;player.y=470;music('normal');setObjective('با اصغر، صاحب رستوران، صحبت کن');runDialog([
 {who:'narrator',text:'عمو امیر ماشین را کنار جاده پارک کرد و وارد رستوران شد. زنگ بالای در با صدایی گرفته تکان خورد. بوی چربی مانده و چوب نم‌کشیده در فضا پیچیده بود.'},
 {who:'asghar',face:'happy',text:'بالاخره یکی پیدا شد! در رو ببند پسرجان. این ساعت مشتری نداریم، فقط آدم‌هایی میان که دنبال کارن یا راه رو گم کردن.'},
 {who:'amir',face:'normal',text:'سلام. آگهی استخدام رو دیدم. من دنبال یه کار ثابت می‌گردم. قبلاً استریم می‌کردم، ولی دیگه اون کار وجود نداره.'},
@@ -115,7 +115,7 @@ function enterRestaurant(){scene='restaurant';asgharLocation='counter';player.x=
 ],()=>{asgharLocation='gone';setObjective('جارو را پشت پیشخوان پیدا کن');toast('با کلید E نزدیک وسایل تعامل کن')})}
 function makeObjects(){objects=[
 {id:'broom',x:145,y:430,r:30,done:false,label:'جارو',act:()=>{if(!broom){broom=true;setObjective('سه لکه روی زمین را تمیز کن');toast('جارو را برداشتی')}else toast('جارو دستته')}},
-{id:'door',x:850,y:265,r:42,label:'در ورودی',act:doorAction},
+{id:'door',x:870,y:215,r:42,label:'در ورودی',act:doorAction},
 {id:'counter',x:480,y:330,r:48,label:'پیشخوان',act:counterAction},
 {id:'kitchen',x:480,y:260,r:52,label:'آشپزخانه',act:kitchenAction},
 {id:'clock',x:490,y:145,r:35,label:'ساعت دیواری',act:()=>{runDialog([{who:'amir',face:'normal',text:'ساعت روی ۰۰:۴۷ گیر کرده. باتریش هم انگار تازه عوض شده...'}])}},
@@ -225,10 +225,10 @@ ctx.fillRect(f.x+10,f.y+f.h+7,5,12);ctx.fillRect(f.x+f.w-29,f.y+f.h+7,5,12);
 ctx.fillStyle='#493326';ctx.fillRect(72,424,40,18);ctx.fillStyle='#47634a';
 for(let i=0;i<5;i++){ctx.beginPath();ctx.ellipse(92+(i-2)*8,405-Math.abs(i-2)*4,9,23,(i-2)*.14,0,Math.PI*2);ctx.fill()}
 // در ورودی روی دیوار سمت راست اتاق
-ctx.fillStyle='#30251e';ctx.fillRect(824,198,82,139);
-ctx.fillStyle='#b58a58';ctx.fillRect(830,204,70,127);
-if(doorOpen){drawOutsideView(838,212,54,108);ctx.fillStyle='#4a3427';ctx.beginPath();ctx.moveTo(830,205);ctx.lineTo(853,215);ctx.lineTo(853,326);ctx.lineTo(830,331);ctx.closePath();ctx.fill();ctx.strokeStyle='#d1a875';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#e1c18b';ctx.beginPath();ctx.arc(849,270,3,0,Math.PI*2);ctx.fill()}
-else{ctx.fillStyle='#d8d9d1';ctx.fillRect(838,212,54,108);ctx.strokeStyle='#62452f';ctx.lineWidth=3;ctx.strokeRect(838,212,54,108);ctx.fillStyle='#28211a';ctx.beginPath();ctx.arc(879,267,4,0,Math.PI*2);ctx.fill()}
+ctx.fillStyle='#30251e';ctx.fillRect(834,142,76,146);
+ctx.fillStyle='#b58a58';ctx.fillRect(840,148,64,134);
+if(doorOpen){drawOutsideView(847,155,50,120);ctx.fillStyle='#4a3427';ctx.beginPath();ctx.moveTo(840,149);ctx.lineTo(862,160);ctx.lineTo(862,275);ctx.lineTo(840,282);ctx.closePath();ctx.fill();ctx.strokeStyle='#d1a875';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#e1c18b';ctx.beginPath();ctx.arc(858,213,3,0,Math.PI*2);ctx.fill()}
+else{ctx.fillStyle='#d8d9d1';ctx.fillRect(847,155,50,120);ctx.strokeStyle='#62452f';ctx.lineWidth=3;ctx.strokeRect(847,155,50,120);ctx.fillStyle='#28211a';ctx.beginPath();ctx.arc(887,211,4,0,Math.PI*2);ctx.fill()}
 if(!broom){ctx.save();ctx.translate(145,430);ctx.strokeStyle='#bd945d';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-10,-23);ctx.lineTo(12,18);ctx.stroke();ctx.fillStyle='#b18a55';ctx.fillRect(0,14,30,7);ctx.restore()}
 spots.forEach(s=>{if(!s.done){ctx.fillStyle='#858078';ctx.globalAlpha=.62;ctx.beginPath();ctx.ellipse(s.x,s.y,17,7,-.2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}});
 if(knocks>0){ctx.fillStyle='#a9c2c5';ctx.globalAlpha=.13;ctx.fillRect(900,220,22,110);ctx.globalAlpha=1}
