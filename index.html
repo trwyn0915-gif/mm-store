@@ -1622,18 +1622,6 @@ function drawChapterTwoStation(){
  const speaking=dialogue&&dialogue[di]?dialogue[di].who:'';
  
 }
-function drawChapterTwoGuide(){
- if(scene!=='chapterTwoOutside')return;
- const ready=chapterTwoProgress.car&&chapterTwoProgress.sign&&chapterTwoProgress.radio;
- const rows=[['۱','صندوق ماشین','پایینِ سمت چپ',chapterTwoProgress.car],['۲','تابلوی مسیر','وسط محوطه',chapterTwoProgress.sign],['۳','جعبه مخابرات','کنار تابلو، سمت راست',chapterTwoProgress.radio],['۴','در ایستگاه','بالای سمت راست',ready]];
- ctx.save();ctx.textAlign='right';ctx.fillStyle='rgba(8,14,19,.92)';ctx.strokeStyle='#c5a675';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(24,28,320,183,12);ctx.fill();ctx.stroke();
- ctx.fillStyle='#f0d39b';ctx.font='bold 17px Vazirmatn';ctx.fillText('راهنمای محوطه',326,55);
- ctx.fillStyle='#fff0d0';ctx.font='bold 12px Vazirmatn';ctx.fillText('این چهار مرحله را دنبال کن:',326,78);
- rows.forEach((r,i)=>{const y=105+i*23;ctx.fillStyle=r[3]?'#a8c5a0':'#f1d49e';ctx.font='bold 12px Vazirmatn';ctx.fillText((r[3]?'✓':'○')+'  '+r[0]+'. '+r[1]+' — '+r[2],326,y)});
- ctx.fillStyle='#d8d0bd';ctx.font='11px Vazirmatn';ctx.fillText('نزدیک هر وسیله شو و کلید E را بزن',326,198);ctx.restore();
- const targets=[{x:145,y:465,done:chapterTwoProgress.car},{x:390,y:330,done:chapterTwoProgress.sign},{x:567,y:345,done:chapterTwoProgress.radio},{x:790,y:350,done:ready}];
- targets.forEach(t=>{if(t.done)return;ctx.save();ctx.strokeStyle='#f2d18f';ctx.fillStyle='rgba(242,209,143,.10)';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.beginPath();ctx.arc(t.x,t.y,29,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.setLineDash([]);ctx.restore()});
-}
 function drawChapterTwoOutside(){
  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080d13');g.addColorStop(1,'#252c2a');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
  // همان فرم و رنگ درختان فصل اول؛ همه پشت جاده
@@ -1671,7 +1659,7 @@ function drawPersistentCharacters(){
  }
 }
 function drawPowerOutOverlay(){if(!powerOut||scene!=='basement')return;ctx.save();const light=ctx.createRadialGradient(player.x,player.y-8,18,player.x,player.y-8,310);light.addColorStop(0,'rgba(0,0,0,0)');light.addColorStop(.28,'rgba(0,0,0,.38)');light.addColorStop(.62,'rgba(0,0,0,.78)');light.addColorStop(1,'rgba(0,0,0,.91)');ctx.fillStyle=light;ctx.fillRect(0,0,W,H);ctx.restore()}
-function draw(){ctx.clearRect(0,0,W,H);if(scene==='drive'){drawDrive();return}if(scene==='intro'||scene==='introStory'){drawDrive();return}if(scene==='roadside'){drawRoadsideScene();return}if(scene==='ending'){drawEndingScene();return}if(scene==='chapterTwoOutside'){drawChapterTwoOutside();drawChapterTwoGuide();drawChapterTwoPair();drawHotspotLabels();return}if(scene==='chapterTwoStation'){drawChapterTwoStation();drawChapterTwoPair();drawPersistentCharacters();return}drawRoom();drawPlayer();drawPersistentCharacters();if(scene==='restaurant'&&broom&&cleaned<3){ctx.save();ctx.translate(player.x+13,player.y+2);ctx.rotate(player.face==='left'?-0.45:player.face==='up'?0.18:0.35);ctx.strokeStyle='#c49c5c';ctx.lineWidth=4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(8,24);ctx.stroke();ctx.fillStyle='#b18a55';ctx.fillRect(2,21,14,5);ctx.restore()}if(scene==='basement'&&breaker){ctx.fillStyle='#d7d09a';ctx.shadowColor='#e8dca0';ctx.shadowBlur=25;ctx.fillRect(800,130,10,10);ctx.shadowBlur=0}drawPowerOutOverlay()}
+function draw(){ctx.clearRect(0,0,W,H);if(scene==='drive'){drawDrive();return}if(scene==='intro'||scene==='introStory'){drawDrive();return}if(scene==='roadside'){drawRoadsideScene();return}if(scene==='ending'){drawEndingScene();return}if(scene==='chapterTwoOutside'){drawChapterTwoOutside();drawChapterTwoPair();drawHotspotLabels();return}if(scene==='chapterTwoStation'){drawChapterTwoStation();drawChapterTwoPair();drawPersistentCharacters();return}drawRoom();drawPlayer();drawPersistentCharacters();if(scene==='restaurant'&&broom&&cleaned<3){ctx.save();ctx.translate(player.x+13,player.y+2);ctx.rotate(player.face==='left'?-0.45:player.face==='up'?0.18:0.35);ctx.strokeStyle='#c49c5c';ctx.lineWidth=4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(8,24);ctx.stroke();ctx.fillStyle='#b18a55';ctx.fillRect(2,21,14,5);ctx.restore()}if(scene==='basement'&&breaker){ctx.fillStyle='#d7d09a';ctx.shadowColor='#e8dca0';ctx.shadowBlur=25;ctx.fillRect(800,130,10,10);ctx.shadowBlur=0}drawPowerOutOverlay()}
 function nearObject(){let n=null,dmin=1e9;for(const o of objects){if(o.id==='broom'&&broom)continue;let d=Math.hypot(player.x-o.x,player.y-o.y);if(d<o.r+20&&d<dmin){n=o;dmin=d}}return n}
 function move(dt){
  if(scene!=='restaurant'&&scene!=='basement'&&scene!=='reveal'&&scene!=='final'&&scene!=='chapterTwoOutside')return;
@@ -1748,7 +1736,7 @@ function chapterTwoCautious(){
  ],()=>enterChapterTwoOutside());
 }
 function enterChapterTwoOutside(){
- scene='chapterTwoOutside';player.x=475;player.y=455;resetMhFollower();objects=[];music('horror');chapterTwoProgress={car:false,sign:false,radio:false};setObjective('سه نشانه محوطه را پیدا کن؛ راهنما را ببین');
+ scene='chapterTwoOutside';player.x=475;player.y=455;resetMhFollower();objects=[];music('horror');chapterTwoProgress={car:false,sign:false,radio:false};setObjective('سه نشانه محوطه را پیدا کن');
  let found=new Set();
  objects=[
  {id:'car',x:145,y:465,r:48,label:'صندوق ماشین',act:()=>{if(found.has('car')){toast('صندوق ماشین را قبلاً گشتی');return}found.add('car');chapterTwoProgress.car=true;setObjective(found.size===3?'هر سه نشانه پیدا شد؛ به در ایستگاه برو':'صندوق ماشین بررسی شد؛ دو نشانه دیگر را پیدا کن');sfx('pickup');runDialog([{who:'narrator',text:'عمو امیر صندوق ماشین را باز کرد. زیر یک پتوی قدیمی، چراغ‌قوه و یک نقشه کوچک از محوطه پیدا کرد.'},{who:'amir',face:'surprised',text:'این نقشه مسیر پشت ایستگاه رو هم نشون می‌ده. انگار یکی قبلاً اینجا رو بررسی کرده.'},{who:'mh',text:'چراغ‌قوه رو بردار. نزدیک ساختمان، نور عادی به‌سختی از مه رد می‌شه.'}],()=>{toast('نشانه اول پیدا شد');if(found.size===3)toast('هر سه نشانه پیدا شد؛ در ایستگاه را بررسی کن')})}},
