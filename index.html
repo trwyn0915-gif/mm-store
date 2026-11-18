@@ -447,6 +447,20 @@ button { touch-action:manipulation; }
   .panel .controls #fullscreen { flex-basis:64px!important; min-width:64px!important; }
 }
 
+
+/* Portrait-only gameplay fallback: if the browser cannot lock rotation,
+   cover the game until the phone is turned upright. Home/chapter screen is untouched. */
+@media (max-width:700px) and (orientation:landscape){
+ body:has(#intro.hidden)::before{
+  content:"لطفاً گوشی را عمودی کنید";
+  position:fixed;inset:0;z-index:2147483647;
+  display:flex;align-items:center;justify-content:center;
+  padding:28px;text-align:center;direction:rtl;
+  background:#080b10;color:#f0dfbd;
+  font-family:Vazirmatn,Tahoma,sans-serif;font-size:clamp(22px,5vw,34px);
+  font-weight:900;line-height:2;
+ }
+}
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
@@ -600,17 +614,22 @@ const controlBar=document.querySelector('.controls');
 controlBar.appendChild($('interact'));
 controlBar.appendChild($('fullscreen'));
 const isMobileLayout=()=>window.matchMedia('(max-width:700px), (pointer:coarse)').matches;
+async function lockGamePortrait(){
+ if(!isMobileLayout()||!screen.orientation||!screen.orientation.lock)return false;
+ try{await screen.orientation.lock('portrait-primary');return true}
+ catch(e){
+  try{await screen.orientation.lock('portrait');return true}catch(err){return false}
+ }
+}
 async function enterGameFullscreen(){
  if(!document.fullscreenElement&&gamePanel.requestFullscreen){
-  try{await gamePanel.requestFullscreen()}catch(e){return false}
+  try{await gamePanel.requestFullscreen()}catch(e){}
  }
- if(isMobileLayout()&&screen.orientation&&screen.orientation.lock){
-  try{await screen.orientation.lock('portrait')}catch(e){}
- }
+ await lockGamePortrait();
  return !!document.fullscreenElement;
 }
 function updateFullscreenLabel(){const active=document.fullscreenElement===gamePanel;$('fullscreen').textContent=active?'خروج از تمام‌صفحه':'تمام‌صفحه'}
-$('fullscreen').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else if(gamePanel.requestFullscreen){await gamePanel.requestFullscreen();if(isMobileLayout()&&screen.orientation&&screen.orientation.lock){try{await screen.orientation.lock('portrait')}catch(e){}}}else{toast('تمام‌صفحه در این مرورگر پشتیبانی نمی‌شود')} }catch(e){toast('ورود به حالت تمام‌صفحه ممکن نشد')}};
+$('fullscreen').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else if(gamePanel.requestFullscreen){await gamePanel.requestFullscreen();await lockGamePortrait()}else{toast('تمام‌صفحه در این مرورگر پشتیبانی نمی‌شود')}}catch(e){toast('ورود به حالت تمام‌صفحه ممکن نشد')}};
 document.addEventListener('fullscreenchange',()=>{
  updateFullscreenLabel();
  if(!document.fullscreenElement&&screen.orientation&&screen.orientation.unlock){
