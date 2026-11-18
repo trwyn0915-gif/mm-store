@@ -1186,8 +1186,8 @@ const actionBar=document.querySelector('.actions');
 function showGameControls(show){controlBar.classList.toggle('hidden',!show);actionBar.classList.toggle('hidden',!show)}
 controlBar.appendChild($('interact'));
 controlBar.appendChild($('fullscreen'));
-function updateFullscreenLabel(){$('fullscreen').textContent='بازگشت'}
-$('fullscreen').textContent='بازگشت';
+function updateFullscreenLabel(){$('fullscreen').textContent='صفحه اصلی'}
+$('fullscreen').textContent='صفحه اصلی';
 $('fullscreen').onclick=async()=>{try{if(window.speechSynthesis)speechSynthesis.cancel();if(audioCtx)music('normal');reset();if(document.fullscreenElement&&document.exitFullscreen){try{await document.exitFullscreen()}catch(e){}}toast('به صفحه اصلی برگشتی')}catch(e){reset()}};
 document.addEventListener('fullscreenchange',()=>{
  updateFullscreenLabel();
