@@ -1309,24 +1309,34 @@ button:focus-visible {outline:2px solid #d8b878;outline-offset:2px}
 }
 
 
-/* Access restriction: game is available on desktop/laptop only */
+/* Cinematic desktop-only access screen */
 .mobile-access-block-screen{display:none}
-html.mobile-access-block,html.mobile-access-block body{width:100%;height:100%;min-height:100%;overflow:hidden!important;background:#080a0e!important}
+html.mobile-access-block,html.mobile-access-block body{width:100%;height:100%;min-height:100%;overflow:hidden!important;background:#050609!important}
 html.mobile-access-block body>main{display:none!important}
 html.mobile-access-block .mobile-access-block-screen{
  display:flex!important;position:fixed!important;inset:0!important;z-index:2147483647!important;
- align-items:center!important;justify-content:center!important;padding:24px!important;
- background:radial-gradient(ellipse at 50% 20%,#202630 0,#090b10 70%)!important;
- color:#f2eee6!important;text-align:center!important;font-family:Vazirmatn,Tahoma,sans-serif!important
+ align-items:center!important;justify-content:center!important;padding:22px!important;isolation:isolate;
+ background:
+  radial-gradient(ellipse at 50% 42%,rgba(112,35,31,.22),transparent 43%),
+  radial-gradient(ellipse at 50% 0%,#252a31 0%,#0b0d12 54%,#040507 100%)!important;
+ color:#f4efe7!important;text-align:center!important;font-family:Vazirmatn,Tahoma,sans-serif!important
 }
-.mobile-access-card{width:min(100%,480px);padding:30px 22px;border:1px solid #66543a;border-radius:20px;background:#11161df2;box-shadow:0 20px 70px #000b}
-.mobile-access-card .access-mark{font-size:42px;font-weight:900;letter-spacing:3px;color:#c6a36a;margin-bottom:12px}
-.mobile-access-card h1{font-size:clamp(21px,6vw,29px);line-height:1.8;margin:0 0 12px;color:#f3e6cd}
-.mobile-access-card p{font-size:16px;line-height:2.2;color:#c3c9cf;margin:0}
-.mobile-access-card strong{color:#e6c58e}
+.mobile-access-block-screen:before{content:"";position:absolute;inset:14px;border:1px solid rgba(197,157,99,.22);pointer-events:none;z-index:-1}
+.mobile-access-block-screen:after{content:"";position:absolute;inset:0;opacity:.13;pointer-events:none;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:34px 34px;mask-image:linear-gradient(transparent,#000 25%,#000 75%,transparent)}
+.mobile-access-card{position:relative;width:min(100%,510px);padding:clamp(27px,6vw,46px) clamp(21px,6vw,42px);border:1px solid rgba(198,163,106,.58);border-radius:5px;background:linear-gradient(145deg,rgba(26,29,35,.98),rgba(10,12,16,.98));box-shadow:0 28px 90px #000c,0 0 55px rgba(121,39,34,.12),inset 0 1px rgba(255,255,255,.07);overflow:hidden}
+.mobile-access-card:before,.mobile-access-card:after{content:"";position:absolute;width:54px;height:54px;border-color:#b9915d;border-style:solid;opacity:.75;pointer-events:none}
+.mobile-access-card:before{top:10px;right:10px;border-width:1px 1px 0 0}
+.mobile-access-card:after{bottom:10px;left:10px;border-width:0 0 1px 1px}
+.mobile-access-card .access-mark{display:inline-flex;align-items:center;justify-content:center;width:76px;height:76px;margin:0 auto 20px;border:1px solid rgba(205,166,105,.72);border-radius:50%;color:#d8b477;font-size:27px;font-weight:900;letter-spacing:2px;text-shadow:0 0 22px rgba(216,180,119,.35);box-shadow:0 0 0 7px rgba(205,166,105,.055),inset 0 0 22px rgba(205,166,105,.08)}
+.mobile-access-card .access-kicker{display:block;margin-bottom:12px;color:#c69b65;font-size:11px;font-weight:800;letter-spacing:3px}
+.mobile-access-card h1{font-size:clamp(22px,6vw,31px);font-weight:900;line-height:1.8;margin:0 0 12px;color:#f5e8d2}
+.mobile-access-card .access-rule{width:74px;height:2px;margin:0 auto 18px;background:linear-gradient(90deg,transparent,#b78d59,transparent)}
+.mobile-access-card p{font-size:clamp(14px,3.8vw,17px);font-weight:600;line-height:2.25;color:#c8cbd0;margin:0}
+.mobile-access-card strong{color:#e5c28c;font-weight:900}
+.mobile-access-card .access-foot{display:block;margin-top:23px;padding-top:16px;border-top:1px solid rgba(255,255,255,.09);color:#777e87;font-size:11px;letter-spacing:1.5px}
 
 </style></head>
-<body><div class="mobile-access-block-screen" role="alert" aria-live="polite"><div class="mobile-access-card"><div class="access-mark">RIP</div><h1>ورود با موبایل امکان‌پذیر نیست</h1><p>برای ورود به بازی، لطفاً از <strong>کامپیوتر یا لپ‌تاپ ویندوز</strong> استفاده کنید.</p></div></div><main class="wrap">
+<body><div class="mobile-access-block-screen" role="alert" aria-live="polite"><div class="mobile-access-card"><div class="access-mark">RIP</div><span class="access-kicker">LAST SHIFT · ACCESS CONTROL</span><h1>ورود با موبایل امکان‌پذیر نیست</h1><div class="access-rule"></div><p>این بازی برای نمایش در صفحه‌نمایش بزرگ طراحی شده است.<br>برای ورود، از <strong>کامپیوتر یا لپ‌تاپ ویندوز</strong> استفاده کنید.</p><span class="access-foot">RIP AMOO AMIR · DESKTOP EXPERIENCE</span></div></div><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
 <section class="panel">
 <div class="hud"><span class="pill" id="chapter">پرونده: آخرین شیفت</span><span class="pill" id="objective">هدف: شروع ماجرا</span><span class="pill" id="clock">ساعت ۰۰:۴۷</span></div>
