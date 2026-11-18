@@ -796,6 +796,78 @@ button { touch-action:manipulation; }
 
 
 .panel .controls.hidden,.panel .actions.hidden{display:none!important}
+
+/* Landscape fullscreen repair: preserve the complete 16:9 game view and keep subtitles/controls in the viewport */
+@media (max-width:900px) and (orientation:landscape) and (pointer:coarse) {
+  .panel:fullscreen {
+    position:fixed!important;inset:0!important;
+    width:100vw!important;height:100vh!important;height:100dvh!important;
+    max-width:none!important;margin:0!important;
+    display:flex!important;flex-direction:column!important;
+    gap:4px!important;padding:4px 7px!important;
+    overflow:hidden!important;
+  }
+  .panel:fullscreen > .hud {
+    order:0!important;flex:0 0 auto!important;
+    display:flex!important;flex-wrap:nowrap!important;
+    justify-content:space-between!important;gap:4px!important;
+    padding:0 0 2px!important;min-height:0!important;
+  }
+  .panel:fullscreen > #stage {
+    order:1!important;flex:1 1 0!important;
+    width:100%!important;min-width:0!important;min-height:0!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    overflow:hidden!important;
+  }
+  .panel:fullscreen > #stage canvas {
+    display:block!important;flex:0 1 auto!important;
+    width:auto!important;height:auto!important;
+    max-width:100%!important;max-height:100%!important;
+    aspect-ratio:16/9!important;object-fit:contain!important;
+  }
+  .panel:fullscreen > .dialog {
+    order:2!important;display:flex!important;flex:0 1 auto!important;
+    width:100%!important;min-height:0!important;max-height:23dvh!important;
+    margin:0!important;padding:4px 8px!important;gap:5px!important;
+    overflow-y:auto!important;align-items:center!important;
+  }
+  .panel:fullscreen > .dialog .portrait {display:none!important}
+  .panel:fullscreen > .dialog .dialogbody {min-width:0!important;width:100%!important}
+  .panel:fullscreen > .dialog .speaker {font-size:10px!important;line-height:1.3!important;margin:0 0 2px!important}
+  .panel:fullscreen > .dialog .line {font-size:clamp(10px,2.5vh,13px)!important;line-height:1.45!important;min-height:0!important;overflow-wrap:anywhere!important}
+  .panel:fullscreen > .dialog .dialogfoot {margin-top:2px!important}
+  .panel:fullscreen > .dialog .dialogfoot button {min-height:30px!important;padding:3px 12px!important}
+  .panel:fullscreen > .choices {
+    order:3!important;flex:0 0 auto!important;
+    max-height:16dvh!important;overflow-y:auto!important;
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:4px!important;margin:0!important;
+  }
+  .panel:fullscreen > .choices button {min-height:32px!important;padding:4px 7px!important;font-size:10px!important}
+  .panel:fullscreen > .controls {
+    order:4!important;position:relative!important;inset:auto!important;
+    flex:0 0 auto!important;width:100%!important;max-width:none!important;
+    margin:0!important;padding:3px 6px!important;
+    display:flex!important;flex-direction:row!important;align-items:center!important;
+    justify-content:space-between!important;gap:7px!important;
+    z-index:1000!important;
+  }
+  .panel:fullscreen > .controls .dpad {
+    grid-template-columns:repeat(3,32px)!important;
+    grid-template-rows:repeat(2,25px)!important;gap:2px!important;
+  }
+  .panel:fullscreen > .controls .dpad button {
+    min-width:32px!important;width:32px!important;
+    min-height:25px!important;height:25px!important;font-size:14px!important;
+  }
+  .panel:fullscreen > .controls #interact {
+    display:block!important;flex:0 1 135px!important;
+    width:auto!important;min-width:90px!important;min-height:38px!important;
+    font-size:12px!important;padding:4px 8px!important;
+  }
+  .panel:fullscreen > .controls #fullscreen {display:none!important}
+  .panel:fullscreen > .actions {display:none!important}
+}
 </style></head>
 <body><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
