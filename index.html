@@ -2126,7 +2126,7 @@ function drawPersistentCharacters(){
   drawAsgharChef(610,420);
  }
  // پیام ضبط‌شده/رادیویی اصغر در زیرزمین به معنی حضور فیزیکی او نیست.
- if(scene==='chapterTwoStation'&&(dialogueCast.has('asghar')||chapterTwoAsgharPresent))drawAsgharChef(740,422);
+ if(scene==='chapterTwoStation'&&chapterTwoAsgharPresent)drawAsgharChef(740,422);
  if(dialogueCast.has('mysterious')){
   if(scene==='chapterTwoStation')drawPerson(860,430,'mysterious');
   else if(scene==='chapterTwoOutside')drawPerson(820,420,'mysterious');
@@ -2253,6 +2253,7 @@ function enterChapterTwoOutside(){
 }
 function chapterTwoInvestigation(){
  scene='chapterTwoStation';
+ chapterTwoAsgharPresent=false;
 
  const found=new Set();
  function menu(){
@@ -2294,7 +2295,7 @@ function chapterTwoInvestigation(){
  ],menu);
 }
 function chapterTwoFinalChoice(){
- mysteriousPresent=true;chapterTwoAsgharPresent=true;
+ mysteriousPresent=true;chapterTwoAsgharPresent=false;
  runDialog([
   {who:'narrator',text:'بعد از بررسی سه سرنخ، تکه‌های ماجرا کنار هم قرار گرفتند. نقشه مسیر تونل را نشان می‌داد، دفتر از یک گزارش گمشده خبر می‌داد و رادیو تأیید کرده بود که اصغر هنوز در نزدیکی ایستگاه است.'},
   {who:'amir',face:'normal',text:'دیگه نمی‌تونیم فقط منتظر بمونیم. باید تصمیم بگیریم اول حقیقت رو بیرون بفرستیم یا خودمون بریم دنبال اصغر.'},
@@ -2317,7 +2318,7 @@ function chapterTwoFinalChoice(){
  {who:'mh',text:'پس بالاخره صدای ما از این جنگل بیرون می‌ره.'},
  {who:'narrator',text:'پیام از ایستگاه به ایستگاه منتقل شد. برای اولین بار، سکوت طولانی اطراف رستوران شکسته شد.'}
  ],()=>end('پایان فصل دوم: پیام در مه','عمو امیر مدارک را از راه رادیو فرستاد و اصغر توانست با آن‌ها ارتباط بگیرد. حالا حقیقت فقط در یک دفتر خاک‌گرفته پنهان نبود؛ چند ایستگاه آن را دریافت کرده بودند و ماجرا تازه داشت آغاز می‌شد.'))},
- {label:'اول به اتاق نگهبانی برویم و اصغر را پیدا کنیم',run:()=>runDialog([
+ {label:'اول به اتاق نگهبانی برویم و اصغر را پیدا کنیم',run:()=>{chapterTwoAsgharPresent=true;runDialog([
  {who:'narrator',text:'عمو امیر نقشه را برداشت و مسیر اتاق نگهبانی را دنبال کرد. راهرو باریک بود و چراغ اضطراری هر چند لحظه یک بار خاموش می‌شد.'},
  {who:'amir',face:'surprised',text:'اون در انتهای راهرو رو ببین. از پشتش صدای رادیو میاد.'},
  {who:'mh',text:'صبر کن. روی دستگیره علامت سه خط هست؛ همون نشونه‌ای که روی دفتر دیدیم.'},
@@ -2326,7 +2327,7 @@ function chapterTwoFinalChoice(){
  {who:'amir',face:'angry',text:'پس چرا ما رو به اون رستوران فرستادی؟ چرا از اول نگفتی چه خبره؟'},
  {who:'asghar',text:'می‌ترسیدم قبل از پیدا شدن مدارک، همه‌چیز از بین بره. اشتباه کردم. حالا باید این پرونده رو با هم از منطقه خارج کنیم.'},
  {who:'mh',text:'این بار هیچ‌کس جا نمی‌مونه. با هم می‌ریم.'}
- ],()=>end('پایان فصل دوم: سه نفر در جاده','عمو امیر، ام‌اچ و اصغر دوباره به هم رسیدند. آن‌ها گزارش اصلی را برداشتند و پیش از روشن شدن کامل هوا، راهی جاده شهر شدند تا ماجرا را آشکار کنند.'))},
+ ],()=>end('پایان فصل دوم: سه نفر در جاده','عمو امیر، ام‌اچ و اصغر دوباره به هم رسیدند. آن‌ها گزارش اصلی را برداشتند و پیش از روشن شدن کامل هوا، راهی جاده شهر شدند تا ماجرا را آشکار کنند.'))}},
  {label:'از تونل خدماتی به جاده پشتی برویم',run:()=>runDialog([
  {who:'narrator',text:'با کمک نقشه، ورودی تونل را پشت اتاقک ابزار پیدا کردید. درِ فلزی قدیمی با کلید یدکی باز شد و هوای خنکی از راهرو بیرون آمد.'},
  {who:'amir',face:'surprised',text:'این مسیر مستقیم به جاده پشتی می‌رسه. می‌تونیم مدارک رو از اینجا خارج کنیم.'},
