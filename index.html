@@ -1889,9 +1889,8 @@ asgharChefLowRes.width=24;asgharChefLowRes.height=60;
 let asgharChefLowResReady=false;
 function drawAsgharChef(x,y){
  if(!asgharChefSprite.complete||!asgharChefSprite.naturalWidth)return;
- // کیفیت آشپز با اطلس کم‌وضوح عمو امیر هماهنگ است.
- const ratio=asgharChefSprite.naturalWidth/asgharChefSprite.naturalHeight;
- const h=124,w=h*ratio;
+ // همان وضوح پایه اطلس عمو امیر: 24×60 پیکسل، با بزرگ‌نمایی نرم.
+ const h=124,w=49.6;
  if(!asgharChefLowResReady){
   const lowCtx=asgharChefLowRes.getContext('2d');
   lowCtx.clearRect(0,0,24,60);
@@ -1899,12 +1898,17 @@ function drawAsgharChef(x,y){
   lowCtx.drawImage(asgharChefSprite,0,0,24,60);
   asgharChefLowResReady=true;
  }
+ // فقط یک تنفس بسیار ظریف؛ اصغر در جای خودش می‌ایستد و راه نمی‌رود.
+ const breath=Math.sin(performance.now()/850)*0.006;
+ const drawW=w*(1+breath);
+ const drawH=h*(1+breath*.35);
+ const groundY=y-5;
  ctx.save();
- // سایه جداگانه کمی بالاتر آمده تا درست زیر کفش‌ها دیده شود.
+ // سایه مستقل و بالاتر، نزدیک‌تر به کف کفش‌ها.
  ctx.fillStyle='rgba(0,0,0,.36)';
- ctx.beginPath();ctx.ellipse(x,y-4,Math.max(17,w*.42),5,0,0,Math.PI*2);ctx.fill();
+ ctx.beginPath();ctx.ellipse(x,groundY-7,Math.max(17,w*.42),5,0,0,Math.PI*2);ctx.fill();
  ctx.imageSmoothingEnabled=true;
- ctx.drawImage(asgharChefLowRes,x-w/2,y-h,w,h);
+ ctx.drawImage(asgharChefLowRes,x-drawW/2,groundY-drawH,drawW,drawH);
  ctx.restore();
 }
 function drawPersistentCharacters(){
