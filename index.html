@@ -1771,16 +1771,17 @@ function drawPlayer(){
  ctx.save();
  // Keep the ground shadow fixed while normalizing the visible character bounds.
  ctx.fillStyle='#0007';ctx.beginPath();ctx.ellipse(player.x,player.y+13,20,6,0,0,Math.PI*2);ctx.fill();
- ctx.imageSmoothingEnabled=true;
+ // Pixel-art source: nearest-neighbour keeps the enlarged sprite edges crisp.
+ ctx.imageSmoothingEnabled=false;
  const bounds=getAmirFrameBounds();
  const b=bounds&&bounds[frame];
  const cellX=(frame%4)*24,cellY=Math.floor(frame/4)*60;
  // Crop transparent padding per frame, but scale every pose to the same height.
  // This prevents the side-facing walk frames from looking shorter.
- const targetH=124;
+ const targetH=120;
  if(b&&b.w>0&&b.h>0){
   const scale=targetH/b.h;
-  const drawW=b.w*scale,drawX=player.x-drawW/2,drawY=player.y+13-targetH;
+  const drawW=Math.round(b.w*scale),drawX=Math.round(player.x-drawW/2),drawY=Math.round(player.y+13-targetH);
   ctx.drawImage(amirAtlas,cellX+b.x,cellY+b.y,b.w,b.h,drawX,drawY,drawW,targetH);
  }else{
   const drawW=52,drawH=124;
