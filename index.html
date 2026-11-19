@@ -1925,9 +1925,11 @@ function drawAsgharChef(x,y){
  const breath=Math.sin(performance.now()/850)*0.003;
  ctx.imageSmoothingEnabled=false;
  const pixelW=asgharChefPixelSprite.width*2;
+ ctx.filter='blur(0.7px)';
  ctx.drawImage(asgharChefPixelSprite,
   x-pixelW*(1+breath)/2,groundY-targetH*(1+breath)+5,
   pixelW*(1+breath),targetH*(1+breath));
+ ctx.filter='none';
  ctx.restore();
 }
 function drawPersistentCharacters(){
