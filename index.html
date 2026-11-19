@@ -1960,7 +1960,7 @@ function drawPlayer(){
  const cellX=(frame%4)*24,cellY=Math.floor(frame/4)*60;
  // Crop transparent padding per frame, but scale every pose to the same height.
  // This prevents the side-facing walk frames from looking shorter.
- const targetH=(player.face==='left'||player.face==='right')?115:120;
+ const targetH=(player.face==='left'||player.face==='right')?100:120;
  if(b&&b.w>0&&b.h>0){
   const scale=targetH/b.h;
   const drawW=Math.round(b.w*scale),drawX=Math.round(player.x-drawW/2),drawY=Math.round(player.y+13-targetH);
