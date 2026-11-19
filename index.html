@@ -1516,6 +1516,45 @@ html.mobile-access-block .mobile-access-block-screen{
     min-height:0!important;
   }
 }
+
+/* Tighten the desktop chapter screen: use the upper space instead of
+   leaving the chapter picker floating in the middle of a tall empty stage. */
+@media (min-width:701px) {
+  #stage:has(#intro:not(.hidden)) .overlay {
+    align-items:flex-start!important;
+    justify-content:center!important;
+    padding:clamp(12px,2.2vh,22px) 16px!important;
+  }
+  #stage:has(#intro:not(.hidden)) .chapter-menu {
+    margin:0 auto!important;
+    width:min(100%,1120px)!important;
+    padding:0 12px 8px!important;
+  }
+  #stage:has(#intro:not(.hidden)) .chapter-menu .rip {
+    font-size:clamp(38px,6vh,58px)!important;
+    margin:0 0 2px!important;
+  }
+  #stage:has(#intro:not(.hidden)) .chapter-menu h1 {
+    font-size:clamp(23px,3.5vh,32px)!important;
+    margin:0 0 4px!important;
+  }
+  #stage:has(#intro:not(.hidden)) .chapter-menu p {
+    margin:3px auto 8px!important;
+    font-size:13px!important;
+  }
+  #stage:has(#intro:not(.hidden)) .chapter-grid {
+    margin:7px auto!important;
+    gap:6px!important;
+    grid-template-columns:repeat(10,minmax(0,1fr))!important;
+  }
+  #stage:has(#intro:not(.hidden)) .chapter-tile {
+    min-height:56px!important;
+    padding:5px 3px!important;
+  }
+  #stage:has(#intro:not(.hidden)) .chapter-number { font-size:20px!important; }
+  #stage:has(#intro:not(.hidden)) .chapter-name { font-size:11px!important; }
+  #stage:has(#intro:not(.hidden)) .chapter-state { font-size:9px!important; }
+}
 </style></head>
 <body><div class="mobile-access-block-screen" role="alert" aria-live="polite"><div class="mobile-access-card"><div class="access-mark">RIP</div><span class="access-kicker">LAST SHIFT · ACCESS CONTROL</span><h1>ورود با موبایل امکان‌پذیر نیست</h1><div class="access-rule"></div><p>این بازی برای نمایش در صفحه‌نمایش بزرگ طراحی شده است.<br>برای ورود، از <strong>کامپیوتر یا لپ‌تاپ ویندوز</strong> استفاده کنید.</p><span class="access-foot">RIP AMOO AMIR · DESKTOP EXPERIENCE</span></div></div><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
