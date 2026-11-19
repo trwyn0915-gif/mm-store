@@ -2129,7 +2129,7 @@ function drawMysteriousCharacter(x,y){
  ctx.beginPath();ctx.ellipse(x,groundY,31,7,0,0,Math.PI*2);ctx.fill();
  if(mysteriousCharacterSprite.complete&&mysteriousCharacterSprite.naturalWidth>0){
   // نسبت تصویر را نزدیک به تصویر تمام‌قد ارسالی نگه می‌داریم؛ بدون کوچک‌سازی به یک نوار باریک.
-  const h=150,w=90;
+  const h=115,w=50;
   ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
   ctx.filter='blur(0.7px)';
   ctx.drawImage(mysteriousCharacterSprite,x-w/2,groundY-h+5,w,h);
