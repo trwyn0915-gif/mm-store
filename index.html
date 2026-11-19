@@ -1709,7 +1709,7 @@ function drawPlayer(){
  const cellX=(frame%4)*24,cellY=Math.floor(frame/4)*60;
  // Crop transparent padding per frame, but scale every pose to the same height.
  // This prevents the side-facing walk frames from looking shorter.
- const targetH=moving?113:124;
+ const targetH=124;
  if(b&&b.w>0&&b.h>0){
   const scale=targetH/b.h;
   const drawW=b.w*scale,drawX=player.x-drawW/2,drawY=player.y+13-targetH;
@@ -1810,32 +1810,31 @@ function drawPersistentCharacters(){
 function drawPowerOutOverlay(){if(!powerOut||scene!=='basement')return;ctx.save();const light=ctx.createRadialGradient(player.x,player.y-8,18,player.x,player.y-8,310);light.addColorStop(0,'rgba(0,0,0,0)');light.addColorStop(.28,'rgba(0,0,0,.38)');light.addColorStop(.62,'rgba(0,0,0,.78)');light.addColorStop(1,'rgba(0,0,0,.91)');ctx.fillStyle=light;ctx.fillRect(0,0,W,H);ctx.restore()}
 function drawHeldBroom(){
  ctx.save();
- // جارو از محل دست شخصیت شروع می‌شود و تا نزدیکی زمین امتداد دارد.
+ // جارو نزدیک دست نگه داشته می‌شود و اندازه‌اش با شخصیت متناسب است.
  const facing=player.face||'down';
  const pose={
-  right:{x:player.x+15,y:player.y-24,angle:-0.18},
-  left:{x:player.x-15,y:player.y-24,angle:0.18},
-  up:{x:player.x+18,y:player.y-22,angle:-0.42},
-  down:{x:player.x+17,y:player.y-20,angle:-0.28}
- }[facing]||{x:player.x+17,y:player.y-20,angle:-0.28};
+  right:{x:player.x+14,y:player.y-29,angle:-0.12},
+  left:{x:player.x-14,y:player.y-29,angle:0.12},
+  up:{x:player.x+15,y:player.y-28,angle:-0.30},
+  down:{x:player.x+14,y:player.y-27,angle:-0.20}
+ }[facing]||{x:player.x+14,y:player.y-27,angle:-0.20};
  ctx.translate(pose.x,pose.y);
  ctx.rotate(pose.angle);
- // دسته چوبی بلند و ضخیم‌تر
+ // دسته کوتاه‌تر و باریک‌تر
  ctx.lineCap='round';
- ctx.strokeStyle='#5b4028';ctx.lineWidth=8;
- ctx.beginPath();ctx.moveTo(0,-2);ctx.lineTo(13,69);ctx.stroke();
- ctx.strokeStyle='#c99a5b';ctx.lineWidth=5;
- ctx.beginPath();ctx.moveTo(0,-2);ctx.lineTo(13,69);ctx.stroke();
- // بست فلزی اتصال دسته به برس
- ctx.fillStyle='#d0b078';ctx.fillRect(7,62,15,5);
- // برس پهن با چند ردیف الیاف مشخص
+ ctx.strokeStyle='#5b4028';ctx.lineWidth=7;
+ ctx.beginPath();ctx.moveTo(0,-2);ctx.lineTo(10,53);ctx.stroke();
+ ctx.strokeStyle='#c99a5b';ctx.lineWidth=4;
+ ctx.beginPath();ctx.moveTo(0,-2);ctx.lineTo(10,53);ctx.stroke();
+ // اتصال و برس جمع‌وجور
+ ctx.fillStyle='#d0b078';ctx.fillRect(6,49,13,5);
  ctx.fillStyle='#805331';
- ctx.beginPath();ctx.roundRect(-4,66,38,13,4);ctx.fill();
- ctx.fillStyle='#b58a55';ctx.fillRect(-5,68,40,5);
- ctx.strokeStyle='#d0a36b';ctx.lineWidth=2;ctx.lineCap='butt';
- for(let i=0;i<9;i++){
-  const x=-3+i*4.3;
-  ctx.beginPath();ctx.moveTo(x,72);ctx.lineTo(x-2+(i%3),82);ctx.stroke();
+ ctx.beginPath();ctx.roundRect(-1,53,31,10,4);ctx.fill();
+ ctx.fillStyle='#b58a55';ctx.fillRect(-2,55,33,4);
+ ctx.strokeStyle='#d0a36b';ctx.lineWidth=1.7;ctx.lineCap='butt';
+ for(let i=0;i<8;i++){
+  const x=i*4;
+  ctx.beginPath();ctx.moveTo(x,59);ctx.lineTo(x-1+(i%3),67);ctx.stroke();
  }
  ctx.restore();
 }
