@@ -1588,7 +1588,31 @@ ctx.fillStyle='#b58a58';ctx.fillRect(840,148,64,134);
 if(doorOpen){drawOutsideView(847,155,50,120);ctx.fillStyle='#4a3427';ctx.beginPath();ctx.moveTo(840,149);ctx.lineTo(862,160);ctx.lineTo(862,275);ctx.lineTo(840,282);ctx.closePath();ctx.fill();ctx.strokeStyle='#d1a875';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#e1c18b';ctx.beginPath();ctx.arc(858,213,3,0,Math.PI*2);ctx.fill()}
 else{ctx.fillStyle='#d8d9d1';ctx.fillRect(847,155,50,120);ctx.strokeStyle='#62452f';ctx.lineWidth=3;ctx.strokeRect(847,155,50,120);ctx.fillStyle='#28211a';ctx.beginPath();ctx.arc(887,211,4,0,Math.PI*2);ctx.fill()}
 
-if(!broom){ctx.save();ctx.translate(145,430);ctx.strokeStyle='#bd945d';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-10,-23);ctx.lineTo(12,18);ctx.stroke();ctx.fillStyle='#b18a55';ctx.fillRect(0,14,30,7);ctx.restore()}
+if(!broom){
+ ctx.save();
+ ctx.translate(145,430);
+ ctx.rotate(-0.58);
+ ctx.scale(1.18,1.18);
+ // سایه جارو روی زمین
+ ctx.fillStyle='#0006';ctx.beginPath();ctx.ellipse(5,42,13,48,0,0,Math.PI*2);ctx.fill();
+ // دسته بلند چوبی
+ ctx.lineCap='round';
+ ctx.strokeStyle='#493321';ctx.lineWidth=9;
+ ctx.beginPath();ctx.moveTo(0,-48);ctx.lineTo(0,48);ctx.stroke();
+ ctx.strokeStyle='#c99a5b';ctx.lineWidth=5;
+ ctx.beginPath();ctx.moveTo(-1,-48);ctx.lineTo(-1,48);ctx.stroke();
+ // بست فلزی و برس پهن
+ ctx.fillStyle='#d0b078';ctx.fillRect(-9,39,18,7);
+ ctx.fillStyle='#805331';
+ ctx.beginPath();ctx.roundRect(-19,45,38,13,4);ctx.fill();
+ ctx.fillStyle='#b58a55';ctx.fillRect(-20,47,40,5);
+ ctx.strokeStyle='#d0a36b';ctx.lineWidth=2;ctx.lineCap='butt';
+ for(let i=0;i<9;i++){
+  const x=-17+i*4.2;
+  ctx.beginPath();ctx.moveTo(x,52);ctx.lineTo(x-2+(i%3),64);ctx.stroke();
+ }
+ ctx.restore();
+}
 spots.forEach((s,i)=>{if(!s.done){
  // لکه‌های نامنظم چربی و خرده‌ریز روی کف؛ با کنتراست کافی برای تشخیص
  ctx.save();
