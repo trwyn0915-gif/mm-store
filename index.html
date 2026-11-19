@@ -2119,6 +2119,27 @@ function drawAsgharChef(x,y){
  ctx.filter='none';
  ctx.restore();
 }
+const mysteriousCharacterSprite=new Image();
+mysteriousCharacterSprite.src='data:image/webp;base64,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';
+let mysteriousCharacterPixelSprite=null;
+function drawMysteriousCharacter(x,y){
+ if(!mysteriousCharacterSprite.complete||!mysteriousCharacterSprite.naturalWidth)return;
+ const sourceH=mysteriousCharacterSprite.naturalHeight,sourceW=mysteriousCharacterSprite.naturalWidth;
+ if(!mysteriousCharacterPixelSprite){
+  const lowH=60,lowW=Math.max(1,Math.round(sourceW*lowH/sourceH));
+  mysteriousCharacterPixelSprite=document.createElement('canvas');
+  mysteriousCharacterPixelSprite.width=lowW;mysteriousCharacterPixelSprite.height=lowH;
+  const lowCtx=mysteriousCharacterPixelSprite.getContext('2d');
+  lowCtx.imageSmoothingEnabled=true;lowCtx.imageSmoothingQuality='high';
+  lowCtx.drawImage(mysteriousCharacterSprite,0,0,sourceW,sourceH,0,0,lowW,lowH);
+ }
+ const targetH=124,groundY=y+13,pixelW=mysteriousCharacterPixelSprite.width*2;
+ ctx.save();
+ ctx.fillStyle='#0007';ctx.beginPath();ctx.ellipse(x,groundY,20,6,0,0,Math.PI*2);ctx.fill();
+ ctx.imageSmoothingEnabled=false;ctx.filter='blur(0.7px)';
+ ctx.drawImage(mysteriousCharacterPixelSprite,x-pixelW/2,groundY-targetH+5,pixelW,targetH);
+ ctx.filter='none';ctx.restore();
+}
 function drawPersistentCharacters(){
  if(scene==='drive'||scene==='intro'||scene==='introStory'||scene==='roadside'||scene==='ending')return;
  // اصغر ابتدا کنار پیشخوان استقبال می‌کند و پس از پایان گفت‌وگوی اول به آشپزخانه می‌رود.
@@ -2128,9 +2149,9 @@ function drawPersistentCharacters(){
  // پیام ضبط‌شده/رادیویی اصغر در زیرزمین به معنی حضور فیزیکی او نیست.
  if(scene==='chapterTwoStation'&&chapterTwoAsgharPresent)drawAsgharChef(chapterTwoAsgharX,422);
  if(dialogueCast.has('mysterious')){
-  if(scene==='chapterTwoStation')drawPerson(860,430,'mysterious');
-  else if(scene==='chapterTwoOutside')drawPerson(820,420,'mysterious');
-  else if(scene==='restaurant'||scene==='reveal'||scene==='final')drawPerson(480,350,'mysterious');
+  if(scene==='chapterTwoStation')drawMysteriousCharacter(860,430);
+  else if(scene==='chapterTwoOutside')drawMysteriousCharacter(820,420);
+  else if(scene==='restaurant'||scene==='reveal'||scene==='final')drawMysteriousCharacter(480,350);
  }
 }
 function drawPowerOutOverlay(){if(!powerOut||scene!=='basement')return;ctx.save();const light=ctx.createRadialGradient(player.x,player.y-8,18,player.x,player.y-8,310);light.addColorStop(0,'rgba(0,0,0,0)');light.addColorStop(.28,'rgba(0,0,0,.38)');light.addColorStop(.62,'rgba(0,0,0,.78)');light.addColorStop(1,'rgba(0,0,0,.91)');ctx.fillStyle=light;ctx.fillRect(0,0,W,H);ctx.restore()}
