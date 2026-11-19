@@ -1701,13 +1701,23 @@ function drawPlayer(){
  const frame=player.face==='up'?(moving?1:7):player.face==='left'?(moving?2:4):player.face==='right'?(moving?3:5):(moving?0:6);
  if(!amirAtlas.complete||!amirAtlas.naturalWidth){drawPerson(player.x,player.y,'amir','front');return}
  ctx.save();
- ctx.fillStyle='#0007';ctx.beginPath();ctx.ellipse(player.x,player.y+13,17,5,0,0,Math.PI*2);ctx.fill();
+ // Keep the ground shadow fixed while normalizing the visible character bounds.
+ ctx.fillStyle='#0007';ctx.beginPath();ctx.ellipse(player.x,player.y+13,20,6,0,0,Math.PI*2);ctx.fill();
  ctx.imageSmoothingEnabled=true;
- // Draw every atlas frame into the exact same box. Cropping each frame to its
- // opaque bounds changes its scale during animation, so keep the full cell.
+ const bounds=getAmirFrameBounds();
+ const b=bounds&&bounds[frame];
  const cellX=(frame%4)*24,cellY=Math.floor(frame/4)*60;
- const drawW=44,drawH=104,drawX=player.x-drawW/2,drawY=player.y+13-drawH;
- ctx.drawImage(amirAtlas,cellX,cellY,24,60,drawX,drawY,drawW,drawH);
+ // Crop transparent padding per frame, but scale every pose to the same height.
+ // This prevents the side-facing walk frames from looking shorter.
+ const targetH=124;
+ if(b&&b.w>0&&b.h>0){
+  const scale=targetH/b.h;
+  const drawW=b.w*scale,drawX=player.x-drawW/2,drawY=player.y+13-targetH;
+  ctx.drawImage(amirAtlas,cellX+b.x,cellY+b.y,b.w,b.h,drawX,drawY,drawW,targetH);
+ }else{
+  const drawW=52,drawH=124;
+  ctx.drawImage(amirAtlas,cellX,cellY,24,60,player.x-drawW/2,player.y+13-drawH,drawW,drawH);
+ }
  ctx.restore();
 }
 function drawCar(x,y,scale=1,angle=0){ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.scale(scale,scale);ctx.shadowColor='#000';ctx.shadowBlur=18;ctx.fillStyle='#080b0d';ctx.beginPath();ctx.ellipse(0,42,112,17,0,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#11191e';ctx.beginPath();ctx.moveTo(-112,20);ctx.lineTo(-100,-18);ctx.quadraticCurveTo(-94,-31,-65,-34);ctx.lineTo(-42,-70);ctx.quadraticCurveTo(-30,-84,0,-84);ctx.lineTo(48,-80);ctx.quadraticCurveTo(67,-76,83,-37);ctx.lineTo(103,-25);ctx.quadraticCurveTo(116,-18,116,5);ctx.lineTo(108,28);ctx.quadraticCurveTo(0,42,-108,28);ctx.closePath();ctx.fill();ctx.strokeStyle='#59666b';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#344b55';ctx.beginPath();ctx.moveTo(-52,-36);ctx.lineTo(-30,-68);ctx.quadraticCurveTo(-20,-76,0,-75);ctx.lineTo(35,-72);ctx.lineTo(51,-37);ctx.closePath();ctx.fill();ctx.strokeStyle='#71848a';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#243740';ctx.beginPath();ctx.moveTo(4,-74);ctx.lineTo(35,-71);ctx.lineTo(49,-38);ctx.lineTo(4,-38);ctx.closePath();ctx.fill();ctx.strokeStyle='#11191d';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,-76);ctx.lineTo(0,-36);ctx.stroke();ctx.fillStyle='#090d10';for(const wx of [-73,72]){ctx.beginPath();ctx.ellipse(wx,22,20,24,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#657178';ctx.beginPath();ctx.ellipse(wx,22,10,14,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#090d10'}ctx.fillStyle='#e7d8aa';ctx.shadowColor='#f5e1a8';ctx.shadowBlur=18;ctx.fillRect(-104,-8,13,9);ctx.fillRect(91,-8,13,9);ctx.shadowBlur=0;ctx.fillStyle='#8e3d32';ctx.fillRect(-105,14,10,8);ctx.fillRect(96,14,10,8);ctx.fillStyle='#27343a';ctx.fillRect(-20,28,42,5);ctx.restore()}
