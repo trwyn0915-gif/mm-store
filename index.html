@@ -1889,7 +1889,7 @@ asgharChefLowRes.width=24;asgharChefLowRes.height=60;
 let asgharChefLowResReady=false;
 function drawAsgharChef(x,y){
  if(!asgharChefSprite.complete||!asgharChefSprite.naturalWidth)return;
- // همان وضوح پایه اطلس عمو امیر: 24×60 پیکسل، با بزرگ‌نمایی نرم.
+ // وضوح پایه دقیقاً مانند فریم‌های اطلس عمو امیر: 24×60 پیکسل.
  const h=124,w=49.6;
  if(!asgharChefLowResReady){
   const lowCtx=asgharChefLowRes.getContext('2d');
@@ -1898,15 +1898,15 @@ function drawAsgharChef(x,y){
   lowCtx.drawImage(asgharChefSprite,0,0,24,60);
   asgharChefLowResReady=true;
  }
- // فقط یک تنفس بسیار ظریف؛ اصغر در جای خودش می‌ایستد و راه نمی‌رود.
+ // آشپز در محل خودش می‌ایستد؛ فقط حرکت تنفس بسیار ظریف دارد.
  const breath=Math.sin(performance.now()/850)*0.006;
  const drawW=w*(1+breath);
  const drawH=h*(1+breath*.35);
- const groundY=y-5;
+ // خط زمین و مرکز سایه، درست مانند شخصیت اصلی، در یک ارتفاع‌اند.
+ const groundY=y+13;
  ctx.save();
- // سایه مستقل و بالاتر، نزدیک‌تر به کف کفش‌ها.
- ctx.fillStyle='rgba(0,0,0,.36)';
- ctx.beginPath();ctx.ellipse(x,groundY-7,Math.max(17,w*.42),5,0,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#0007';
+ ctx.beginPath();ctx.ellipse(x,groundY,20,6,0,0,Math.PI*2);ctx.fill();
  ctx.imageSmoothingEnabled=true;
  ctx.drawImage(asgharChefLowRes,x-drawW/2,groundY-drawH,drawW,drawH);
  ctx.restore();
@@ -1915,7 +1915,7 @@ function drawPersistentCharacters(){
  if(scene==='drive'||scene==='intro'||scene==='introStory'||scene==='roadside'||scene==='ending')return;
  // اصغر ابتدا کنار پیشخوان استقبال می‌کند و پس از پایان گفت‌وگوی اول به آشپزخانه می‌رود.
  if(scene==='restaurant'&&(asgharLocation==='counter'||dialogueCast.has('asghar'))){
-  drawAsgharChef(650,475);
+  drawAsgharChef(650,420);
  }
  // پیام ضبط‌شده/رادیویی اصغر در زیرزمین به معنی حضور فیزیکی او نیست.
  if(scene==='chapterTwoStation'&&(dialogueCast.has('asghar')||chapterTwoAsgharPresent))drawAsgharChef(740,422);
