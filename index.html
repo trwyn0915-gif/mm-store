@@ -1915,7 +1915,7 @@ function drawAsgharChef(x,y){
  ctx.imageSmoothingQuality='high';
  const breath=Math.sin(performance.now()/850)*0.003;
  ctx.drawImage(asgharChefSprite,bounds.x,bounds.y,bounds.w,bounds.h,
-  x-drawW*(1+breath)/2,groundY-targetH*(1+breath)+6,drawW*(1+breath),targetH*(1+breath));
+  x-drawW*(1+breath)/2,groundY-targetH*(1+breath)+5,drawW*(1+breath),targetH*(1+breath));
  ctx.restore();
 }
 function drawPersistentCharacters(){
