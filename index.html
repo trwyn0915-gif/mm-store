@@ -1546,6 +1546,27 @@ ctx.fillStyle='#d8bd86';ctx.beginPath();ctx.arc(101,231,4,0,Math.PI*2);ctx.fill(
 ctx.fillStyle='#f1d9a9';ctx.font='bold 12px Vazirmatn';ctx.fillText('انبار / زیرزمین',84,153);
 // نورهای سقفی روی کف، نه روی میزها
 for(const x of [250,480,710]){ctx.fillStyle='#f5d9a5';ctx.globalAlpha=.11;ctx.beginPath();ctx.ellipse(x,315,95,35,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}
+// چراغ‌های سقفی رستوران؛ هرکدام گاهی یک پلک کوتاه می‌زنند.
+const lightTime=performance.now();
+for(let i=0;i<3;i++){
+ const lx=[250,480,710][i];
+ const cycle=(lightTime+i*730)%5200;
+ const blink=(cycle>3650&&cycle<3790)||(cycle>3890&&cycle<3970);
+ const glow=blink?0.015:(cycle>3650&&cycle<4050?.045:.13);
+ ctx.save();
+ ctx.globalAlpha=glow;
+ const halo=ctx.createRadialGradient(lx,300,4,lx,315,115);
+ halo.addColorStop(0,'rgba(255,224,165,.95)');
+ halo.addColorStop(1,'rgba(255,202,125,0)');
+ ctx.fillStyle=halo;ctx.beginPath();ctx.ellipse(lx,315,115,48,0,0,Math.PI*2);ctx.fill();
+ ctx.restore();
+ ctx.save();
+ ctx.fillStyle='#342d25';ctx.fillRect(lx-22,42,44,7);
+ ctx.fillStyle=blink?'#66533b':'#d5b77f';ctx.fillRect(lx-16,48,32,5);
+ ctx.fillStyle=blink?'#554331':'#fff0c5';ctx.globalAlpha=blink?.35:1;
+ ctx.beginPath();ctx.roundRect(lx-12,51,24,5,2);ctx.fill();
+ ctx.restore();
+}
 // ورودی آشپزخانه در دیوار انتهایی؛ فضای پشت آن تاریک و قابل تشخیص
 ctx.fillStyle='#171e20';ctx.fillRect(405,205,150,92);
 ctx.fillStyle='#76543a';ctx.fillRect(397,198,166,10);ctx.fillRect(397,198,9,105);ctx.fillRect(554,198,9,105);
