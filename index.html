@@ -2124,36 +2124,35 @@ mysteriousCharacterSprite.src='data:image/webp;base64,UklGRgIGAABXRUJQVlA4WAoAAA
 let mysteriousCharacterPixelSprite=null;
 function drawMysteriousCharacter(x,y){
  const groundY=y+13;
- if(!mysteriousCharacterSprite.complete||!mysteriousCharacterSprite.naturalWidth)return;
- const sourceW=mysteriousCharacterSprite.naturalWidth,sourceH=mysteriousCharacterSprite.naturalHeight;
- if(!mysteriousCharacterPixelSprite){
-  const lowH=60,lowW=Math.max(1,Math.round(sourceW*lowH/sourceH));
-  mysteriousCharacterPixelSprite=document.createElement('canvas');
-  mysteriousCharacterPixelSprite.width=lowW;mysteriousCharacterPixelSprite.height=lowH;
-  const lowCtx=mysteriousCharacterPixelSprite.getContext('2d');
-  lowCtx.imageSmoothingEnabled=true;lowCtx.imageSmoothingQuality='high';
-  lowCtx.drawImage(mysteriousCharacterSprite,0,0,sourceW,sourceH,0,0,lowW,lowH);
- }
- const targetH=132;
- const pixelW=Math.round(mysteriousCharacterPixelSprite.width*targetH/mysteriousCharacterPixelSprite.height);
  ctx.save();
- ctx.fillStyle='#0008';ctx.beginPath();ctx.ellipse(x,groundY,Math.max(18,pixelW*.34),7,0,0,Math.PI*2);ctx.fill();
- ctx.imageSmoothingEnabled=false;ctx.filter='blur(0.7px)';
- ctx.drawImage(mysteriousCharacterPixelSprite,x-pixelW/2,groundY-targetH+5,pixelW,targetH);
- ctx.filter='none';ctx.restore();
+ ctx.fillStyle='rgba(0,0,0,.42)';
+ ctx.beginPath();ctx.ellipse(x,groundY,31,7,0,0,Math.PI*2);ctx.fill();
+ if(mysteriousCharacterSprite.complete&&mysteriousCharacterSprite.naturalWidth>0){
+  // نسبت تصویر را نزدیک به تصویر تمام‌قد ارسالی نگه می‌داریم؛ بدون کوچک‌سازی به یک نوار باریک.
+  const h=150,w=90;
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+  ctx.filter='blur(0.7px)';
+  ctx.drawImage(mysteriousCharacterSprite,x-w/2,groundY-h+5,w,h);
+  ctx.filter='none';
+ }else{
+  // تا زمان آماده‌شدن تصویر، جای شخصیت در صحنه خالی نمی‌ماند.
+  drawPerson(x,groundY-12,'mysterious','front');
+ }
+ ctx.restore();
 }
 function drawPersistentCharacters(){
  if(scene==='drive'||scene==='intro'||scene==='introStory'||scene==='roadside'||scene==='ending')return;
- // اصغر ابتدا کنار پیشخوان استقبال می‌کند و پس از پایان گفت‌وگوی اول به آشپزخانه می‌رود.
  if(scene==='restaurant'&&(asgharLocation==='counter'||dialogueCast.has('asghar'))){
   drawAsgharChef(610,420);
  }
- // پیام ضبط‌شده/رادیویی اصغر در زیرزمین به معنی حضور فیزیکی او نیست.
  if(scene==='chapterTwoStation'&&chapterTwoAsgharPresent)drawAsgharChef(chapterTwoAsgharX,422);
- if(mysteriousPresent||dialogueCast.has('mysterious')){
-  if(scene==='chapterTwoStation')drawMysteriousCharacter(710,430);
-  else if(scene==='chapterTwoOutside')drawMysteriousCharacter(820,420);
-  else if(scene==='restaurant'||scene==='reveal'||scene==='final')drawMysteriousCharacter(480,350);
+ // مرد مرموز پس از پیدا شدن هر سه سرنخ، کنار درِ ورودی ایستگاه دیده می‌شود.
+ if(scene==='chapterTwoStation'&&(mysteriousPresent||dialogueCast.has('mysterious'))){
+  drawMysteriousCharacter(850,430);
+ }else if(scene==='chapterTwoOutside'&&(mysteriousPresent||dialogueCast.has('mysterious'))){
+  drawMysteriousCharacter(820,420);
+ }else if((scene==='restaurant'||scene==='reveal'||scene==='final')&&(mysteriousPresent||dialogueCast.has('mysterious'))){
+  drawMysteriousCharacter(480,350);
  }
 }
 function drawPowerOutOverlay(){if(!powerOut||scene!=='basement')return;ctx.save();const light=ctx.createRadialGradient(player.x,player.y-8,18,player.x,player.y-8,310);light.addColorStop(0,'rgba(0,0,0,0)');light.addColorStop(.28,'rgba(0,0,0,.38)');light.addColorStop(.62,'rgba(0,0,0,.78)');light.addColorStop(1,'rgba(0,0,0,.91)');ctx.fillStyle=light;ctx.fillRect(0,0,W,H);ctx.restore()}
