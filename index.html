@@ -1808,7 +1808,38 @@ function drawPersistentCharacters(){
  }
 }
 function drawPowerOutOverlay(){if(!powerOut||scene!=='basement')return;ctx.save();const light=ctx.createRadialGradient(player.x,player.y-8,18,player.x,player.y-8,310);light.addColorStop(0,'rgba(0,0,0,0)');light.addColorStop(.28,'rgba(0,0,0,.38)');light.addColorStop(.62,'rgba(0,0,0,.78)');light.addColorStop(1,'rgba(0,0,0,.91)');ctx.fillStyle=light;ctx.fillRect(0,0,W,H);ctx.restore()}
-function draw(){ctx.clearRect(0,0,W,H);if(scene==='drive'){drawDrive();return}if(scene==='intro'||scene==='introStory'){drawDrive();return}if(scene==='roadside'){drawRoadsideScene();return}if(scene==='ending'){drawEndingScene();return}if(scene==='chapterTwoOutside'){drawChapterTwoOutside();drawChapterTwoPair();drawHotspotLabels();return}if(scene==='chapterTwoStation'){drawChapterTwoStation();drawChapterTwoPair();drawPersistentCharacters();return}drawRoom();drawPlayer();drawPersistentCharacters();if(scene==='restaurant'&&broom&&cleaned<3){ctx.save();ctx.translate(player.x+13,player.y+2);ctx.rotate(player.face==='left'?-0.45:player.face==='up'?0.18:0.35);ctx.strokeStyle='#c49c5c';ctx.lineWidth=4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(8,24);ctx.stroke();ctx.fillStyle='#b18a55';ctx.fillRect(2,21,14,5);ctx.restore()}if(scene==='basement'&&breaker){ctx.fillStyle='#d7d09a';ctx.shadowColor='#e8dca0';ctx.shadowBlur=25;ctx.fillRect(800,130,10,10);ctx.shadowBlur=0}drawPowerOutOverlay()}
+function drawHeldBroom(){
+ ctx.save();
+ // جارو از محل دست شخصیت شروع می‌شود و تا نزدیکی زمین امتداد دارد.
+ const facing=player.face||'down';
+ const pose={
+  right:{x:player.x+15,y:player.y-24,angle:-0.18},
+  left:{x:player.x-15,y:player.y-24,angle:0.18},
+  up:{x:player.x+18,y:player.y-22,angle:-0.42},
+  down:{x:player.x+17,y:player.y-20,angle:-0.28}
+ }[facing]||{x:player.x+17,y:player.y-20,angle:-0.28};
+ ctx.translate(pose.x,pose.y);
+ ctx.rotate(pose.angle);
+ // دسته چوبی بلند و ضخیم‌تر
+ ctx.lineCap='round';
+ ctx.strokeStyle='#5b4028';ctx.lineWidth=8;
+ ctx.beginPath();ctx.moveTo(0,-2);ctx.lineTo(13,69);ctx.stroke();
+ ctx.strokeStyle='#c99a5b';ctx.lineWidth=5;
+ ctx.beginPath();ctx.moveTo(0,-2);ctx.lineTo(13,69);ctx.stroke();
+ // بست فلزی اتصال دسته به برس
+ ctx.fillStyle='#d0b078';ctx.fillRect(7,62,15,5);
+ // برس پهن با چند ردیف الیاف مشخص
+ ctx.fillStyle='#805331';
+ ctx.beginPath();ctx.roundRect(-4,66,38,13,4);ctx.fill();
+ ctx.fillStyle='#b58a55';ctx.fillRect(-5,68,40,5);
+ ctx.strokeStyle='#d0a36b';ctx.lineWidth=2;ctx.lineCap='butt';
+ for(let i=0;i<9;i++){
+  const x=-3+i*4.3;
+  ctx.beginPath();ctx.moveTo(x,72);ctx.lineTo(x-2+(i%3),82);ctx.stroke();
+ }
+ ctx.restore();
+}
+function draw(){ctx.clearRect(0,0,W,H);if(scene==='drive'){drawDrive();return}if(scene==='intro'||scene==='introStory'){drawDrive();return}if(scene==='roadside'){drawRoadsideScene();return}if(scene==='ending'){drawEndingScene();return}if(scene==='chapterTwoOutside'){drawChapterTwoOutside();drawChapterTwoPair();drawHotspotLabels();return}if(scene==='chapterTwoStation'){drawChapterTwoStation();drawChapterTwoPair();drawPersistentCharacters();return}drawRoom();drawPlayer();drawPersistentCharacters();if(scene==='restaurant'&&broom&&cleaned<3){drawHeldBroom()}if(scene==='basement'&&breaker){ctx.fillStyle='#d7d09a';ctx.shadowColor='#e8dca0';ctx.shadowBlur=25;ctx.fillRect(800,130,10,10);ctx.shadowBlur=0}drawPowerOutOverlay()}
 function nearObject(){let n=null,dmin=1e9;for(const o of objects){if(o.id==='broom'&&broom)continue;let d=Math.hypot(player.x-o.x,player.y-o.y);if(d<o.r+20&&d<dmin){n=o;dmin=d}}return n}
 function move(dt){
  if(scene!=='restaurant'&&scene!=='basement'&&scene!=='reveal'&&scene!=='final'&&scene!=='chapterTwoOutside')return;
