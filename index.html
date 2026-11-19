@@ -1555,6 +1555,26 @@ html.mobile-access-block .mobile-access-block-screen{
   #stage:has(#intro:not(.hidden)) .chapter-name { font-size:11px!important; }
   #stage:has(#intro:not(.hidden)) .chapter-state { font-size:9px!important; }
 }
+
+/* Make the chapter landing screen itself compact, not just its contents. */
+@media (min-width:701px) {
+  .panel:has(#intro:not(.hidden)) {
+    height:auto!important;
+    max-height:calc(100dvh - 24px)!important;
+    flex:0 0 auto!important;
+    align-self:center;
+  }
+  .panel:has(#intro:not(.hidden)) #stage {
+    flex:0 0 auto!important;
+    height:clamp(350px,58vh,410px)!important;
+    min-height:0!important;
+  }
+}
+@media (min-width:701px) and (max-height:650px) {
+  .panel:has(#intro:not(.hidden)) #stage {
+    height:clamp(320px,60vh,380px)!important;
+  }
+}
 </style></head>
 <body><div class="mobile-access-block-screen" role="alert" aria-live="polite"><div class="mobile-access-card"><div class="access-mark">RIP</div><span class="access-kicker">LAST SHIFT · ACCESS CONTROL</span><h1>ورود با موبایل امکان‌پذیر نیست</h1><div class="access-rule"></div><p>این بازی برای نمایش در صفحه‌نمایش بزرگ طراحی شده است.<br>برای ورود، از <strong>کامپیوتر یا لپ‌تاپ ویندوز</strong> استفاده کنید.</p><span class="access-foot">RIP AMOO AMIR · DESKTOP EXPERIENCE</span></div></div><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
