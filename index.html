@@ -1922,13 +1922,13 @@ function drawAsgharChef(x,y){
   lowCtx.imageSmoothingEnabled=true;lowCtx.imageSmoothingQuality='high';
   lowCtx.drawImage(asgharChefSprite,bounds.x,bounds.y,bounds.w,bounds.h,0,0,lowW,lowH);
  }
- const breath=Math.sin(performance.now()/850)*0.003;
+ // بدون انیمیشن تنفس؛ کاراکتر کاملاً ثابت رسم می‌شود.
  ctx.imageSmoothingEnabled=false;
  const pixelW=asgharChefPixelSprite.width*2;
  ctx.filter='blur(0.7px)';
  ctx.drawImage(asgharChefPixelSprite,
-  x-pixelW*(1+breath)/2,groundY-targetH*(1+breath)+5,
-  pixelW*(1+breath),targetH*(1+breath));
+  x-pixelW/2,groundY-targetH+5,
+  pixelW,targetH);
  ctx.filter='none';
  ctx.restore();
 }
