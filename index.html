@@ -1335,6 +1335,177 @@ html.mobile-access-block .mobile-access-block-screen{
 .mobile-access-card strong{color:#18743d;font-weight:900}
 .mobile-access-card .access-foot{display:block;margin-top:23px;padding-top:16px;border-top:1px solid rgba(36,112,61,.14);color:#829488;font-size:11px;letter-spacing:1.5px}
 
+
+/* Desktop single-screen game layout */
+@media (min-width:701px) {
+  html, body {
+    width:100%; height:100%; min-height:0;
+    overflow:hidden!important;
+  }
+  body {
+    padding:12px!important;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .wrap {
+    width:min(1480px, calc(100vw - 24px));
+    max-width:none;
+    height:calc(100dvh - 24px);
+    min-height:0;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
+  }
+  .top, .footer { display:none!important; }
+  .panel {
+    width:100%; height:100%; min-height:0;
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    overflow:hidden;
+    border-radius:18px;
+    background:
+      radial-gradient(ellipse at 50% 0%, #202a34 0%, transparent 58%),
+      linear-gradient(145deg,#151c24,#090d12);
+    border:1px solid #46515d;
+    box-shadow:0 18px 60px #000b, inset 0 1px 0 #ffffff0c;
+  }
+  .hud {
+    flex:0 0 auto;
+    padding:0 2px 7px;
+    border-bottom:1px solid #ffffff16;
+    gap:10px;
+  }
+  .pill {
+    padding:7px 14px;
+    font-size:13px;
+    background:linear-gradient(135deg,#252f39,#151c24);
+    border-color:#465361;
+  }
+  .controls { display:none!important; }
+  #stage {
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:15px;
+    border:1px solid #596675;
+    background:#070a0e;
+    box-shadow:inset 0 0 65px #000c,0 5px 20px #0005;
+  }
+  #stage canvas {
+    width:100%;
+    height:100%;
+    max-width:100%;
+    max-height:100%;
+    aspect-ratio:auto;
+    object-fit:contain;
+  }
+  .dialog {
+    flex:0 0 auto;
+    margin:0;
+    min-height:92px;
+    max-height:125px;
+    padding:9px 13px;
+    border-color:#465462;
+    background:linear-gradient(110deg,#1a232c,#10161d);
+  }
+  .portrait { flex-basis:82px;width:82px;height:82px; }
+  .line { font-size:13px;line-height:1.7;min-height:38px; }
+  .choices {
+    flex:0 0 auto;
+    max-height:94px;
+    overflow:auto;
+    margin:0;
+    padding:2px 1px;
+  }
+  .choices button { min-height:38px; }
+  .actions {
+    flex:0 0 auto;
+    margin:0;
+    justify-content:flex-end;
+    padding-top:7px;
+    border-top:1px solid #ffffff16;
+  }
+  .actions button {
+    min-width:112px;
+    min-height:40px;
+    border-radius:10px;
+  }
+  #stage .overlay {
+    overflow:hidden!important;
+    padding:12px;
+    background:radial-gradient(ellipse at center,#111923eF,#05070bf5);
+  }
+  #stage .chapter-menu {
+    width:min(100%,1050px);
+    max-height:100%;
+    overflow:hidden!important;
+    padding:5px 12px;
+  }
+  #stage .chapter-menu .rip {
+    font-size:clamp(34px,5vh,54px);
+    letter-spacing:7px;
+    margin:0;
+  }
+  #stage .chapter-menu h1 {
+    font-size:clamp(20px,3vh,28px);
+    margin:0 0 2px;
+  }
+  #stage .chapter-menu p {
+    font-size:12px;
+    line-height:1.6;
+    margin:2px auto 7px;
+  }
+  #stage .creator-link {
+    min-height:34px;
+    margin:3px auto 7px;
+    padding:6px 16px;
+    font-size:12px;
+    border-radius:9px;
+  }
+  #stage .chapter-grid {
+    width:100%;
+    max-width:940px;
+    grid-template-columns:repeat(10,minmax(0,1fr));
+    gap:5px;
+    margin:6px auto;
+  }
+  #stage .chapter-tile {
+    min-height:48px;
+    padding:3px 2px;
+    gap:1px;
+    border-radius:8px;
+  }
+  #stage .chapter-number {
+    font-size:18px;
+    line-height:1.1;
+  }
+  #stage .chapter-name { font-size:10px; }
+  #stage .chapter-state { font-size:9px; }
+  #stage .chapter-note { display:none; }
+  #stage .chapter-tile.locked { opacity:.72; }
+}
+@media (min-width:701px) and (max-height:650px) {
+  body { padding:7px!important; }
+  .wrap { height:calc(100dvh - 14px); }
+  .panel { padding:7px;gap:5px; }
+  .hud { padding-bottom:4px; }
+  .dialog { min-height:76px;max-height:92px;padding:6px 9px; }
+  .portrait { flex-basis:66px;width:66px;height:66px; }
+  .line { font-size:12px;line-height:1.5; }
+  .actions { padding-top:4px; }
+  #stage .chapter-grid { gap:3px;margin:3px auto; }
+  #stage .chapter-tile { min-height:40px; }
+  #stage .chapter-menu .rip { font-size:34px; }
+  #stage .chapter-menu p { margin-bottom:3px; }
+  #stage .creator-link { min-height:29px;margin:2px auto 4px; }
+}
+
 </style></head>
 <body><div class="mobile-access-block-screen" role="alert" aria-live="polite"><div class="mobile-access-card"><div class="access-mark">RIP</div><span class="access-kicker">LAST SHIFT · ACCESS CONTROL</span><h1>ورود با موبایل امکان‌پذیر نیست</h1><div class="access-rule"></div><p>این بازی برای نمایش در صفحه‌نمایش بزرگ طراحی شده است.<br>برای ورود، از <strong>کامپیوتر یا لپ‌تاپ ویندوز</strong> استفاده کنید.</p><span class="access-foot">RIP AMOO AMIR · DESKTOP EXPERIENCE</span></div></div><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
