@@ -2123,22 +2123,33 @@ const mysteriousCharacterSprite=new Image();
 mysteriousCharacterSprite.src='data:image/webp;base64,UklGRgIGAABXRUJQVlA4WAoAAAAQAAAAFAAAOwAAQUxQSKkCAAABoHVte1lBV/+kzcxn27ZtW22S9z7zgZ+XiRzTVzej5KCs+Ub5NqHCCF9o7zRmxbAmLSEXAunZaZhQGJ35S28ziQCBG6Wb/C2hUq0L5W36OBvpyZwt3xdLm1fJiAxcjGf1WRa8brhySrWeTPJScp03ARaGuHpZeWUuY0ipdVhxl8dMnm9SElDKzhMXotOwJoQ7GV57UqiceR/OV1BaJYYu4j0TjtGXEfqSmpG5GCtMBVrI3CHDsVoM9Epe4HYDsQtRmHtGHPXHYphzbBy129ItBt54S8SI62d5xLY1EZmiU59MCbRPPHt9SlNO3EqVmcMPA0O9z3ppAmtEp0Wn8UDeod5e/cn1UW+PzQuOEjvwjsjsbrE/9dQbq2f4n9TC1oawz7/2/bWjTz/E6nBlLsH9V/ILf7y2MfMgBArk+7/b2tJWu8hi0S+60kC205ycgvpcgKBc94iAps6L8lntxMw1r2ZYJTrKKvoLkJinI4jGrNXlqu5nRD4QDuYJSYu3uKRyqVaZSaRvqo6t1B/UuJArTSr4mq0yBgSs1fRogMIjF9ErrLsNCIDndOPFPykTFKug0iBR+TVg5K/nZPk9QghcJZyP4jA8Fyu8nrlDGnpqUR6qur1BiFyrLIOwyj5U1nNywSzLeX1JwXfK695iYJRC8nrZQqGdJSTcr3JAj5S7nUTJXNWlJPT4iMoeFLe61UK/pOTcm2NRX5SnqkTgQmryMm5hfpQ8osyrysILFjTOTktOpySU+S9LiJY2EId5JwfReAg5V4nExK/LaI81zbzI1OWkct1WChS4o+1lS3ajWCzl5XzuhKgZMZZuohgDFrauUybP/PlQIDeunZWEb5eXk61C+153qXHrAcAVlA4IDIDAADwEQCdASoVADwAPj0YiUOiIYwGAoAQAeJZQDD392UDq12yTqAHoAfoB1pvlAXMD8QPNnxHeiz4P8N5Af3K7juOeIDuG/7tyR0av+A+0D4iP5j+pefr5x/6fuEfyP+ff5z7e++b6J364BHpC8ze2oz+5w6lfwtAEBAvQ8QvvuMmVGdO5KhSpsAb0YD3gR4S8xyXO4muB1z/4ADIxyNK2aGq11Evib3yWpJLD/SCYRh6AS8LcroR0P55ZCC3Q77yZNpBfdOItey/cvBgOxJeAj/4Lfr/y/oV/0zdhYlrcnhj/2H2JLbDgyc1xREoJh40geTDwY6mYT22YaJz203UJMFJPt9pzYSAqfApPH3JvzccA6mj4fJxWteRl/HmOYnX6fFz/kRNfGf/rIOz401/S7kAqRgXnfAIDJAop+NexuMJp7xcIRJJJW/tk34HR29z+moF/6Xievj71v9jkI0CAJowneE8PaOB6osF/AXUf6hAArDAxb/gIGm+MS2hXJXUtaaJLgBxmfyc/wO0IGh+Gk8v2sH9jnPWWyvvLqS8G2qTAlrpyI7CMrxOGidNAUIm3wv4eWrJqjOZHMBsMYWpiP/YVH97a//VO3vIso5BPAocwL8Th9/p300jyrshMILOrA+Fne6Aw22rK71SUkxh3p4sfCEpwWZQVfC+zqzMr9UQr6apBhQsIP8pnGGiXVThwtx4PP10tKbtNnH+dsRsvVyrAe+ED2i1/axRvx9cVt7WgQCX46//F+KoMBfQLPm6BO5QLCPOjCwJp9lI/+o08qAkSFHYXbKlkk12wAgWm8vPXNlBuhJ0qCk9ppJ4TW9lf37CWOn0lMW+F/41SpgYfySrajufR+G9Z+p/ke63Hq7U54+0ov0eOfE95Bz5VTbzx3J5TWqoBPLB5rwSqeU84mH9yZIIVQmZZQOvZq6a8m4ZBj+ysJYuJSPZC0RIxLAgPu8BBucn46xv+IhIHVrei1WadW9AOMl4d4z07c3F7vHxNZ5ES3OWdIVZ4WTJ55+U/QIeFAzPn1N88OYiBbHH5as61tppAMTgQobTo63+CmlVUfmMDrUK4nrvMiT4DzG32AAAAA==';
 let mysteriousCharacterPixelSprite=null;
 function drawMysteriousCharacter(x,y){
- if(!mysteriousCharacterSprite.complete||!mysteriousCharacterSprite.naturalWidth)return;
- const sourceH=mysteriousCharacterSprite.naturalHeight,sourceW=mysteriousCharacterSprite.naturalWidth;
- if(!mysteriousCharacterPixelSprite){
-  const lowH=60,lowW=Math.max(1,Math.round(sourceW*lowH/sourceH));
-  mysteriousCharacterPixelSprite=document.createElement('canvas');
-  mysteriousCharacterPixelSprite.width=lowW;mysteriousCharacterPixelSprite.height=lowH;
-  const lowCtx=mysteriousCharacterPixelSprite.getContext('2d');
-  lowCtx.imageSmoothingEnabled=true;lowCtx.imageSmoothingQuality='high';
-  lowCtx.drawImage(mysteriousCharacterSprite,0,0,sourceW,sourceH,0,0,lowW,lowH);
- }
- const targetH=124,groundY=y+13,pixelW=mysteriousCharacterPixelSprite.width*2;
+ const targetH=132,groundY=y+13;
  ctx.save();
- ctx.fillStyle='#0007';ctx.beginPath();ctx.ellipse(x,groundY,20,6,0,0,Math.PI*2);ctx.fill();
- ctx.imageSmoothingEnabled=false;ctx.filter='blur(0.7px)';
- ctx.drawImage(mysteriousCharacterPixelSprite,x-pixelW/2,groundY-targetH+5,pixelW,targetH);
- ctx.filter='none';ctx.restore();
+ ctx.fillStyle='#0008';ctx.beginPath();ctx.ellipse(x,groundY,24,7,0,0,Math.PI*2);ctx.fill();
+ if(mysteriousCharacterSprite.complete&&mysteriousCharacterSprite.naturalWidth){
+  const sourceH=mysteriousCharacterSprite.naturalHeight,sourceW=mysteriousCharacterSprite.naturalWidth;
+  if(!mysteriousCharacterPixelSprite){
+   const lowH=60,lowW=Math.max(1,Math.round(sourceW*lowH/sourceH));
+   mysteriousCharacterPixelSprite=document.createElement('canvas');
+   mysteriousCharacterPixelSprite.width=lowW;mysteriousCharacterPixelSprite.height=lowH;
+   const lowCtx=mysteriousCharacterPixelSprite.getContext('2d');
+   lowCtx.imageSmoothingEnabled=true;lowCtx.imageSmoothingQuality='high';
+   lowCtx.drawImage(mysteriousCharacterSprite,0,0,sourceW,sourceH,0,0,lowW,lowH);
+  }
+  const pixelW=Math.max(64,mysteriousCharacterPixelSprite.width*2);
+  ctx.imageSmoothingEnabled=false;ctx.filter='blur(0.7px)';
+  ctx.drawImage(mysteriousCharacterPixelSprite,x-pixelW/2,groundY-targetH+5,pixelW,targetH);
+  ctx.filter='none';
+ }else{
+  // تا زمان آماده‌شدن تصویر اصلی، حضور شخصیت در صحنه با یک شمایل قابل‌دیدن حفظ می‌شود.
+  ctx.fillStyle='#17191f';ctx.beginPath();ctx.ellipse(x,groundY-101,23,29,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#292b33';ctx.beginPath();ctx.moveTo(x-37,groundY-76);ctx.quadraticCurveTo(x-43,groundY-28,x-30,groundY-5);ctx.lineTo(x+30,groundY-5);ctx.quadraticCurveTo(x+43,groundY-28,x+37,groundY-76);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#b8a18e';ctx.fillRect(x-15,groundY-109,30,9);
+  ctx.fillStyle='#d8d5d0';ctx.fillRect(x-12,groundY-105,7,3);ctx.fillRect(x+5,groundY-105,7,3);
+  ctx.fillStyle='#111318';ctx.fillRect(x-17,groundY-98,34,16);
+  ctx.fillStyle='#111318';ctx.fillRect(x-26,groundY-8,17,8);ctx.fillRect(x+9,groundY-8,17,8);
+ }
+ ctx.restore();
 }
 function drawPersistentCharacters(){
  if(scene==='drive'||scene==='intro'||scene==='introStory'||scene==='roadside'||scene==='ending')return;
@@ -2149,7 +2160,7 @@ function drawPersistentCharacters(){
  // پیام ضبط‌شده/رادیویی اصغر در زیرزمین به معنی حضور فیزیکی او نیست.
  if(scene==='chapterTwoStation'&&chapterTwoAsgharPresent)drawAsgharChef(chapterTwoAsgharX,422);
  if(mysteriousPresent||dialogueCast.has('mysterious')){
-  if(scene==='chapterTwoStation')drawMysteriousCharacter(860,430);
+  if(scene==='chapterTwoStation')drawMysteriousCharacter(710,430);
   else if(scene==='chapterTwoOutside')drawMysteriousCharacter(820,420);
   else if(scene==='restaurant'||scene==='reveal'||scene==='final')drawMysteriousCharacter(480,350);
  }
