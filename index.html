@@ -2148,7 +2148,7 @@ function drawPersistentCharacters(){
  }
  // پیام ضبط‌شده/رادیویی اصغر در زیرزمین به معنی حضور فیزیکی او نیست.
  if(scene==='chapterTwoStation'&&chapterTwoAsgharPresent)drawAsgharChef(chapterTwoAsgharX,422);
- if(dialogueCast.has('mysterious')){
+ if(mysteriousPresent||dialogueCast.has('mysterious')){
   if(scene==='chapterTwoStation')drawMysteriousCharacter(860,430);
   else if(scene==='chapterTwoOutside')drawMysteriousCharacter(820,420);
   else if(scene==='restaurant'||scene==='reveal'||scene==='final')drawMysteriousCharacter(480,350);
@@ -2185,7 +2185,7 @@ function drawHeldBroom(){
  }
  ctx.restore();
 }
-function draw(){ctx.clearRect(0,0,W,H);if(scene==='drive'){drawDrive();return}if(scene==='intro'||scene==='introStory'){drawDrive();return}if(scene==='roadside'){drawRoadsideScene();return}if(scene==='ending'){drawEndingScene();return}if(scene==='chapterTwoOutside'){drawChapterTwoOutside();drawChapterTwoPair();drawHotspotLabels(true);return}if(scene==='chapterTwoStation'){drawChapterTwoStation();drawChapterTwoPair();drawPersistentCharacters();return}drawRoom();drawRestaurantLightingOverlay();drawPlayer();drawPersistentCharacters();if(scene==='restaurant'&&broom&&cleaned<3){drawHeldBroom()}if(scene==='basement'&&breaker){ctx.fillStyle='#d7d09a';ctx.shadowColor='#e8dca0';ctx.shadowBlur=25;ctx.fillRect(800,130,10,10);ctx.shadowBlur=0}drawPowerOutOverlay()}
+function draw(){ctx.clearRect(0,0,W,H);if(scene==='drive'){drawDrive();return}if(scene==='intro'||scene==='introStory'){drawDrive();return}if(scene==='roadside'){drawRoadsideScene();return}if(scene==='ending'){drawEndingScene();return}if(scene==='chapterTwoOutside'){drawChapterTwoOutside();drawChapterTwoPair();drawPersistentCharacters();drawHotspotLabels(true);return}if(scene==='chapterTwoStation'){drawChapterTwoStation();drawChapterTwoPair();drawPersistentCharacters();return}drawRoom();drawRestaurantLightingOverlay();drawPlayer();drawPersistentCharacters();if(scene==='restaurant'&&broom&&cleaned<3){drawHeldBroom()}if(scene==='basement'&&breaker){ctx.fillStyle='#d7d09a';ctx.shadowColor='#e8dca0';ctx.shadowBlur=25;ctx.fillRect(800,130,10,10);ctx.shadowBlur=0}drawPowerOutOverlay()}
 function nearObject(){let n=null,dmin=1e9;for(const o of objects){if(o.id==='broom'&&broom)continue;let d=Math.hypot(player.x-o.x,player.y-o.y);if(d<o.r+20&&d<dmin){n=o;dmin=d}}return n}
 function move(dt){
  if(scene!=='restaurant'&&scene!=='basement'&&scene!=='reveal'&&scene!=='final'&&scene!=='chapterTwoOutside')return;
