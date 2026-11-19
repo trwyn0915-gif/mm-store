@@ -1635,7 +1635,7 @@ spots.forEach((s,i)=>{if(!s.done){
  ctx.restore();
 }});
 if(knocks>0){ctx.fillStyle='#a9c2c5';ctx.globalAlpha=.13;ctx.fillRect(900,220,22,110);ctx.globalAlpha=1}
-if(scene==='reveal'||scene==='final')drawPerson(mhChase.active?mhChase.x:650,mhChase.active?mhChase.y:405,'mh');
+if(scene==='reveal'||scene==='final')drawPerson(mhChase.elapsed>0?mhChase.x:650,mhChase.elapsed>0?mhChase.y:405,'mh',mhChase.face);
 drawHotspotLabels();
 if(shadowUntil>performance.now()){const q=(performance.now()-shadowStart)/1400,sx=shadowOrigin+Math.sin(q*5)*115;ctx.save();ctx.globalAlpha=.42*(1-q);ctx.fillStyle='#020304';ctx.beginPath();ctx.ellipse(sx,235,24,43,0,0,Math.PI*2);ctx.fill();ctx.fillRect(sx-18,260,36,75);ctx.beginPath();ctx.ellipse(sx,213,18,20,0,0,Math.PI*2);ctx.fill();ctx.restore()}
 }else if(scene==='basement'){
