@@ -1838,11 +1838,32 @@ function drawChapterTwoOutside(){
  drawCar(145,480,.62,0);ctx.fillStyle='#e0d0a6';ctx.font='bold 13px Vazirmatn';ctx.textAlign='center';ctx.fillText('خودروی عمو امیر',145,410);
  ctx.fillStyle='rgba(190,204,194,.045)';ctx.fillRect(0,348,W,27);
 }
+function drawRestaurantLightingOverlay(){
+ if(scene!=='restaurant'&&scene!=='reveal'&&scene!=='final')return;
+ const now=performance.now();
+ let blinkCount=0;
+ for(let i=0;i<3;i++){
+  const cycle=(now+i*730)%5200;
+  if((cycle>3650&&cycle<3790)||(cycle>3890&&cycle<3970))blinkCount++;
+ }
+ if(!blinkCount)return;
+ // با خاموش شدن چراغ‌ها، نور عمومی سالن هم کم می‌شود؛ آشپزخانه تاریک‌تر می‌ماند.
+ ctx.save();
+ ctx.fillStyle='rgba(5,8,10,'+(blinkCount>1?'.34':'.23')+')';
+ ctx.fillRect(38,38,884,466);
+ const kitchen=ctx.createLinearGradient(0,195,0,315);
+ kitchen.addColorStop(0,'rgba(0,0,0,.18)');
+ kitchen.addColorStop(.55,'rgba(0,0,0,.48)');
+ kitchen.addColorStop(1,'rgba(0,0,0,.22)');
+ ctx.fillStyle=kitchen;
+ ctx.fillRect(397,198,166,110);
+ ctx.restore();
+}
 function drawPersistentCharacters(){
  if(scene==='drive'||scene==='intro'||scene==='introStory'||scene==='roadside'||scene==='ending')return;
  // اصغر ابتدا کنار پیشخوان استقبال می‌کند و پس از پایان گفت‌وگوی اول به آشپزخانه می‌رود.
  if(scene==='restaurant'&&(asgharLocation==='counter'||dialogueCast.has('asghar'))){
-  drawPerson(480,350,'asghar');
+  drawPerson(480,322,'asghar');
  }
  // پیام ضبط‌شده/رادیویی اصغر در زیرزمین به معنی حضور فیزیکی او نیست.
  if(scene==='chapterTwoStation'&&(dialogueCast.has('asghar')||chapterTwoAsgharPresent))drawPerson(740,430,'asghar');
@@ -1883,7 +1904,7 @@ function drawHeldBroom(){
  }
  ctx.restore();
 }
-function draw(){ctx.clearRect(0,0,W,H);if(scene==='drive'){drawDrive();return}if(scene==='intro'||scene==='introStory'){drawDrive();return}if(scene==='roadside'){drawRoadsideScene();return}if(scene==='ending'){drawEndingScene();return}if(scene==='chapterTwoOutside'){drawChapterTwoOutside();drawChapterTwoPair();drawHotspotLabels();return}if(scene==='chapterTwoStation'){drawChapterTwoStation();drawChapterTwoPair();drawPersistentCharacters();return}drawRoom();drawPlayer();drawPersistentCharacters();if(scene==='restaurant'&&broom&&cleaned<3){drawHeldBroom()}if(scene==='basement'&&breaker){ctx.fillStyle='#d7d09a';ctx.shadowColor='#e8dca0';ctx.shadowBlur=25;ctx.fillRect(800,130,10,10);ctx.shadowBlur=0}drawPowerOutOverlay()}
+function draw(){ctx.clearRect(0,0,W,H);if(scene==='drive'){drawDrive();return}if(scene==='intro'||scene==='introStory'){drawDrive();return}if(scene==='roadside'){drawRoadsideScene();return}if(scene==='ending'){drawEndingScene();return}if(scene==='chapterTwoOutside'){drawChapterTwoOutside();drawChapterTwoPair();drawHotspotLabels();return}if(scene==='chapterTwoStation'){drawChapterTwoStation();drawChapterTwoPair();drawPersistentCharacters();return}drawRoom();drawRestaurantLightingOverlay();drawPlayer();drawPersistentCharacters();if(scene==='restaurant'&&broom&&cleaned<3){drawHeldBroom()}if(scene==='basement'&&breaker){ctx.fillStyle='#d7d09a';ctx.shadowColor='#e8dca0';ctx.shadowBlur=25;ctx.fillRect(800,130,10,10);ctx.shadowBlur=0}drawPowerOutOverlay()}
 function nearObject(){let n=null,dmin=1e9;for(const o of objects){if(o.id==='broom'&&broom)continue;let d=Math.hypot(player.x-o.x,player.y-o.y);if(d<o.r+20&&d<dmin){n=o;dmin=d}}return n}
 function move(dt){
  if(scene!=='restaurant'&&scene!=='basement'&&scene!=='reveal'&&scene!=='final'&&scene!=='chapterTwoOutside')return;
