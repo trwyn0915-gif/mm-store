@@ -2129,7 +2129,7 @@ function drawMysteriousCharacter(x,y){
  ctx.beginPath();ctx.ellipse(x,groundY,31,7,0,0,Math.PI*2);ctx.fill();
  if(mysteriousCharacterSprite.complete&&mysteriousCharacterSprite.naturalWidth>0){
   // نسبت تصویر را نزدیک به تصویر تمام‌قد ارسالی نگه می‌داریم؛ بدون کوچک‌سازی به یک نوار باریک.
-  const h=115,w=44;
+  const h=115,w=42;
   ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
   ctx.filter='blur(0.7px)';
   ctx.drawImage(mysteriousCharacterSprite,x-w/2,groundY-h+5,w,h);
@@ -2145,10 +2145,10 @@ function drawPersistentCharacters(){
  if(scene==='restaurant'&&asgharLocation==='counter'){
   drawAsgharChef(610,420);
  }
- if(scene==='chapterTwoStation'&&chapterTwoAsgharPresent)drawAsgharChef(chapterTwoAsgharX,422);
+ if(scene==='chapterTwoStation'&&chapterTwoAsgharPresent)drawAsgharChef(400,422);
  // مرد مرموز پس از پیدا شدن هر سه سرنخ، کنار درِ ورودی ایستگاه دیده می‌شود.
  if(scene==='chapterTwoStation'&&mysteriousPresent){
-  drawMysteriousCharacter(850,430);
+  drawMysteriousCharacter(540,430);
  }else if(scene==='chapterTwoOutside'&&mysteriousPresent){
   drawMysteriousCharacter(820,420);
  }else if((scene==='reveal'||scene==='final')&&mysteriousPresent){
