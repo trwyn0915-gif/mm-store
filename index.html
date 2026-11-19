@@ -1966,7 +1966,7 @@ function drawPlayer(){
   const drawW=Math.round(b.w*scale),drawX=Math.round(player.x-drawW/2),drawY=Math.round(player.y+13-targetH);
   ctx.drawImage(amirAtlas,cellX+b.x,cellY+b.y,b.w,b.h,drawX,drawY,drawW,targetH);
  }else{
-  const drawH=(player.face==='left'||player.face==='right')?115:120;
+  const drawH=(player.face==='left'||player.face==='right')?100:120;
   const drawW=Math.round(52*drawH/120);
   ctx.drawImage(amirAtlas,cellX,cellY,24,60,player.x-drawW/2,player.y+13-drawH,drawW,drawH);
  }
