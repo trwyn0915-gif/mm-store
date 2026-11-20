@@ -1984,17 +1984,54 @@ function drawEndingScene(){
  ctx.strokeStyle='#b4a37c';ctx.setLineDash([34,30]);ctx.lineDashOffset=-(performance.now()*.045)%64;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,455);ctx.lineTo(W,455);ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;drawCar(480,465,.88,0);
  ctx.fillStyle='#c5c0a5';ctx.globalAlpha=.16;for(let i=0;i<7;i++){ctx.beginPath();ctx.ellipse((i*151+performance.now()*.012)%1000,350+(i%3)*35,95,12,0,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;ctx.fillStyle='#d8cba8';ctx.font='bold 16px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی · سپیده‌دم',480,70)
 }
+function drawPineTree(x,baseY,height,width,shade=0){
+ ctx.save();ctx.translate(x,baseY);ctx.scale(width/150,height/260);
+ ctx.fillStyle='#241f1b';ctx.beginPath();ctx.moveTo(-10,-10);ctx.lineTo(-7,-88);ctx.lineTo(7,-88);ctx.lineTo(10,-10);ctx.fill();
+ const tiers=[{y:-258,w:16,h:66},{y:-218,w:30,h:76},{y:-172,w:43,h:82},{y:-124,w:56,h:88},{y:-76,w:70,h:94}];
+ for(let i=0;i<tiers.length;i++){
+  const t=tiers[i],dark=(i+shade)%2===0;
+  const grad=ctx.createLinearGradient(-t.w,t.y, t.w,t.y+t.h);
+  grad.addColorStop(0,dark?'#173329':'#1c3d31');
+  grad.addColorStop(.55,dark?'#24523b':'#28613e');
+  grad.addColorStop(1,'#10271f');
+  ctx.fillStyle=grad;ctx.strokeStyle='#091a16';ctx.lineWidth=2.2;
+  ctx.beginPath();ctx.moveTo(0,t.y);ctx.lineTo(t.w*.72,t.y+t.h*.63);ctx.lineTo(t.w,t.y+t.h*.8);ctx.lineTo(t.w*.48,t.y+t.h*.78);ctx.lineTo(t.w*.8,t.y+t.h);ctx.lineTo(-t.w*.8,t.y+t.h);ctx.lineTo(-t.w*.48,t.y+t.h*.78);ctx.lineTo(-t.w,t.y+t.h*.8);ctx.lineTo(-t.w*.72,t.y+t.h*.63);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.globalAlpha=.35;ctx.fillStyle='#5b8950';ctx.beginPath();ctx.moveTo(0,t.y+8);ctx.lineTo(-t.w*.5,t.y+t.h*.62);ctx.lineTo(-t.w*.12,t.y+t.h*.55);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+ }
+ ctx.restore();
+}
+function drawForestBackdrop(baseY=365,moving=0){
+ // دو ردیف درخت با عمق متفاوت؛ ردیف دورتر تیره‌تر و کوچک‌تر است.
+ for(let i=0;i<25;i++){
+  const x=((i*79+moving)%1160+1160)%1160-100;
+  const h=145+(i%5)*19,w=76+(i%4)*10;
+  drawPineTree(x,baseY-10,h,w,i%2);
+ }
+ for(let i=0;i<15;i++){
+  const x=((i*113+53+moving*.55)%1160+1160)%1160-100;
+  const h=205+(i%4)*22,w=112+(i%3)*13;
+  drawPineTree(x,baseY+7,h,w,(i+1)%2);
+ }
+}
+function drawNightAtmosphere(alpha=.2){
+ ctx.save();const g=ctx.createLinearGradient(0,0,0,H);
+ g.addColorStop(0,'rgba(2,7,20,.38)');g.addColorStop(.58,'rgba(3,9,19,.18)');g.addColorStop(1,'rgba(2,5,12,'+alpha+')');
+ ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ const vignette=ctx.createRadialGradient(W/2,H*.45,90,W/2,H*.45,620);
+ vignette.addColorStop(0,'rgba(0,0,0,0)');vignette.addColorStop(1,'rgba(0,3,10,.38)');
+ ctx.fillStyle=vignette;ctx.fillRect(0,0,W,H);ctx.restore();
+}
 function drawDrive(){
  let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080d13');g.addColorStop(1,'#252c2a');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
- for(let i=0;i<18;i++){let x=((i*67+roadMotion*.7)%1120+1120)%1120-80;let h=185+(i%4)*25;ctx.fillStyle=i%2?'#0b1714':'#14211d';ctx.beginPath();ctx.moveTo(x-48,365);ctx.lineTo(x,365-h);ctx.lineTo(x+48,365);ctx.fill();}
+ drawForestBackdrop(365,roadMotion*.7);
  ctx.fillStyle='#252b2c';ctx.fillRect(0,360,W,180);ctx.fillStyle='#414747';ctx.fillRect(0,370,W,160);ctx.fillStyle='#77766c';ctx.fillRect(0,360,W,5);ctx.fillRect(0,525,W,5);
  ctx.strokeStyle='#d1bd8a';ctx.setLineDash([34,30]);ctx.lineDashOffset=-(roadMotion*.58)%64;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(0,455);ctx.lineTo(W,455);ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;
- drawCar(480,465+Math.sin(performance.now()*.012)*2.2*driveSpeed,.98,0);ctx.fillStyle='#d6c59b';ctx.font='bold 18px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی',480,70)
+ drawCar(480,465+Math.sin(performance.now()*.012)*2.2*driveSpeed,.98,0);drawNightAtmosphere(.22);ctx.fillStyle='#d6c59b';ctx.font='bold 18px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی',480,70)
 }
 function drawRoadsideScene(){
  let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080f13');g.addColorStop(.58,'#14201d');g.addColorStop(1,'#202522');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
  // جنگل ثابت در پس‌زمینه
- for(let i=0;i<22;i++){let x=(i*53)%1040-35,h=190+(i%5)*32;ctx.fillStyle=i%3===0?'#0b1714':'#111d19';ctx.beginPath();ctx.moveTo(x-52,375);ctx.lineTo(x,375-h);ctx.lineTo(x+52,375);ctx.closePath();ctx.fill();}
+ drawForestBackdrop(375,0);
  // جاده و خط‌کشی کاملاً ثابت
  ctx.fillStyle='#292f30';ctx.fillRect(0,365,W,175);ctx.fillStyle='#454a47';ctx.fillRect(0,374,W,155);ctx.fillStyle='#858176';ctx.fillRect(0,365,W,5);ctx.fillRect(0,527,W,4);
  ctx.strokeStyle='#cbb98b';ctx.setLineDash([34,30]);ctx.lineDashOffset=0;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,455);ctx.lineTo(W,455);ctx.stroke();ctx.setLineDash([]);
@@ -2011,7 +2048,7 @@ function drawRoadsideScene(){
  // چراغ‌های گرم کنار ورودی
  for(const x of [590,825]){ctx.fillStyle='#d5b77b';ctx.fillRect(x,232,7,18);ctx.fillStyle='rgba(230,185,105,.18)';ctx.beginPath();ctx.arc(x+3,243,27,0,Math.PI*2);ctx.fill()}
  // ماشین پس از ترمز کنار جاده پارک شده و کاملاً ثابت است
- drawCar(260,465,.88,0);
+ drawCar(260,465,.88,0);drawNightAtmosphere(.2);
  ctx.fillStyle='#d6c59b';ctx.font='bold 17px Vazirmatn';ctx.textAlign='center';ctx.fillText('رستوران جنگلی',705,112)
 }
 function drawChapterTwoStation(){
@@ -2030,7 +2067,7 @@ function drawChapterTwoStation(){
 function drawChapterTwoOutside(){
  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080d13');g.addColorStop(1,'#252c2a');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
  // همان فرم و رنگ درختان فصل اول؛ همه پشت جاده
- for(let i=0;i<18;i++){const x=((i*67)%1120+1120)%1120-80,h=185+(i%4)*25;ctx.fillStyle=i%2?'#0b1714':'#14211d';ctx.beginPath();ctx.moveTo(x-48,365);ctx.lineTo(x,365-h);ctx.lineTo(x+48,365);ctx.closePath();ctx.fill();}
+ drawForestBackdrop(365,0);
  // حاشیه خاکی زیر درختان
  ctx.fillStyle='#26372d';ctx.fillRect(0,348,W,24);
  // ساختمان ایستگاه با پایه و پله‌ای که تا سطح زمین ادامه دارد
@@ -2046,7 +2083,7 @@ function drawChapterTwoOutside(){
  // جاده و خط‌کشی در پیش‌زمینه
  ctx.fillStyle='#292f30';ctx.fillRect(0,375,W,165);ctx.fillStyle='#414744';ctx.fillRect(0,383,W,149);ctx.fillStyle='#77766c';ctx.fillRect(0,375,W,4);ctx.fillRect(0,532,W,4);
  ctx.strokeStyle='#c8b98e';ctx.lineWidth=4;ctx.setLineDash([30,26]);ctx.lineDashOffset=0;ctx.beginPath();ctx.moveTo(0,458);ctx.lineTo(W,458);ctx.stroke();ctx.setLineDash([]);
- drawCar(145,480,.62,0);
+ drawCar(145,480,.62,0);drawNightAtmosphere(.23);
  ctx.fillStyle='rgba(190,204,194,.045)';ctx.fillRect(0,348,W,27);
 }
 function drawRestaurantLightingOverlay(){
