@@ -1985,7 +1985,9 @@ function drawEndingScene(){
  ctx.fillStyle='#c5c0a5';ctx.globalAlpha=.16;for(let i=0;i<7;i++){ctx.beginPath();ctx.ellipse((i*151+performance.now()*.012)%1000,350+(i%3)*35,95,12,0,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;ctx.fillStyle='#d8cba8';ctx.font='bold 16px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی · سپیده‌دم',480,70)
 }
 const forestTreeSprite=new Image();
-forestTreeSprite.src='pine-tree.webp';
+forestTreeSprite.onload=()=>{if(typeof draw==='function')draw();};
+forestTreeSprite.onerror=()=>console.error('Forest tree sprite failed to load:',forestTreeSprite.src);
+forestTreeSprite.src='./pine-tree.webp';
 function drawForestBackdrop(baseY=365,moving=0){
  if(!forestTreeSprite.complete||!forestTreeSprite.naturalWidth)return;
  // ردیف دورتر: کوچک‌تر و کم‌رنگ‌تر برای ایجاد عمق
