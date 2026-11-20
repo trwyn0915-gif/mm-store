@@ -2030,7 +2030,7 @@ function drawChapterTwoStation(){
 function drawChapterTwoOutside(){
  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080d13');g.addColorStop(1,'#252c2a');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
  // همان فرم و رنگ درختان فصل اول؛ همه پشت جاده
- drawForestBackdrop(365,0);
+ for(let i=0;i<18;i++){const x=((i*67)%1120+1120)%1120-80,h=185+(i%4)*25;ctx.fillStyle=i%2?'#0b1714':'#14211d';ctx.beginPath();ctx.moveTo(x-48,365);ctx.lineTo(x,365-h);ctx.lineTo(x+48,365);ctx.closePath();ctx.fill();}
  // حاشیه خاکی زیر درختان
  ctx.fillStyle='#26372d';ctx.fillRect(0,348,W,24);
  // ساختمان ایستگاه با پایه و پله‌ای که تا سطح زمین ادامه دارد
@@ -2046,7 +2046,7 @@ function drawChapterTwoOutside(){
  // جاده و خط‌کشی در پیش‌زمینه
  ctx.fillStyle='#292f30';ctx.fillRect(0,375,W,165);ctx.fillStyle='#414744';ctx.fillRect(0,383,W,149);ctx.fillStyle='#77766c';ctx.fillRect(0,375,W,4);ctx.fillRect(0,532,W,4);
  ctx.strokeStyle='#c8b98e';ctx.lineWidth=4;ctx.setLineDash([30,26]);ctx.lineDashOffset=0;ctx.beginPath();ctx.moveTo(0,458);ctx.lineTo(W,458);ctx.stroke();ctx.setLineDash([]);
- drawCar(145,480,.62,0);drawNightAtmosphere(.23);
+ drawCar(145,480,.62,0);
  ctx.fillStyle='rgba(190,204,194,.045)';ctx.fillRect(0,348,W,27);
 }
 function drawRestaurantLightingOverlay(){
