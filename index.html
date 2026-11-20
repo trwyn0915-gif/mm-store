@@ -1982,48 +1982,19 @@ function drawEndingScene(){
  for(let i=0;i<22;i++){let x=(i*97)%1000,h=170+(i%5)*38;ctx.fillStyle=i%2?'#0b1714':'#111d19';ctx.beginPath();ctx.moveTo(x-58,420);ctx.lineTo(x,420-h);ctx.lineTo(x+58,420);ctx.fill();}
  ctx.fillStyle='#292f2e';ctx.fillRect(0,360,W,180);ctx.fillStyle='#424844';ctx.fillRect(0,370,W,160);ctx.fillStyle='#77766c';ctx.fillRect(0,360,W,5);ctx.fillRect(0,525,W,5);
  ctx.strokeStyle='#b4a37c';ctx.setLineDash([34,30]);ctx.lineDashOffset=-(performance.now()*.045)%64;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,455);ctx.lineTo(W,455);ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;drawCar(480,465,.88,0);
- ctx.fillStyle='#c5c0a5';ctx.globalAlpha=.16;for(let i=0;i<7;i++){ctx.beginPath();ctx.ellipse((i*151+performance.now()*.012)%1000,350+(i%3)*35,95,12,0,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;ctx.fillStyle='#d8cba8';ctx.font='bold 16px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی · شب',480,70)
-}
-const forestTreeSprite=new Image();
-forestTreeSprite.onload=()=>{if(typeof draw==='function')draw();};
-forestTreeSprite.onerror=()=>console.error('Forest tree sprite failed to load:',forestTreeSprite.src);
-fetch('./tree-sprite-exact.b64').then(r=>{if(!r.ok)throw new Error('Tree asset HTTP '+r.status);return r.text()}).then(b64=>{forestTreeSprite.src='data:image/webp;base64,'+b64.trim()}).catch(err=>console.error('Forest tree sprite load failed:',err));
-function drawForestBackdrop(baseY=365,moving=0){
- if(!forestTreeSprite.complete||!forestTreeSprite.naturalWidth)return;
- // یک ردیف منظم از همان درخت ارسالی؛ بدون روی‌هم‌افتادن تصاویر
- const trees=[
-  {x:48,h:205},{x:178,h:226},{x:308,h:198},{x:438,h:232},
-  {x:568,h:207},{x:698,h:228},{x:828,h:199},{x:958,h:222}
- ];
- const shift=((moving%130)+130)%130;
- for(let i=0;i<trees.length;i++){
-  const t=trees[i],x=t.x-shift;
-  const w=t.h*(forestTreeSprite.naturalWidth/forestTreeSprite.naturalHeight);
-  ctx.save();
-  ctx.globalAlpha=.88;
-  ctx.drawImage(forestTreeSprite,x-w/2,baseY-t.h,w,t.h);
-  ctx.restore();
- }
-}
-function drawNightAtmosphere(alpha=.2){
- ctx.save();const g=ctx.createLinearGradient(0,0,0,H);
- g.addColorStop(0,'rgba(2,7,20,.38)');g.addColorStop(.58,'rgba(3,9,19,.18)');g.addColorStop(1,'rgba(2,5,12,'+alpha+')');
- ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
- const vignette=ctx.createRadialGradient(W/2,H*.45,90,W/2,H*.45,620);
- vignette.addColorStop(0,'rgba(0,0,0,0)');vignette.addColorStop(1,'rgba(0,3,10,.38)');
- ctx.fillStyle=vignette;ctx.fillRect(0,0,W,H);ctx.restore();
+ ctx.fillStyle='#c5c0a5';ctx.globalAlpha=.16;for(let i=0;i<7;i++){ctx.beginPath();ctx.ellipse((i*151+performance.now()*.012)%1000,350+(i%3)*35,95,12,0,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;ctx.fillStyle='#d8cba8';ctx.font='bold 16px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی · سپیده‌دم',480,70)
 }
 function drawDrive(){
  let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080d13');g.addColorStop(1,'#252c2a');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
- drawForestBackdrop(365,roadMotion*.7);
+ for(let i=0;i<18;i++){let x=((i*67+roadMotion*.7)%1120+1120)%1120-80;let h=185+(i%4)*25;ctx.fillStyle=i%2?'#0b1714':'#14211d';ctx.beginPath();ctx.moveTo(x-48,365);ctx.lineTo(x,365-h);ctx.lineTo(x+48,365);ctx.fill();}
  ctx.fillStyle='#252b2c';ctx.fillRect(0,360,W,180);ctx.fillStyle='#414747';ctx.fillRect(0,370,W,160);ctx.fillStyle='#77766c';ctx.fillRect(0,360,W,5);ctx.fillRect(0,525,W,5);
  ctx.strokeStyle='#d1bd8a';ctx.setLineDash([34,30]);ctx.lineDashOffset=-(roadMotion*.58)%64;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(0,455);ctx.lineTo(W,455);ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;
- drawCar(480,465+Math.sin(performance.now()*.012)*2.2*driveSpeed,.98,0);drawNightAtmosphere(.22);ctx.fillStyle='#d6c59b';ctx.font='bold 18px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی',480,70)
+ drawCar(480,465+Math.sin(performance.now()*.012)*2.2*driveSpeed,.98,0);ctx.fillStyle='#d6c59b';ctx.font='bold 18px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی',480,70)
 }
 function drawRoadsideScene(){
  let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080f13');g.addColorStop(.58,'#14201d');g.addColorStop(1,'#202522');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
  // جنگل ثابت در پس‌زمینه
- drawForestBackdrop(375,0);
+ for(let i=0;i<22;i++){let x=(i*53)%1040-35,h=190+(i%5)*32;ctx.fillStyle=i%3===0?'#0b1714':'#111d19';ctx.beginPath();ctx.moveTo(x-52,375);ctx.lineTo(x,375-h);ctx.lineTo(x+52,375);ctx.closePath();ctx.fill();}
  // جاده و خط‌کشی کاملاً ثابت
  ctx.fillStyle='#292f30';ctx.fillRect(0,365,W,175);ctx.fillStyle='#454a47';ctx.fillRect(0,374,W,155);ctx.fillStyle='#858176';ctx.fillRect(0,365,W,5);ctx.fillRect(0,527,W,4);
  ctx.strokeStyle='#cbb98b';ctx.setLineDash([34,30]);ctx.lineDashOffset=0;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,455);ctx.lineTo(W,455);ctx.stroke();ctx.setLineDash([]);
@@ -2040,7 +2011,7 @@ function drawRoadsideScene(){
  // چراغ‌های گرم کنار ورودی
  for(const x of [590,825]){ctx.fillStyle='#d5b77b';ctx.fillRect(x,232,7,18);ctx.fillStyle='rgba(230,185,105,.18)';ctx.beginPath();ctx.arc(x+3,243,27,0,Math.PI*2);ctx.fill()}
  // ماشین پس از ترمز کنار جاده پارک شده و کاملاً ثابت است
- drawCar(260,465,.88,0);drawNightAtmosphere(.2);
+ drawCar(260,465,.88,0);
  ctx.fillStyle='#d6c59b';ctx.font='bold 17px Vazirmatn';ctx.textAlign='center';ctx.fillText('رستوران جنگلی',705,112)
 }
 function drawChapterTwoStation(){
