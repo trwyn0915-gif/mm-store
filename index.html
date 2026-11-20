@@ -1984,33 +1984,23 @@ function drawEndingScene(){
  ctx.strokeStyle='#b4a37c';ctx.setLineDash([34,30]);ctx.lineDashOffset=-(performance.now()*.045)%64;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,455);ctx.lineTo(W,455);ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;drawCar(480,465,.88,0);
  ctx.fillStyle='#c5c0a5';ctx.globalAlpha=.16;for(let i=0;i<7;i++){ctx.beginPath();ctx.ellipse((i*151+performance.now()*.012)%1000,350+(i%3)*35,95,12,0,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;ctx.fillStyle='#d8cba8';ctx.font='bold 16px Vazirmatn';ctx.textAlign='center';ctx.fillText('جاده جنگلی · سپیده‌دم',480,70)
 }
-function drawPineTree(x,baseY,height,width,shade=0){
- ctx.save();ctx.translate(x,baseY);ctx.scale(width/150,height/260);
- ctx.fillStyle='#241f1b';ctx.beginPath();ctx.moveTo(-10,-10);ctx.lineTo(-7,-88);ctx.lineTo(7,-88);ctx.lineTo(10,-10);ctx.fill();
- const tiers=[{y:-258,w:16,h:66},{y:-218,w:30,h:76},{y:-172,w:43,h:82},{y:-124,w:56,h:88},{y:-76,w:70,h:94}];
- for(let i=0;i<tiers.length;i++){
-  const t=tiers[i],dark=(i+shade)%2===0;
-  const grad=ctx.createLinearGradient(-t.w,t.y, t.w,t.y+t.h);
-  grad.addColorStop(0,dark?'#173329':'#1c3d31');
-  grad.addColorStop(.55,dark?'#24523b':'#28613e');
-  grad.addColorStop(1,'#10271f');
-  ctx.fillStyle=grad;ctx.strokeStyle='#091a16';ctx.lineWidth=2.2;
-  ctx.beginPath();ctx.moveTo(0,t.y);ctx.lineTo(t.w*.72,t.y+t.h*.63);ctx.lineTo(t.w,t.y+t.h*.8);ctx.lineTo(t.w*.48,t.y+t.h*.78);ctx.lineTo(t.w*.8,t.y+t.h);ctx.lineTo(-t.w*.8,t.y+t.h);ctx.lineTo(-t.w*.48,t.y+t.h*.78);ctx.lineTo(-t.w,t.y+t.h*.8);ctx.lineTo(-t.w*.72,t.y+t.h*.63);ctx.closePath();ctx.fill();ctx.stroke();
-  ctx.globalAlpha=.35;ctx.fillStyle='#5b8950';ctx.beginPath();ctx.moveTo(0,t.y+8);ctx.lineTo(-t.w*.5,t.y+t.h*.62);ctx.lineTo(-t.w*.12,t.y+t.h*.55);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+const forestTreeSprite=new Image();
+forestTreeSprite.src='pine-tree.webp';
+function drawForestBackdrop(baseY=365,moving=0){
+ if(!forestTreeSprite.complete||!forestTreeSprite.naturalWidth)return;
+ // ردیف دورتر: کوچک‌تر و کم‌رنگ‌تر برای ایجاد عمق
+ ctx.save();ctx.globalAlpha=.58;
+ for(let i=0;i<17;i++){
+  const x=((i*91+moving*.55)%1190+1190)%1190-105;
+  const h=145+(i%4)*17,w=h*.72;
+  ctx.drawImage(forestTreeSprite,x-w/2,baseY-h,w,h);
  }
  ctx.restore();
-}
-function drawForestBackdrop(baseY=365,moving=0){
- // دو ردیف درخت با عمق متفاوت؛ ردیف دورتر تیره‌تر و کوچک‌تر است.
- for(let i=0;i<25;i++){
-  const x=((i*79+moving)%1160+1160)%1160-100;
-  const h=145+(i%5)*19,w=76+(i%4)*10;
-  drawPineTree(x,baseY-10,h,w,i%2);
- }
- for(let i=0;i<15;i++){
-  const x=((i*113+53+moving*.55)%1160+1160)%1160-100;
-  const h=205+(i%4)*22,w=112+(i%3)*13;
-  drawPineTree(x,baseY+7,h,w,(i+1)%2);
+ // ردیف جلویی: همان تصویر ارسالی، با اندازه‌های متنوع
+ for(let i=0;i<12;i++){
+  const x=((i*127+48+moving)%1260+1260)%1260-115;
+  const h=190+(i%4)*22,w=h*.72;
+  ctx.drawImage(forestTreeSprite,x-w/2,baseY-h+8,w,h);
  }
 }
 function drawNightAtmosphere(alpha=.2){
