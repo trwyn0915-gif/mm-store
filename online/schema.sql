@@ -30,6 +30,8 @@ create index if not exists world_players_room_seen_idx
   on public.world_players(room_id, last_seen_at desc);
 create index if not exists world_chat_room_created_idx
   on public.world_chat(room_id, created_at desc);
+create index if not exists world_chat_user_id_idx
+  on public.world_chat(user_id);
 
 alter table public.world_players enable row level security;
 alter table public.world_chat enable row level security;
@@ -41,17 +43,17 @@ create policy "Players are visible to everyone"
 drop policy if exists "Players can create their own character" on public.world_players;
 create policy "Players can create their own character"
   on public.world_players for insert to authenticated
-  with check (auth.uid() = user_id);
+  with check ((select auth.uid()) = user_id);
 
 drop policy if exists "Players can update their own character" on public.world_players;
 create policy "Players can update their own character"
   on public.world_players for update to authenticated
-  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 drop policy if exists "Players can delete their own character" on public.world_players;
 create policy "Players can delete their own character"
   on public.world_players for delete to authenticated
-  using (auth.uid() = user_id);
+  using ((select auth.uid()) = user_id);
 
 drop policy if exists "Authenticated users can read room chat" on public.world_chat;
 create policy "Authenticated users can read room chat"
