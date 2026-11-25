@@ -352,7 +352,7 @@ window.addEventListener("fullscreenchange",()=>{if(document.body.classList.conta
 // Portrait devices use a rotated landscape game viewport; no physical rotation is required.
 async function stayInGame(){if(!document.fullscreenElement){const root=document.documentElement;if(!root.requestFullscreen){sayToast("این مرورگر امکان بازگشت به تمام‌صفحه را نمی‌دهد");return;}try{await root.requestFullscreen();}catch(e){sayToast("برای ادامه، حالت تمام‌صفحه را از مرورگر فعال کن");return;}}try{await screen.orientation?.lock?.("landscape");}catch(_){}hideExitConfirm();}
 $("stayInGame").addEventListener("click",stayInGame);
-function confirmExitSite(){exitApproved=true;hideExitConfirm();if(history.length>2){history.go(-2);return;}if(document.referrer){location.replace(document.referrer);return;}location.replace("https://github.com/trwyn0915-gif/mm-store");}
+function confirmExitSite(){exitApproved=true;let destination="https://github.com/trwyn0915-gif/mm-store";try{if(document.referrer&&new URL(document.referrer).origin!==location.origin)destination=document.referrer;}catch(_){}location.replace(destination);}
 $("confirmExit").addEventListener("click",confirmExitSite);
 function toggleChat(){if(!connected){sayToast("برای چت باید ابتدا وارد دنیای آنلاین شوی");return;}const bottom=document.querySelector(".bottom");bottom.classList.toggle("chat-open");}
 $("chatToggle").addEventListener("click",toggleChat);
@@ -386,6 +386,6 @@ function showFatalGameError(message){
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=32",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=33",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
