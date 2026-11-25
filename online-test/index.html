@@ -304,7 +304,7 @@ async function ensureAvatar(id,characterId){
   if(avatarLoading.get(id)!==chosen)return null;
   const model=cloneSkinned(gltf.scene);
   const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3());
-  model.scale.setScalar((chosen==="hero"?1.95:2.15)/(size.y||1));model.updateMatrixWorld(true);
+  model.scale.setScalar((chosen==="hero"?1.56:2.15)/(size.y||1));model.updateMatrixWorld(true);
   const fitted=new THREE.Box3().setFromObject(model),center=fitted.getCenter(new THREE.Vector3());
   model.position.x-=center.x;model.position.y-=fitted.min.y;model.position.z-=center.z;
   const group=new THREE.Group();group.add(model);
@@ -370,7 +370,7 @@ function drawPerson(p,isSelf=false){const q=worldToScreen(p.x,p.y),color=skins[p
 function drawWorld(dt=0){
  const px=(player.x-1200)/8,pz=(player.y-900)/8;
  const selfRecord=avatarRecords.get("self");
- if(selfRecord){selfRecord.group.position.set(px,selfRecord.characterId==="hero"?-.56:selfRecord.characterId==="robot"?-.419:-.404,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
+ if(selfRecord){selfRecord.group.position.set(px,selfRecord.characterId==="hero"?-.584:selfRecord.characterId==="robot"?-.415:-.404,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
  const orbitPitch=clamp(.18+lookPitch*.7,-.75,.8);
  const orbitHorizontal=10*Math.cos(orbitPitch);
  camera3D.position.set(px-Math.sin(lookYaw)*orbitHorizontal,1.4+10*Math.sin(orbitPitch),pz+Math.cos(lookYaw)*orbitHorizontal);
@@ -379,8 +379,8 @@ function drawWorld(dt=0){
   const record=avatarRecords.get(id);
   if(record){
    const targetX=(p.x-1200)/8,targetZ=(p.y-900)/8;
-   if(!record.remotePositionReady){record.group.position.set(targetX,record.characterId==="hero"?-.56:record.characterId==="robot"?-.419:-.404,targetZ);record.remotePositionReady=true;}
-   else{const blend=1-Math.exp(-18*Math.min(dt,.05));record.group.position.x+=(targetX-record.group.position.x)*blend;record.group.position.z+=(targetZ-record.group.position.z)*blend;record.group.position.y=record.characterId==="hero"?-.56:record.characterId==="robot"?-.419:-.404;}
+   if(!record.remotePositionReady){record.group.position.set(targetX,record.characterId==="hero"?-.584:record.characterId==="robot"?-.415:-.404,targetZ);record.remotePositionReady=true;}
+   else{const blend=1-Math.exp(-18*Math.min(dt,.05));record.group.position.x+=(targetX-record.group.position.x)*blend;record.group.position.z+=(targetZ-record.group.position.z)*blend;record.group.position.y=record.characterId==="hero"?-.584:record.characterId==="robot"?-.415:-.404;}
    const targetYaw=Number.isFinite(p.yaw)?p.yaw:Math.PI;
    record.group.rotation.y+=Math.atan2(Math.sin(targetYaw-record.group.rotation.y),Math.cos(targetYaw-record.group.rotation.y))*(1-Math.exp(-12*Math.min(dt,.05)));
    setAvatarMoving(record,!!p.moving);record.mixer?.update(dt);
@@ -528,6 +528,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=63",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=64",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
