@@ -228,6 +228,7 @@ body.desktop-blocked #desktopBlock{display:flex!important}
 </head>
 <body>
 <div id="desktopBlock" role="alert" aria-live="assertive"><div class="desktop-block-card"><h1>MM WORLD</h1><p>این بازی فقط برای گوشی طراحی شده است.</p><p>لطفاً لینک بازی را با تلفن همراه باز کنید.</p><small>ورود از طریق کامپیوتر امکان‌پذیر نیست.</small></div></div>
+<audio id="backgroundMusic" src="./assets/music/butterfly.mp3" preload="auto" loop></audio>
 <main class="wrap">
 <header class="head"><div><div class="brand">MM WORLD</div><div class="sub">دنیای آزاد نقش‌آفرینی اتحادیه MM</div></div><span class="tag">نسخه آنلاین آزمایشی</span></header>
 <section class="card">
@@ -250,12 +251,12 @@ body.desktop-blocked #desktopBlock{display:flex!important}
  <div class="game-controls" id="gameControls">
   <div class="side-controls"><button class="game-btn" id="quickChat" aria-label="چت">چت</button><button class="game-btn" id="quickInteract" aria-label="تعامل">تعامل</button><button class="game-btn" id="openShop" aria-label="فروشگاه کاراکترها">فروشگاه</button></div>
   <div class="joy-base" id="joystick" aria-label="جوی‌استیک حرکت"><div class="joy-knob" id="joyKnob"></div></div>
-  <div class="right-controls"></div>
+  <div class="right-controls"><button class="game-btn" id="musicToggle" type="button" aria-label="خاموش کردن موسیقی" aria-pressed="true">موسیقی</button></div>
  </div>
 </div>
 <div class="bottom">
  <section class="panel"><h2>گفت‌وگوی جهانی</h2><div id="chatlog" class="chatlog" aria-live="polite"><div class="chatline">برای گفت‌وگو ابتدا وارد دنیای آنلاین شو.</div></div><form id="chatform" class="chatrow"><input id="chatinput" maxlength="300" placeholder="پیامت را بنویس..." autocomplete="off"><button class="primary" type="submit">ارسال</button></form></section>
- <section class="panel"><h2>راهنمای بازی</h2><div class="help">• حرکت: کلیدهای جهت‌دار یا WASD<br>• موبایل: دکمه‌های پایین صفحه<br>• تعامل: کلید E یا دکمه تعامل<br>• کنار نگهبان دهکده ماموریت بگیر.<br>• گیاهان در جنگل را جمع کن و پاداش بگیر.<br>• بازیکنان دیگر را زنده روی نقشه می‌بینی.</div></section>
+ <section class="panel"><h2>راهنمای بازی</h2><div class="help">• حرکت: کلیدهای جهت‌دار یا WASD<br>• موبایل: دکمه‌های پایین صفحه<br>• تعامل: کلید E یا دکمه تعامل<br>• کنار نگهبان دهکده ماموریت بگیر.<br>• گیاهان در جنگل را جمع کن و پاداش بگیر.<br>• بازیکنان دیگر را زنده روی نقشه می‌بینی.<br>• موسیقی پس‌زمینه: Butterfly — Purrple Cat (CC BY 4.0).</div></section>
 </div>
 </section>
 <div class="foot">MM WORLD · دنیای مشترک آنلاین · اطلاعات اتصال از Supabase Realtime</div>
@@ -493,7 +494,16 @@ async function connect(){
  }
 }
 async function waitForStableViewport(){let lastW=0,lastH=0,stableSince=0;const began=performance.now();while(performance.now()-began<2200){const w=Math.round(window.visualViewport?.width||window.innerWidth),h=Math.round(window.visualViewport?.height||window.innerHeight);if(w===lastW&&h===lastH){if(!stableSince)stableSince=performance.now();if(performance.now()-stableSince>=350)return true;}else{lastW=w;lastH=h;stableSince=0;}await new Promise(resolve=>setTimeout(resolve,80));}return true;}
-async function startFromPage(){if(desktopDevice){document.body.classList.add("desktop-blocked");return;}const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");showLoading();const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال فعال‌سازی حالت افقی و تمام‌صفحه...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{if(screen.orientation?.lock)await screen.orientation.lock("landscape");}catch(e){console.info("Landscape lock unavailable; using the rotated landscape game stage",e);}await waitForStableViewport();setLoadingProgress(8,"در حال آماده‌سازی محیط سه‌بعدی...");document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
+const backgroundMusic=$("backgroundMusic");
+const musicToggle=$("musicToggle");
+let musicEnabled=true;
+backgroundMusic.volume=0.22;
+function updateMusicToggle(){musicToggle.textContent=musicEnabled?"موسیقی روشن":"موسیقی خاموش";musicToggle.setAttribute("aria-pressed",String(musicEnabled));musicToggle.setAttribute("aria-label",musicEnabled?"خاموش کردن موسیقی":"روشن کردن موسیقی");}
+function startBackgroundMusic(){if(!musicEnabled)return;backgroundMusic.play().catch(error=>console.info("Background music could not start:",error));}
+musicToggle.addEventListener("click",()=>{musicEnabled=!musicEnabled;if(musicEnabled)startBackgroundMusic();else backgroundMusic.pause();updateMusicToggle();});
+document.addEventListener("visibilitychange",()=>{if(document.hidden)backgroundMusic.pause();else if(connected&&musicEnabled)startBackgroundMusic();});
+updateMusicToggle();
+async function startFromPage(){if(desktopDevice){document.body.classList.add("desktop-blocked");return;}startBackgroundMusic();const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");showLoading();const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال فعال‌سازی حالت افقی و تمام‌صفحه...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{if(screen.orientation?.lock)await screen.orientation.lock("landscape");}catch(e){console.info("Landscape lock unavailable; using the rotated landscape game stage",e);}await waitForStableViewport();setLoadingProgress(8,"در حال آماده‌سازی محیط سه‌بعدی...");document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
 $("connect").addEventListener("click",startFromPage);
 $("startLandscape").addEventListener("click",startFromPage);
 $("skin").addEventListener("change",()=>{player.skin=ownedCharacters.has($("skin").value)?$("skin").value:"robot";persist();ensureAvatar("self",player.skin).catch(console.error);});
@@ -509,7 +519,7 @@ window.addEventListener("fullscreenchange",()=>{if(document.body.classList.conta
 // Portrait devices use a rotated landscape game viewport; no physical rotation is required.
 async function stayInGame(){if(!document.fullscreenElement){const root=document.documentElement;if(!root.requestFullscreen){sayToast("این مرورگر امکان بازگشت به تمام‌صفحه را نمی‌دهد");return;}try{await root.requestFullscreen();}catch(e){sayToast("برای ادامه، حالت تمام‌صفحه را از مرورگر فعال کن");return;}}try{await screen.orientation?.lock?.("landscape");}catch(_){}hideExitConfirm();}
 $("stayInGame").addEventListener("click",stayInGame);
-async function confirmExitSite(){exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";const startBtn=$("startLandscape");startBtn.disabled=false;startBtn.textContent="ورود به سایت";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
+async function confirmExitSite(){backgroundMusic.pause();backgroundMusic.currentTime=0;exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";const startBtn=$("startLandscape");startBtn.disabled=false;startBtn.textContent="ورود به سایت";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
 $("confirmExit").addEventListener("click",confirmExitSite);
 function toggleChat(){if(!connected){sayToast("برای چت باید ابتدا وارد دنیای آنلاین شوی");return;}const bottom=document.querySelector(".bottom");bottom.classList.toggle("chat-open");}
 $("chatToggle").addEventListener("click",toggleChat);
@@ -543,6 +553,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=85",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=86",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
