@@ -168,6 +168,25 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
  #rotatePrompt small{font-size:clamp(11px,1.7vw,15px)!important}
 }
 
+/* Keep the exit confirmation in the same landscape orientation as the game. */
+@media(max-width:760px) and (orientation:portrait){
+ .exit-overlay{
+  position:fixed!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
+  width:100dvh!important;height:100vw!important;min-height:0!important;
+  padding:clamp(8px,2dvh,18px)!important;box-sizing:border-box!important;
+  transform:translate(-50%,-50%) rotate(90deg)!important;transform-origin:center center!important;
+  overflow:hidden!important;
+ }
+ .exit-dialog{
+  width:min(84%,620px)!important;max-width:620px!important;max-height:94%!important;
+  overflow:auto!important;padding:clamp(14px,2.4dvh,26px)!important;
+ }
+ .exit-mark{width:clamp(40px,7dvh,54px)!important;height:clamp(40px,7dvh,54px)!important}
+ .exit-dialog h2{font-size:clamp(18px,3.8dvh,26px)!important}
+ .exit-dialog p{font-size:clamp(13px,2.7dvh,18px)!important;line-height:1.65!important;margin-bottom:clamp(12px,2.5dvh,22px)!important}
+ .exit-actions{flex-wrap:nowrap!important;gap:clamp(8px,1.8dvh,14px)!important}
+ .exit-actions button{min-height:clamp(42px,7dvh,54px)!important;padding:8px clamp(12px,2.5dvh,22px)!important;font-size:clamp(12px,2.4dvh,16px)!important}
+}
 </style>
 </head>
 <body>
@@ -367,6 +386,6 @@ function showFatalGameError(message){
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=31",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=32",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
