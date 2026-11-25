@@ -1,5 +1,5 @@
-// Copy this file to config.js and add your Supabase project details.
-// The anon/publishable key is intended for browser use; protect data with RLS.
-// Never put a service_role or secret key in this file.
-export const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
-export const SUPABASE_ANON_KEY = "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
+// RIP Online World — public browser configuration.
+// The publishable key is designed for client-side use. Database access is protected by RLS.
+// Never place a Supabase secret or service_role key in this file.
+export const SUPABASE_URL = "https://ncdbhxttxqxsygsbsyyc.supabase.co";
+export const SUPABASE_ANON_KEY = "sb_publishable_CCY-_nSU8Fj9gS_im4BbMA_MrayCkT0";
