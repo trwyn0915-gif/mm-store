@@ -495,7 +495,7 @@ async function connect(){
 }
 async function waitForStableViewport(){let lastW=0,lastH=0,stableSince=0;const began=performance.now();while(performance.now()-began<2200){const w=Math.round(window.visualViewport?.width||window.innerWidth),h=Math.round(window.visualViewport?.height||window.innerHeight);if(w===lastW&&h===lastH){if(!stableSince)stableSince=performance.now();if(performance.now()-stableSince>=350)return true;}else{lastW=w;lastH=h;stableSince=0;}await new Promise(resolve=>setTimeout(resolve,80));}return true;}
 const backgroundMusic=$("backgroundMusic");
-backgroundMusic.volume=0.132;
+backgroundMusic.volume=0.08;
 function startBackgroundMusic(){backgroundMusic.play().catch(error=>console.info("Background music could not start:",error));}
 document.addEventListener("visibilitychange",()=>{if(document.hidden)backgroundMusic.pause();else if(connected)startBackgroundMusic();});
 async function startFromPage(){if(desktopDevice){document.body.classList.add("desktop-blocked");return;}startBackgroundMusic();const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");showLoading();const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال فعال‌سازی حالت افقی و تمام‌صفحه...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{if(screen.orientation?.lock)await screen.orientation.lock("landscape");}catch(e){console.info("Landscape lock unavailable; using the rotated landscape game stage",e);}await waitForStableViewport();setLoadingProgress(8,"در حال آماده‌سازی محیط سه‌بعدی...");document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
@@ -548,6 +548,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=88",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=89",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
