@@ -33,6 +33,22 @@ button,input,select{font:inherit}button{border:1px solid #65766d;border-radius:1
 }
 
 /* Single-screen game mode: controls remain visible in fullscreen on every mobile viewport. */
+
+/* Final fullscreen layout: the game itself is the only visible screen. */
+html:fullscreen,html:fullscreen body{width:100%;height:100%;min-height:100%;margin:0;padding:0;overflow:hidden;background:#071015}
+html:fullscreen body .head,html:fullscreen body .foot,
+html:fullscreen body .bar,html:fullscreen body .stats,
+html:fullscreen body .bottom{display:none!important}
+html:fullscreen body .wrap,html:fullscreen body .card{position:fixed;inset:0;width:100vw;height:100dvh;min-height:0;max-width:none;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;background:#071015;display:block;overflow:hidden}
+html:fullscreen body #gamebox,body.playing #gamebox{position:fixed;inset:0;width:100vw;height:100dvh;min-width:100vw;min-height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;aspect-ratio:auto;overflow:hidden;background:#071015}
+html:fullscreen body #game,body.playing #game{position:absolute;inset:0;width:100%;height:100%;max-width:100%;max-height:100%;aspect-ratio:auto;object-fit:contain;display:block}
+html:fullscreen body .game-controls,body.playing .game-controls{position:fixed;inset:0;width:100vw;height:100dvh;display:block!important;z-index:500;pointer-events:none}
+html:fullscreen body .joy-base,html:fullscreen body .right-controls,html:fullscreen body .side-controls,
+body.playing .joy-base,body.playing .right-controls,body.playing .side-controls{pointer-events:auto}
+html:fullscreen body .bottom.chat-open,body.playing .bottom.chat-open{display:block!important;position:fixed;z-index:700;right:10px;bottom:10px;left:auto;top:auto;width:min(360px,78vw);max-height:72dvh;margin:0;pointer-events:auto}
+html:fullscreen body .bottom.chat-open .panel:last-child,body.playing .bottom.chat-open .panel:last-child{display:none!important}
+html:fullscreen body #rotatePrompt,body.playing #rotatePrompt{display:none!important}
+
 .bar,.stats,.head,.foot{display:none!important}
 .wrap,.card{width:100%;height:100dvh;max-width:none;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;background:transparent;display:flex;flex-direction:column;justify-content:center}
 #gamebox{position:relative;width:min(100vw,177.7778dvh);height:auto;max-height:100dvh;aspect-ratio:16/9;flex:0 1 auto;margin:auto;border:0;border-radius:0;overflow:hidden}
