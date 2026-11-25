@@ -135,7 +135,8 @@ export function createRipOnline() {
       y: Number.isFinite(position.y) ? position.y : 0,
       facing: ["up", "down", "left", "right"].includes(position.facing) ? position.facing : "down",
       displayName: String(position.displayName || "بازیکن").trim().slice(0, 20),
-      skin: String(position.skin || "teal").slice(0, 20),
+      skin: String(position.skin || "hero").slice(0, 20),
+      yaw: Number.isFinite(position.yaw) ? position.yaw : 0,
       sentAt: Date.now()
     };
     const now = Date.now();
