@@ -358,14 +358,14 @@ function drawPerson(p,isSelf=false){const q=worldToScreen(p.x,p.y),color=skins[p
 function drawWorld(dt=0){
  const px=(player.x-1200)/8,pz=(player.y-900)/8;
  const selfRecord=avatarRecords.get("self");
- if(selfRecord){selfRecord.group.position.set(px,0,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
+ if(selfRecord){selfRecord.group.position.set(px,-.04,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
  const orbitPitch=clamp(.18+lookPitch*.7,-.75,.8);
  const orbitHorizontal=10*Math.cos(orbitPitch);
  camera3D.position.set(px-Math.sin(lookYaw)*orbitHorizontal,1.4+10*Math.sin(orbitPitch),pz+Math.cos(lookYaw)*orbitHorizontal);
  camera3D.lookAt(px,1.4,pz);
  for(const [id,p] of Object.entries(players)){
   const record=avatarRecords.get(id);
-  if(record){record.group.position.set((p.x-1200)/8,0,(p.y-900)/8);record.group.rotation.y=Number.isFinite(p.yaw)?p.yaw:Math.PI;setAvatarMoving(record,!!p.moving);record.mixer?.update(dt);}
+  if(record){record.group.position.set((p.x-1200)/8,-.04,(p.y-900)/8);record.group.rotation.y=Number.isFinite(p.yaw)?p.yaw:Math.PI;setAvatarMoving(record,!!p.moving);record.mixer?.update(dt);}
  }
  renderer3D.render(scene3D,camera3D);
 }
@@ -377,17 +377,28 @@ function blocked(x,y){
  for(const t of trees){if(Math.hypot(x-t.x,y-t.y)<t.r+13)return true;}
  return false;
 }
+let smoothForward=0,smoothStrafe=0;
 function move(dt){
  if(lookPointer!==null){player.moving=false;return;}
- let forward=(keys.up?1:0)-(keys.down?1:0),strafe=(keys.right?1:0)-(keys.left?1:0);
- if(!forward&&!strafe){player.moving=false;return;}
- player.moving=true;
- const length=Math.hypot(forward,strafe)||1;forward/=length;strafe/=length;
+ let targetForward=clamp((keys.up?1:0)-(keys.down?1:0)-joyAxisY,-1,1);
+ let targetStrafe=clamp((keys.right?1:0)-(keys.left?1:0)+joyAxisX,-1,1);
+ const inputLength=Math.hypot(targetForward,targetStrafe);
+ if(inputLength>1){targetForward/=inputLength;targetStrafe/=inputLength;}
+ const blend=1-Math.exp(-14*dt);
+ smoothForward+=(targetForward-smoothForward)*blend;
+ smoothStrafe+=(targetStrafe-smoothStrafe)*blend;
+ if(Math.hypot(smoothForward,smoothStrafe)<.025&&inputLength===0){smoothForward=0;smoothStrafe=0;player.moving=false;return;}
+ player.moving=Math.hypot(smoothForward,smoothStrafe)>.06;
  const speed=sprinting?315:190,worldSpeed=speed/8;
- const dx=(Math.sin(lookYaw)*forward+Math.cos(lookYaw)*strafe)*worldSpeed*dt;
- const dz=(-Math.cos(lookYaw)*forward+Math.sin(lookYaw)*strafe)*worldSpeed*dt;
- player.x=clamp(player.x+dx*8,30,W-30);player.y=clamp(player.y+dz*8,30,H-30);player.avatarYaw=Math.atan2(dx,dz);
- player.face=Math.abs(forward)>Math.abs(strafe)?(forward>0?"forward":"back"):(strafe>0?"right":"left");
+ const dx=(Math.sin(lookYaw)*smoothForward+Math.cos(lookYaw)*smoothStrafe)*worldSpeed*dt;
+ const dz=(-Math.cos(lookYaw)*smoothForward+Math.sin(lookYaw)*smoothStrafe)*worldSpeed*dt;
+ player.x=clamp(player.x+dx*8,30,W-30);player.y=clamp(player.y+dz*8,30,H-30);
+ if(Math.hypot(dx,dz)>.0001){
+  const targetYaw=Math.atan2(dx,dz);
+  player.avatarYaw+=Math.atan2(Math.sin(targetYaw-player.avatarYaw),Math.cos(targetYaw-player.avatarYaw))*Math.min(1,dt*12);
+ }
+ const forward=Math.abs(smoothForward),strafe=Math.abs(smoothStrafe);
+ player.face=forward>strafe?(smoothForward>0?"forward":"back"):(smoothStrafe>0?"right":"left");
 }
 
 function nearest(){const candidates=[{...npc,type:"npc"},...herbsSpots.filter(h=>!h.taken).map(h=>({...h,type:"herb"}))];let best=null,d=65;for(const o of candidates){let n=Math.hypot(player.x-o.x,player.y-o.y);if(n<d){d=n;best=o;}}return best;}
@@ -470,14 +481,14 @@ function toggleChat(){if(!connected){sayToast("برای چت باید ابتدا
 $("chatToggle").addEventListener("click",toggleChat);
 $("quickChat").addEventListener("click",toggleChat);
 $("quickInteract").addEventListener("click",interact);
-const joy=$("joystick"),knob=$("joyKnob");let joyPointer=null;
-function resetJoy(){joyPointer=null;keys.up=keys.down=keys.left=keys.right=false;knob.style.transform="translate3d(0,0,0)";}
+const joy=$("joystick"),knob=$("joyKnob");let joyPointer=null,joyAxisX=0,joyAxisY=0;
+function resetJoy(){joyPointer=null;joyAxisX=0;joyAxisY=0;knob.style.transform="translate3d(0,0,0)";}
 joy.addEventListener("pointerdown",e=>{e.preventDefault();if(joyPointer!==null)return;joyPointer=e.pointerId;try{joy.setPointerCapture(e.pointerId);}catch(_){}updateJoy(e);});
 joy.addEventListener("pointermove",e=>{if(e.pointerId===joyPointer){e.preventDefault();updateJoy(e);}});
 joy.addEventListener("pointerup",e=>{if(e.pointerId===joyPointer)resetJoy();});
 joy.addEventListener("pointercancel",e=>{if(e.pointerId===joyPointer)resetJoy();});
 joy.addEventListener("lostpointercapture",resetJoy);
-function updateJoy(e){const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=Math.max(12,(r.width-knob.offsetWidth)/2),len=Math.hypot(dx,dy),scale=len>max?max/len:1,x=dx*scale,y=dy*scale;knob.style.transform=`translate3d(${x}px,${y}px,0)`;const dead= max*.16;keys.left=x< -dead;keys.right=x>dead;keys.up=y< -dead;keys.down=y>dead;}
+function updateJoy(e){const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=Math.max(12,(r.width-knob.offsetWidth)/2),len=Math.hypot(dx,dy),scale=len>max?max/len:1,x=dx*scale,y=dy*scale;knob.style.transform=`translate3d(${x}px,${y}px,0)`;let nx=x/max,ny=y/max;const dead=.08,mag=Math.hypot(nx,ny);if(mag<dead){nx=0;ny=0;}else{const adjusted=Math.min(1,(mag-dead)/(1-dead))/mag;nx*=adjusted;ny*=adjusted;}joyAxisX=nx;joyAxisY=ny;}
 const run=$("runButton");run.addEventListener("pointerdown",e=>{e.preventDefault();sprinting=true;run.setPointerCapture?.(e.pointerId);});["pointerup","pointercancel","lostpointercapture"].forEach(ev=>run.addEventListener(ev,()=>sprinting=false));
 
 document.querySelectorAll("[data-dir]").forEach(b=>{const k=b.dataset.dir;const down=e=>{e.preventDefault();keys[k]=true;};const up=e=>{e.preventDefault();keys[k]=false;};b.addEventListener("pointerdown",down);b.addEventListener("pointerup",up);b.addEventListener("pointercancel",up);b.addEventListener("pointerleave",up);});
@@ -498,6 +509,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=50",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=51",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
