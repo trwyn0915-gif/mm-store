@@ -251,7 +251,7 @@ body.desktop-blocked #desktopBlock{display:flex!important}
  <div class="game-controls" id="gameControls">
   <div class="side-controls"><button class="game-btn" id="quickChat" aria-label="چت">چت</button><button class="game-btn" id="quickInteract" aria-label="تعامل">تعامل</button><button class="game-btn" id="openShop" aria-label="فروشگاه کاراکترها">فروشگاه</button></div>
   <div class="joy-base" id="joystick" aria-label="جوی‌استیک حرکت"><div class="joy-knob" id="joyKnob"></div></div>
-  <div class="right-controls"><button class="game-btn" id="musicToggle" type="button" aria-label="خاموش کردن موسیقی" aria-pressed="true">موسیقی</button></div>
+  <div class="right-controls"></div>
  </div>
 </div>
 <div class="bottom">
@@ -495,14 +495,9 @@ async function connect(){
 }
 async function waitForStableViewport(){let lastW=0,lastH=0,stableSince=0;const began=performance.now();while(performance.now()-began<2200){const w=Math.round(window.visualViewport?.width||window.innerWidth),h=Math.round(window.visualViewport?.height||window.innerHeight);if(w===lastW&&h===lastH){if(!stableSince)stableSince=performance.now();if(performance.now()-stableSince>=350)return true;}else{lastW=w;lastH=h;stableSince=0;}await new Promise(resolve=>setTimeout(resolve,80));}return true;}
 const backgroundMusic=$("backgroundMusic");
-const musicToggle=$("musicToggle");
-let musicEnabled=true;
-backgroundMusic.volume=0.22;
-function updateMusicToggle(){musicToggle.textContent=musicEnabled?"موسیقی روشن":"موسیقی خاموش";musicToggle.setAttribute("aria-pressed",String(musicEnabled));musicToggle.setAttribute("aria-label",musicEnabled?"خاموش کردن موسیقی":"روشن کردن موسیقی");}
-function startBackgroundMusic(){if(!musicEnabled)return;backgroundMusic.play().catch(error=>console.info("Background music could not start:",error));}
-musicToggle.addEventListener("click",()=>{musicEnabled=!musicEnabled;if(musicEnabled)startBackgroundMusic();else backgroundMusic.pause();updateMusicToggle();});
-document.addEventListener("visibilitychange",()=>{if(document.hidden)backgroundMusic.pause();else if(connected&&musicEnabled)startBackgroundMusic();});
-updateMusicToggle();
+backgroundMusic.volume=0.132;
+function startBackgroundMusic(){backgroundMusic.play().catch(error=>console.info("Background music could not start:",error));}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)backgroundMusic.pause();else if(connected)startBackgroundMusic();});
 async function startFromPage(){if(desktopDevice){document.body.classList.add("desktop-blocked");return;}startBackgroundMusic();const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");showLoading();const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال فعال‌سازی حالت افقی و تمام‌صفحه...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{if(screen.orientation?.lock)await screen.orientation.lock("landscape");}catch(e){console.info("Landscape lock unavailable; using the rotated landscape game stage",e);}await waitForStableViewport();setLoadingProgress(8,"در حال آماده‌سازی محیط سه‌بعدی...");document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
 $("connect").addEventListener("click",startFromPage);
 $("startLandscape").addEventListener("click",startFromPage);
@@ -553,6 +548,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=87",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=88",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
