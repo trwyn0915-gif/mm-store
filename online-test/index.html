@@ -228,7 +228,7 @@ body.desktop-blocked #desktopBlock{display:flex!important}
 </head>
 <body>
 <div id="desktopBlock" role="alert" aria-live="assertive"><div class="desktop-block-card"><h1>MM WORLD</h1><p>این بازی فقط برای گوشی طراحی شده است.</p><p>لطفاً لینک بازی را با تلفن همراه باز کنید.</p><small>ورود از طریق کامپیوتر امکان‌پذیر نیست.</small></div></div>
-<audio id="backgroundMusic" src="./assets/music/butterfly.mp3" preload="auto" loop></audio>
+<audio id="backgroundMusic" src="./assets/music/Purrple%20Cat%20-%20Butterfly-1.mp3" preload="auto" loop></audio>
 <main class="wrap">
 <header class="head"><div><div class="brand">MM WORLD</div><div class="sub">دنیای آزاد نقش‌آفرینی اتحادیه MM</div></div><span class="tag">نسخه آنلاین آزمایشی</span></header>
 <section class="card">
@@ -553,6 +553,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=86",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=87",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
