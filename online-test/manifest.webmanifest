@@ -5,8 +5,6 @@
   "dir": "rtl",
   "start_url": "./",
   "display": "fullscreen",
-  "display_override": ["fullscreen", "standalone"],
-  "display_override": ["fullscreen", "standalone"],
   "orientation": "landscape",
   "background_color": "#091116",
   "theme_color": "#101a20",
