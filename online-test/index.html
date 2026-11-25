@@ -343,21 +343,21 @@ async function connect(){
  const btn=$("connect");btn.disabled=true;status("در حال اتصال به دنیای آنلاین...");setLoadingProgress(12,"در حال اتصال به سرور بازی...");
  try{
   online=createRipOnline();
-  const auth=await online.connect();userId=auth.userId;
-  const saved=await online.loadCharacter();
+  const auth=await online.connect();userId=auth.userId;setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
+  const saved=await online.loadCharacter();setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
   if(saved){
    player.x=clamp(saved.x||player.x,30,W-30);player.y=clamp(saved.y||player.y,30,H-30);
    player.level=saved.level||1;player.xp=saved.experience||0;
    if(skins[saved.character_id])player.skin=saved.character_id;
   }
-  await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});
+  await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});setLoadingProgress(68,"در حال ورود به دنیای MM...");
   await online.joinRoom(ROOM,{
    onPlayers:state=>{players={};for(const metas of Object.values(state||{})){const p=Array.isArray(metas)?metas[metas.length-1]:metas;if(p?.userId&&p.userId!==userId)players[p.userId]=p;}stats();},
    onMove:p=>{if(p?.userId&&p.userId!==userId)players[p.userId]={...players[p.userId],...p};stats();},
    onPlayerUpdate:p=>{if(p?.userId&&p.userId!==userId)players[p.userId]={...players[p.userId],...p};stats();},
    onChat:p=>{if(p?.userId!==userId)addChat(p.displayName||"بازیکن",p.message||"",p.id);}
   });
-  connected=true;
+  connected=true;setLoadingProgress(90,"دنیای بازی آماده شد...");
   document.body.classList.remove("exit-to-page");
   const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
   document.body.classList.add("playing");
@@ -368,9 +368,10 @@ async function connect(){
   if(log.children.length===1&&log.firstChild.textContent.includes("برای گفت‌وگو"))log.innerHTML="";
   history.forEach(m=>addChat(m.display_name,m.message,m.id));
   await online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin});
+  setLoadingProgress(100,"ورود به دنیای MM موفق بود");await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));hideLoading();
   stats();sayToast("با موفقیت وارد دنیای آنلاین شدی");persist();
  }catch(e){
-  console.error("Online connection failed:",e);
+  console.error("Online connection failed:",e);hideLoading();
   connected=false;players={};userId="";
   if(online){try{await online.leave();}catch(_){}}
   online=null;
@@ -401,7 +402,7 @@ window.addEventListener("fullscreenchange",()=>{if(document.body.classList.conta
 // Portrait devices use a rotated landscape game viewport; no physical rotation is required.
 async function stayInGame(){if(!document.fullscreenElement){const root=document.documentElement;if(!root.requestFullscreen){sayToast("این مرورگر امکان بازگشت به تمام‌صفحه را نمی‌دهد");return;}try{await root.requestFullscreen();}catch(e){sayToast("برای ادامه، حالت تمام‌صفحه را از مرورگر فعال کن");return;}}try{await screen.orientation?.lock?.("landscape");}catch(_){}hideExitConfirm();}
 $("stayInGame").addEventListener("click",stayInGame);
-async function confirmExitSite(){exitApproved=true;hideExitConfirm();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";sprinting=false;resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";const startBtn=$("startLandscape");startBtn.disabled=false;startBtn.textContent="ورود به سایت";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
+async function confirmExitSite(){exitApproved=true;hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";sprinting=false;resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";const startBtn=$("startLandscape");startBtn.disabled=false;startBtn.textContent="ورود به سایت";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
 $("confirmExit").addEventListener("click",confirmExitSite);
 function toggleChat(){if(!connected){sayToast("برای چت باید ابتدا وارد دنیای آنلاین شوی");return;}const bottom=document.querySelector(".bottom");bottom.classList.toggle("chat-open");}
 $("chatToggle").addEventListener("click",toggleChat);
@@ -424,7 +425,7 @@ window.addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(["arrowup",
 window.addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="w"||k==="arrowup")keys.up=false;if(k==="s"||k==="arrowdown")keys.down=false;if(k==="a"||k==="arrowleft")keys.left=false;if(k==="d"||k==="arrowright")keys.right=false;});
 window.addEventListener("blur",()=>{Object.keys(keys).forEach(k=>keys[k]=false);sprinting=false;resetJoy();});window.addEventListener("pagehide",()=>{if(online)online.leave().catch(()=>{});});
 function frame(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(connected){move(dt);camera.x=clamp(player.x-480,0,W-960);camera.y=clamp(player.y-270,0,H-540);if(t-lastSend>250){lastSend=t;online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin}).catch(console.error);}if(t-lastSave>2000){lastSave=t;online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp}).catch(console.error);}drawWorld();}else{ctx.clearRect(0,0,canvas.width,canvas.height);}requestAnimationFrame(frame);}
-function showFatalGameError(message){
+function showFatalGameError(message){hideLoading();
  connected=false;
  document.body.classList.remove("playing");
  const p=$("rotatePrompt");p.hidden=false;p.classList.remove("hidden");
