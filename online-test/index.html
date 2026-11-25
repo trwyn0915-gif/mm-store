@@ -353,8 +353,8 @@ threeRoot.addEventListener("pointerup",endLook);threeRoot.addEventListener("poin
 const W=2400,H=1800,ROOM="mm-world-main";
 const skins={teal:"#35c4b2",gold:"#e7b84f",violet:"#a98bdf",red:"#df7770"};
 const stored=JSON.parse(localStorage.getItem("mmworld-profile")||"{}");
-const ownedCharacters=new Set(["robot",...(Array.isArray(stored.ownedCharacters)?stored.ownedCharacters.filter(id=>CHARACTER_IDS.includes(id)):[])]);
-const savedSkin=CHARACTER_IDS.includes(stored.skin)&&ownedCharacters.has(stored.skin)?stored.skin:"robot";
+const ownedCharacters=new Set(["robot","hero",...(Array.isArray(stored.ownedCharacters)?stored.ownedCharacters.filter(id=>CHARACTER_IDS.includes(id)):[])]);
+const savedSkin=stored.skin==="robot"?"hero":CHARACTER_IDS.includes(stored.skin)&&ownedCharacters.has(stored.skin)?stored.skin:"hero";
 $("playerName").value=stored.name||"بازیکن MM";$("skin").value=savedSkin;
 let player={x:1190,y:1060,face:"down",avatarYaw:Math.PI,name:$("playerName").value,skin:savedSkin,level:1,xp:0,moving:false};
 let coins=Number(stored.coins)||0,herbs=Number(stored.herbs)||0,questStarted=!!stored.questStarted,questDone=!!stored.questDone;const collected=new Set(Array.isArray(stored.collected)?stored.collected:[]);
@@ -367,7 +367,7 @@ const buildings=[{x:1050,y:650,w:280,h:150,label:"تالار دهکده",color:"
 function persist(){localStorage.setItem("mmworld-profile",JSON.stringify({name:player.name,skin:player.skin,coins,herbs,questStarted,questDone,collected:[...collected],ownedCharacters:[...ownedCharacters]}));}
 function openCharacterShop(){renderCharacterShop();$("characterShop").classList.add("open");$("characterShop").setAttribute("aria-hidden","false");}
 function closeCharacterShop(){$("characterShop").classList.remove("open");$("characterShop").setAttribute("aria-hidden","true");}
-function renderCharacterShop(){const list=$("shopItems");$("shopCoins").textContent=new Intl.NumberFormat("fa-IR").format(coins);list.replaceChildren();for(const id of ["robot","hero","knight","wizard","pirate","astronaut","zombie","princess"]){const owned=ownedCharacters.has(id),price=CHARACTER_PRICES[id]||0,card=document.createElement("article");card.className="shop-item";const name=document.createElement("strong");name.textContent=CHARACTER_NAMES[id];const detail=document.createElement("small");detail.textContent=id==="robot"?"رایگان · کاراکتر پیش‌فرض":owned?"خریداری‌شده":new Intl.NumberFormat("fa-IR").format(price)+" سکه";const action=document.createElement("button");action.type="button";action.dataset.character=id;action.dataset.action=owned?"equip":"buy";action.className=owned?"":"primary";action.textContent=owned?(player.skin===id?"انتخاب شده":"انتخاب کاراکتر"):"خرید و انتخاب";card.append(name,detail,action);list.append(card);}}
+function renderCharacterShop(){const list=$("shopItems");$("shopCoins").textContent=new Intl.NumberFormat("fa-IR").format(coins);list.replaceChildren();for(const id of ["robot","hero","knight","wizard","pirate","astronaut","zombie","princess"]){const owned=ownedCharacters.has(id),price=CHARACTER_PRICES[id]||0,card=document.createElement("article");card.className="shop-item";const name=document.createElement("strong");name.textContent=CHARACTER_NAMES[id];const detail=document.createElement("small");detail.textContent=id==="hero"?"رایگان · کاراکتر پیش‌فرض":id==="robot"?"رایگان":owned?"خریداری‌شده":new Intl.NumberFormat("fa-IR").format(price)+" سکه";const action=document.createElement("button");action.type="button";action.dataset.character=id;action.dataset.action=owned?"equip":"buy";action.className=owned?"":"primary";action.textContent=owned?(player.skin===id?"انتخاب شده":"انتخاب کاراکتر"):"خرید و انتخاب";card.append(name,detail,action);list.append(card);}}
 async function chooseCharacter(id){if(!ownedCharacters.has(id))return;player.skin=id;persist();renderCharacterShop();if(connected){await ensureAvatar("self",id);await online.saveCharacter({displayName:player.name,characterId:id,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});}sayToast("کاراکتر "+CHARACTER_NAMES[id]+" انتخاب شد");}
 $("shopItems").addEventListener("click",async e=>{const btn=e.target.closest("button[data-character]");if(!btn)return;const id=btn.dataset.character;if(btn.dataset.action==="equip"){await chooseCharacter(id);return;}const price=CHARACTER_PRICES[id];if(!price||ownedCharacters.has(id))return;if(coins<price){sayToast("سکه کافی برای خرید این کاراکتر نداری");return;}coins-=price;ownedCharacters.add(id);persist();stats();await chooseCharacter(id);renderCharacterShop();});
 $("openShop").addEventListener("click",openCharacterShop);$("closeShop").addEventListener("click",closeCharacterShop);$("characterShop").addEventListener("click",e=>{if(e.target===$("characterShop"))closeCharacterShop();});
@@ -451,9 +451,10 @@ async function connect(){
   if(saved){
    player.x=clamp(saved.x||player.x,30,W-30);player.y=clamp(saved.y||player.y,30,H-30);
    player.level=saved.level||1;player.xp=saved.experience||0;
-   if(CHARACTER_ASSETS[saved.character_id]&&ownedCharacters.has(saved.character_id))player.skin=saved.character_id;
-   else player.skin="robot";
-  }else{player.skin="robot";}
+   if(saved.character_id==="robot")player.skin="hero";
+   else if(CHARACTER_ASSETS[saved.character_id]&&ownedCharacters.has(saved.character_id))player.skin=saved.character_id;
+   else player.skin="hero";
+  }else{player.skin="hero";}
   persist();
   setLoadingProgress(60,"در حال بارگذاری کاراکتر سه‌بعدی...");
   await ensureAvatar("self",player.skin);
@@ -519,7 +520,7 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden)backgroundM
 async function startFromPage(){if(desktopDevice){document.body.classList.add("desktop-blocked");return;}startBackgroundMusic();const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");showLoading();const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال فعال‌سازی حالت افقی و تمام‌صفحه...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{if(screen.orientation?.lock)await screen.orientation.lock("landscape");}catch(e){console.info("Landscape lock unavailable; using the rotated landscape game stage",e);}await waitForStableViewport();setLoadingProgress(8,"در حال آماده‌سازی محیط سه‌بعدی...");document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
 $("connect").addEventListener("click",startFromPage);
 $("startLandscape").addEventListener("click",startFromPage);
-$("skin").addEventListener("change",()=>{player.skin=ownedCharacters.has($("skin").value)?$("skin").value:"robot";persist();ensureAvatar("self",player.skin).catch(console.error);});
+$("skin").addEventListener("change",()=>{player.skin=ownedCharacters.has($("skin").value)?$("skin").value:"hero";persist();ensureAvatar("self",player.skin).catch(console.error);});
 $("playerName").addEventListener("change",()=>{player.name=$("playerName").value.trim().slice(0,20)||"بازیکن MM";persist();});
 $("chatform").addEventListener("submit",async e=>{e.preventDefault();const msg=$("chatinput").value.trim();if(!msg)return;if(!connected){sayToast("اول وارد دنیای آنلاین شو");return;}if(Date.now()-lastChat<1200){sayToast("کمی صبر کن و دوباره بفرست");return;}lastChat=Date.now();try{const sent=await online.sendChat(ROOM,msg,player.name);addChat(player.name,msg,sent?.id);$("chatinput").value="";}catch(err){console.error(err);sayToast("پیام ارسال نشد");}});
 let exitGuardInstalled=false,exitApproved=false;
@@ -566,6 +567,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=90",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=91",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
