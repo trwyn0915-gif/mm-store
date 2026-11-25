@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js?v=3";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js?v=5";
 
 const validConfig =
   SUPABASE_URL.startsWith("https://") &&
@@ -77,6 +77,27 @@ export function createRipOnline() {
       })
       .on("broadcast", { event: "chat" }, ({ payload }) => {
         if (payload?.userId && payload.userId !== currentUser.id) handlers.onChat?.(payload);
+      })
+      // Durable position updates provide a fallback if a transient broadcast is missed.
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "world_players",
+        filter: `room_id=eq.${room}`
+      }, ({ new: row }) => {
+        if (row?.user_id && row.user_id !== currentUser.id) {
+          handlers.onPlayerUpdate?.({
+            userId: row.user_id,
+            x: Number(row.x),
+            y: Number(row.y),
+            facing: row.facing,
+            displayName: row.display_name,
+            skin: row.character_id,
+            level: row.level,
+            experience: row.experience,
+            sentAt: Date.now()
+          });
+        }
       })
       .on("postgres_changes", {
         event: "INSERT",
