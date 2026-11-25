@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101a20">
+<meta name="description" content="MM World؛ دنیای نقش‌آفرینی آنلاین اتحادیه MM">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>نقش‌آفرینی MM | دنیای مشترک</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap');
+:root{color-scheme:dark;--gold:#e8c477;--panel:#111c22;--line:#34464c;--muted:#a8b7b5}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#091116;color:#f4f2e9;font-family:Vazirmatn,Tahoma,sans-serif}body{padding:10px;background:radial-gradient(ellipse at top,#1d3436,#091116 70%)}
+button,input,select{font:inherit}button{border:1px solid #65766d;border-radius:12px;background:#233239;color:#fff;padding:10px 14px;font-weight:800;cursor:pointer;touch-action:manipulation}button:disabled{opacity:.5;cursor:wait}.primary{background:linear-gradient(135deg,#e8c477,#ad8744);color:#17140d;border-color:#f0d99d}.wrap{max-width:1180px;margin:auto}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 10px}.brand{font-weight:900;font-size:clamp(22px,4vw,32px);color:var(--gold)}.sub{font-size:12px;color:var(--muted)}.tag{border:1px solid #66755f;border-radius:30px;padding:7px 12px;color:#c8d8c4;font-size:12px}
+.card{background:#101a20eF;border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:0 14px 40px #0007}.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}.field{display:flex;gap:7px;align-items:center;flex:1 1 140px}.field label{font-size:12px;color:var(--muted)}input,select{width:100%;min-width:0;background:#0a1318;color:#fff;border:1px solid #4a6065;border-radius:10px;padding:10px}.status{font-size:12px;color:#b8d6c2;min-width:125px}.stats{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0}.stat{background:#1c2a30;border:1px solid #354b50;border-radius:30px;padding:6px 11px;font-size:12px;color:#dce7df}.stat b{color:var(--gold)}#gamebox{position:relative;border:1px solid #3c5558;border-radius:15px;overflow:hidden;background:#345e47}canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;touch-action:none}#toast{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:#0b171beF;border:1px solid #9b8755;color:#f4dfaa;border-radius:24px;padding:7px 14px;font-size:12px;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;z-index:4}#toast.show{opacity:1}.bottom{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:10px;margin-top:10px}.panel{background:#101a20;border:1px solid var(--line);border-radius:14px;padding:10px}.panel h2{font-size:15px;margin:0 0 8px;color:var(--gold)}.help{font-size:12px;line-height:1.9;color:#c5d0cb}.chatlog{height:150px;overflow:auto;display:flex;flex-direction:column;gap:5px;font-size:12px;line-height:1.7}.chatline{overflow-wrap:anywhere;color:#dfe8e3}.chatline b{color:var(--gold)}.chatrow{display:flex;gap:6px;margin-top:8px}.chatrow input{flex:1}.touch{display:none;position:fixed;z-index:10;bottom:max(10px,env(safe-area-inset-bottom));left:10px;right:10px;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}.pad{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,43px);gap:3px;direction:ltr;pointer-events:auto}.pad button{padding:0;font-size:20px;background:#101d22ed;border-color:#83918a}.pad [data-dir=up]{grid-column:2}.pad [data-dir=left]{grid-column:1;grid-row:2}.pad [data-dir=down]{grid-column:2;grid-row:2}.pad [data-dir=right]{grid-column:3;grid-row:2}.touch .act{pointer-events:auto;min-height:54px;flex:1;background:#c39a50;color:#15130e}.touch .extra{pointer-events:auto;min-height:54px;padding:7px 10px}.foot{text-align:center;color:#83928e;font-size:11px;padding:12px}
+@media(max-width:760px){body{padding:6px 6px 100px}.card{padding:8px;border-radius:13px}.head{align-items:flex-start}.tag{font-size:10px}.bar{gap:6px}.bar button{padding:9px 10px;font-size:12px}.stats{gap:5px}.stat{font-size:10px;padding:5px 8px}#gamebox{border-radius:10px}.bottom{grid-template-columns:1fr}.panel h2{font-size:14px}.chatlog{height:112px}.touch{display:flex}.pad{grid-template-columns:repeat(3,43px);grid-template-rows:repeat(2,39px)}.pad button{font-size:18px}.foot{padding:8px}}
+@media(max-width:380px){.pad{grid-template-columns:repeat(3,37px);grid-template-rows:repeat(2,35px)}.touch{gap:5px;left:6px;right:6px}.touch .act{font-size:12px;padding:7px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="head"><div><div class="brand">MM WORLD</div><div class="sub">دنیای آزاد نقش‌آفرینی اتحادیه MM</div></div><span class="tag">نسخه آنلاین آزمایشی</span></header>
+<section class="card">
+<div class="bar">
+ <div class="field"><label for="playerName">نام بازیکن</label><input id="playerName" maxlength="20" minlength="2" value="بازیکن MM"></div>
+ <div class="field"><label for="skin">ظاهر</label><select id="skin"><option value="teal">سبزآبی</option><option value="gold">طلایی</option><option value="violet">بنفش</option><option value="red">قرمز</option></select></div>
+ <button id="connect" class="primary">ورود به دنیای آنلاین</button><button id="full">تمام‌صفحه</button>
+ <span id="status" class="status" role="status">وضعیت: آفلاین</span>
+</div>
+<div class="stats">
+ <span class="stat">بازیکنان آنلاین: <b id="onlineCount">۰</b></span>
+ <span class="stat">سطح: <b id="level">۱</b></span>
+ <span class="stat">تجربه: <b id="xp">۰ / ۱۰۰</b></span>
+ <span class="stat">سکه: <b id="coins">۰</b></span>
+ <span class="stat">ماموریت: <b id="quest">با نگهبان دهکده صحبت کن</b></span>
+</div>
+<div id="gamebox"><canvas id="game" width="960" height="540" aria-label="نقشه دنیای MM"></canvas><div id="toast"></div></div>
+<div class="bottom">
+ <section class="panel"><h2>گفت‌وگوی جهانی</h2><div id="chatlog" class="chatlog" aria-live="polite"><div class="chatline">برای گفت‌وگو ابتدا وارد دنیای آنلاین شو.</div></div><form id="chatform" class="chatrow"><input id="chatinput" maxlength="300" placeholder="پیامت را بنویس..." autocomplete="off"><button class="primary" type="submit">ارسال</button></form></section>
+ <section class="panel"><h2>راهنمای بازی</h2><div class="help">• حرکت: کلیدهای جهت‌دار یا WASD<br>• موبایل: دکمه‌های پایین صفحه<br>• تعامل: کلید E یا دکمه تعامل<br>• کنار نگهبان دهکده ماموریت بگیر.<br>• گیاهان در جنگل را جمع کن و پاداش بگیر.<br>• بازیکنان دیگر را زنده روی نقشه می‌بینی.</div></section>
+</div>
+</section>
+<div class="foot">MM WORLD · دنیای مشترک آنلاین · اطلاعات اتصال از Supabase Realtime</div>
+</main>
+<div class="touch" id="touch">
+ <div class="pad"><button data-dir="up">▲</button><button data-dir="left">◀</button><button data-dir="down">▼</button><button data-dir="right">▶</button></div>
+ <button class="act" id="touchInteract">تعامل</button>
+ <button class="extra" id="touchChat">چت</button>
+</div>
+<script type="module">
+import { createRipOnline } from "../online/multiplayer.js";
+const $=id=>document.getElementById(id),canvas=$("game"),ctx=canvas.getContext("2d");
+const W=2400,H=1800,ROOM="mm-world-main";
+const skins={teal:"#35c4b2",gold:"#e7b84f",violet:"#a98bdf",red:"#df7770"};
+const stored=JSON.parse(localStorage.getItem("mmworld-profile")||"{}");
+$("playerName").value=stored.name||"بازیکن MM";$("skin").value=stored.skin||"teal";
+let player={x:1190,y:1060,face:"down",name:$("playerName").value,skin:$("skin").value,level:1,xp:0};
+let coins=Number(stored.coins)||0,herbs=Number(stored.herbs)||0,questStarted=!!stored.questStarted,questDone=!!stored.questDone;
+let online=null,userId="",connected=false,players={},lastSend=0,lastSave=0,lastChat=0,chatCooldown=0;
+let camera={x:0,y:0},keys={up:false,down:false,left:false,right:false},last=0,toastTimer=0;
+const trees=[];for(let i=0;i<100;i++){let x=120+((i*317)%2140),y=100+((i*197)%1580);if(Math.hypot(x-1200,y-900)>240)trees.push({x,y,r:20+(i%4)*5});}
+const herbsSpots=[{x:520,y:420},{x:690,y:520},{x:390,y:690},{x:1750,y:420},{x:1940,y:610},{x:1640,y:760},{x:570,y:1390},{x:820,y:1510},{x:1830,y:1390},{x:2070,y:1200}].map((p,i)=>({...p,id:i}));
+const npc={x:1190,y:860,name:"نگهبان دهکده"};
+const buildings=[{x:1050,y:650,w:280,h:150,label:"تالار دهکده",color:"#98734e"},{x:1440,y:900,w:210,h:145,label:"بازارچه",color:"#846d52"},{x:920,y:1160,w:180,h:125,label:"خانه مسافر",color:"#6b7760"}];
+function persist(){localStorage.setItem("mmworld-profile",JSON.stringify({name:player.name,skin:player.skin,coins,herbs,questStarted,questDone}));}
+function sayToast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2100);}
+function status(t){$("status").textContent=t;}
+function stats(){ $("onlineCount").textContent=String(Object.keys(players).length+ (connected?1:0));$("level").textContent=player.level;$("xp").textContent=player.xp+" / "+(player.level*100);$("coins").textContent=coins;$("quest").textContent=questDone?"ماموریت تکمیل شد":questStarted?("گیاه جمع کن: "+herbs+" / ۳"):"با نگهبان دهکده صحبت کن"; }
+function addXP(n){player.xp+=n;while(player.xp>=player.level*100){player.xp-=player.level*100;player.level++;coins+=25;sayToast("سطح جدید! پاداش ۲۵ سکه گرفتی");}stats();persist();}
+function addChat(name,message){const row=document.createElement("div");row.className="chatline";const b=document.createElement("b");b.textContent=name+": ";row.append(b,document.createTextNode(message));$("chatlog").append(row);while($("chatlog").children.length>60)$("chatlog").firstChild.remove();$("chatlog").scrollTop=$("chatlog").scrollHeight;}
+function worldToScreen(x,y){return{x:x-camera.x,y:y-camera.y};}
+function drawTree(x,y,r){const p=worldToScreen(x,y);ctx.fillStyle="#4b392b";ctx.fillRect(p.x-5,p.y+5,10,22);ctx.fillStyle="#1d4e3d";ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fill();ctx.fillStyle="#28654a";ctx.beginPath();ctx.arc(p.x-r*.25,p.y-r*.25,r*.65,0,Math.PI*2);ctx.fill();}
+function drawPerson(p,isSelf=false){const q=worldToScreen(p.x,p.y),color=skins[p.skin]||"#35c4b2";ctx.save();ctx.fillStyle="#10201d";ctx.beginPath();ctx.ellipse(q.x,q.y+10,13,6,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=color;ctx.beginPath();ctx.arc(q.x,q.y,11,0,Math.PI*2);ctx.fill();ctx.strokeStyle=isSelf?"#fff0b5":"#14252a";ctx.lineWidth=3;ctx.stroke();ctx.fillStyle="#f8f5e8";ctx.font="bold 13px Vazirmatn";ctx.textAlign="center";ctx.direction="rtl";ctx.lineWidth=3;ctx.strokeStyle="#071116";ctx.strokeText(p.name||"بازیکن",q.x,q.y-19);ctx.fillText(p.name||"بازیکن",q.x,q.y-19);if(isSelf){ctx.fillStyle="#fff1b6";ctx.font="10px Vazirmatn";ctx.fillText("شما",q.x,q.y+27);}ctx.restore();}
+function drawWorld(){ctx.clearRect(0,0,960,540);ctx.fillStyle="#477b56";ctx.fillRect(0,0,960,540);
+ // soft grass texture
+ for(let i=0;i<90;i++){let x=(i*131-camera.x*.25)%960,y=(i*83-camera.y*.25)%540;ctx.fillStyle=i%2?"#57845d":"#3f704e";ctx.fillRect((x+960)%960,(y+540)%540,3,3);}
+ // paths
+ ctx.fillStyle="#b9a078";ctx.beginPath();ctx.moveTo(1080-camera.x,0-camera.y);ctx.lineTo(1320-camera.x,0-camera.y);ctx.lineTo(1320-camera.x,1800-camera.y);ctx.lineTo(1080-camera.x,1800-camera.y);ctx.fill();
+ ctx.beginPath();ctx.moveTo(0-camera.x,850-camera.y);ctx.lineTo(2400-camera.x,850-camera.y);ctx.lineTo(2400-camera.x,970-camera.y);ctx.lineTo(0-camera.x,970-camera.y);ctx.fill();
+ // lake
+ let lake=worldToScreen(480,1120);ctx.fillStyle="#327d91";ctx.beginPath();ctx.ellipse(lake.x,lake.y,210,125,-.18,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#8cc5c2";ctx.lineWidth=5;ctx.stroke();
+ // village square
+ let sq=worldToScreen(1200,900);ctx.fillStyle="#c5ae7f";ctx.beginPath();ctx.arc(sq.x,sq.y,180,0,Math.PI*2);ctx.fill();
+ for(const b of buildings){let q=worldToScreen(b.x,b.y);ctx.fillStyle="#3b3026";ctx.fillRect(q.x+6,q.y+9,b.w,b.h);ctx.fillStyle=b.color;ctx.fillRect(q.x,q.y,b.w,b.h);ctx.fillStyle="#d6bd8c";ctx.fillRect(q.x+b.w*.38,q.y+b.h*.52,b.w*.24,b.h*.48);ctx.fillStyle="#473d32";ctx.beginPath();ctx.moveTo(q.x-12,q.y);ctx.lineTo(q.x+b.w/2,q.y-55);ctx.lineTo(q.x+b.w+12,q.y);ctx.fill();ctx.fillStyle="#fff1d0";ctx.font="bold 14px Vazirmatn";ctx.textAlign="center";ctx.fillText(b.label,q.x+b.w/2,q.y-62);}
+ for(const t of trees){if(t.x<camera.x-60||t.x>camera.x+1020||t.y<camera.y-60||t.y>camera.y+600)continue;drawTree(t.x,t.y,t.r);}
+ for(const h of herbsSpots){if(h.taken)continue;let q=worldToScreen(h.x,h.y);ctx.fillStyle="#d6e68b";ctx.beginPath();ctx.arc(q.x,q.y,8,0,Math.PI*2);ctx.fill();ctx.fillStyle="#4a9b5a";ctx.fillRect(q.x-2,q.y,4,13);}
+ let n=worldToScreen(npc.x,npc.y);ctx.fillStyle="#e8c477";ctx.beginPath();ctx.arc(n.x,n.y,14,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#382b18";ctx.lineWidth=3;ctx.stroke();ctx.fillStyle="#fff4d5";ctx.font="bold 13px Vazirmatn";ctx.textAlign="center";ctx.fillText("نگهبان دهکده",n.x,n.y-25);
+ for(const p of Object.values(players)){if(Number.isFinite(p.x)&&Number.isFinite(p.y))drawPerson({x:p.x,y:p.y,name:p.displayName||"بازیکن",skin:p.skin||"teal"});}
+ drawPerson(player,true);
+ ctx.fillStyle="#f6e8bd";ctx.font="bold 16px Vazirmatn";ctx.textAlign="right";ctx.fillText("دهکده MM",930,28);
+}
+function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
+function move(dt){let dx=(keys.right?1:0)-(keys.left?1:0),dy=(keys.down?1:0)-(keys.up?1:0);if(!dx&&!dy)return;if(dx&&dy){dx*=.7071;dy*=.7071;}player.x=clamp(player.x+dx*190*dt,30,W-30);player.y=clamp(player.y+dy*190*dt,30,H-30);player.face=Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up");}
+function nearest(){const candidates=[{...npc,type:"npc"},...herbsSpots.filter(h=>!h.taken).map(h=>({...h,type:"herb"}))];let best=null,d=65;for(const o of candidates){let n=Math.hypot(player.x-o.x,player.y-o.y);if(n<d){d=n;best=o;}}return best;}
+function interact(){const o=nearest();if(!o){sayToast("چیزی در نزدیکی تو نیست");return;}if(o.type==="npc"){if(!questStarted){questStarted=true;sayToast("ماموریت: سه گیاه درخشان جمع کن");}else if(!questDone&&herbs>=3){questDone=true;coins+=100;addXP(80);sayToast("ماموریت کامل شد؛ ۱۰۰ سکه پاداش گرفتی");}else if(questDone){sayToast("ممنون که به دهکده کمک کردی");}else{sayToast("هنوز "+Math.max(0,3-herbs)+" گیاه دیگر لازم داری");}}else{const spot=herbsSpots.find(h=>h.id===o.id);if(spot&&!spot.taken){spot.taken=true;herbs++;coins+=3;addXP(12);sayToast("گیاه جمع شد؛ +۳ سکه");}}persist();stats();}
+async function connect(){if(connected)return;const name=$("playerName").value.trim().slice(0,20);if(name.length<2){sayToast("نام باید حداقل دو حرف باشد");return;}player.name=name;player.skin=$("skin").value;const btn=$("connect");btn.disabled=true;status("در حال اتصال...");try{online=createRipOnline();const auth=await online.connect();userId=auth.userId;const saved=await online.loadCharacter();if(saved){player.x=clamp(saved.x||player.x,30,W-30);player.y=clamp(saved.y||player.y,30,H-30);player.level=saved.level||1;player.xp=saved.experience||0;player.skin=saved.character_id||player.skin;}await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});await online.joinRoom(ROOM,{onPlayers:state=>{players={};for(const metas of Object.values(state||{})){const p=Array.isArray(metas)?metas[metas.length-1]:metas;if(p?.userId&&p.userId!==userId)players[p.userId]=p;}stats();},onMove:p=>{if(p?.userId&&p.userId!==userId)players[p.userId]={...players[p.userId],...p};stats();},onChat:p=>{if(p?.userId!==userId)addChat(p.displayName||"بازیکن",p.message||"");}});connected=true;status("متصل · جهان مشترک فعال");btn.textContent="متصل شدی";btn.disabled=true;const history=await online.loadRecentChat(ROOM,30);$("chatlog").innerHTML="";history.forEach(m=>addChat(m.display_name,m.message));await online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin});stats();sayToast("به دنیای MM خوش آمدی");persist();}catch(e){console.error(e);status("اتصال برقرار نشد؛ دوباره تلاش کن");btn.disabled=false;online=null;}}
+$("connect").addEventListener("click",connect);
+$("skin").addEventListener("change",()=>{player.skin=$("skin").value;persist();});
+$("playerName").addEventListener("change",()=>{player.name=$("playerName").value.trim().slice(0,20)||"بازیکن MM";persist();});
+$("chatform").addEventListener("submit",async e=>{e.preventDefault();const msg=$("chatinput").value.trim();if(!msg)return;if(!connected){sayToast("اول وارد دنیای آنلاین شو");return;}if(Date.now()-lastChat<1200){sayToast("کمی صبر کن و دوباره بفرست");return;}lastChat=Date.now();try{await online.sendChat(ROOM,msg,player.name);addChat(player.name,msg);$("chatinput").value="";}catch(err){console.error(err);sayToast("پیام ارسال نشد");}});
+$("touchChat").addEventListener("click",()=>$("chatinput").focus());
+document.querySelectorAll("[data-dir]").forEach(b=>{const k=b.dataset.dir;const down=e=>{e.preventDefault();keys[k]=true;};const up=e=>{e.preventDefault();keys[k]=false;};b.addEventListener("pointerdown",down);b.addEventListener("pointerup",up);b.addEventListener("pointercancel",up);b.addEventListener("pointerleave",up);});
+$("touchInteract").addEventListener("click",interact);
+$("full").addEventListener("click",()=>{const el=$("gamebox");if(!document.fullscreenElement)el.requestFullscreen?.().catch(()=>sayToast("تمام‌صفحه در این مرورگر پشتیبانی نشد"));else document.exitFullscreen?.();});
+window.addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault();if(k==="w"||k==="arrowup")keys.up=true;if(k==="s"||k==="arrowdown")keys.down=true;if(k==="a"||k==="arrowleft")keys.left=true;if(k==="d"||k==="arrowright")keys.right=true;if(k==="e"||k===" ")interact();});
+window.addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="w"||k==="arrowup")keys.up=false;if(k==="s"||k==="arrowdown")keys.down=false;if(k==="a"||k==="arrowleft")keys.left=false;if(k==="d"||k==="arrowright")keys.right=false;});
+window.addEventListener("blur",()=>{Object.keys(keys).forEach(k=>keys[k]=false);});
+function frame(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;move(dt);camera.x=clamp(player.x-480,0,W-960);camera.y=clamp(player.y-270,0,H-540);if(connected&&t-lastSend>140){lastSend=t;online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin}).catch(console.error);}if(connected&&t-lastSave>7000){lastSave=t;online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp}).catch(console.error);}drawWorld();requestAnimationFrame(frame);}
+stats();requestAnimationFrame(frame);
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body></html>
