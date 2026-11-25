@@ -11,6 +11,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap');
 :root{color-scheme:dark;--gold:#e8c477;--panel:#111c22;--line:#34464c;--muted:#a8b7b5}
 *{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;background:#091116;color:#f4f2e9;font-family:Vazirmatn,Tahoma,sans-serif}
+/* Prevent accidental text selection, copy handles and blue tap highlights across the game. Keep form fields selectable. */
+html,body,body *{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+input,textarea,[contenteditable="true"],input *,textarea *{-webkit-user-select:text;user-select:text}
+button:focus:not(:focus-visible){outline:none}
+::selection{background:transparent;color:inherit}
+::-moz-selection{background:transparent;color:inherit}
 body{padding:10px;background:radial-gradient(ellipse at top,#1d3436,#091116 70%);overflow:hidden;min-height:100dvh}
 button,input,select{font:inherit}button{border:1px solid #65766d;border-radius:12px;background:#233239;color:#fff;padding:10px 14px;font-weight:800;cursor:pointer;touch-action:manipulation}button:disabled{opacity:.5;cursor:wait}.primary{background:linear-gradient(135deg,#e8c477,#ad8744);color:#17140d;border-color:#f0d99d}.wrap{max-width:1180px;margin:auto}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 10px}.brand{font-weight:900;font-size:clamp(22px,4vw,32px);color:var(--gold)}.sub{font-size:12px;color:var(--muted)}.tag{border:1px solid #66755f;border-radius:30px;padding:7px 12px;color:#c8d8c4;font-size:12px}
 .card{background:#101a20eF;border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:0 14px 40px #0007;position:relative}.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}.field{display:flex;gap:7px;align-items:center;flex:1 1 140px}.field label{font-size:12px;color:var(--muted)}input,select{width:100%;min-width:0;background:#0a1318;color:#fff;border:1px solid #4a6065;border-radius:10px;padding:10px}.status{font-size:12px;color:#b8d6c2;min-width:125px}.stats{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0}.stat{background:#1c2a30;border:1px solid #354b50;border-radius:30px;padding:6px 11px;font-size:12px;color:#dce7df}.stat b{color:var(--gold)}
@@ -412,6 +418,6 @@ function showFatalGameError(message){
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=36",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=37",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
