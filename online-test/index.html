@@ -22,20 +22,8 @@ button,input,select{font:inherit}button{border:1px solid #65766d;border-radius:1
 @media(max-width:760px){
  body{padding:0;background:#081116;overflow:hidden;min-height:100dvh}.wrap{width:100%;max-width:none;height:100dvh;margin:0;display:flex;flex-direction:column;justify-content:center}.head,.foot{display:none}.card{border:0;border-radius:0;padding:0;box-shadow:none;flex:1;min-height:0;display:flex;flex-direction:column;gap:0;justify-content:center}.bar{flex:0 0 auto;display:flex;gap:5px;margin:0;padding:5px;align-items:center}.field{flex:1 1 28%;gap:4px}.field label{font-size:10px}.field input,.field select{padding:6px 7px;font-size:12px}.bar button{padding:7px 9px;font-size:11px}.status{font-size:10px;min-width:0;flex:1 1 100%;text-align:center}.stats{flex:0 0 auto;display:flex;flex-wrap:nowrap;overflow:hidden;gap:4px;margin:0;padding:0 5px 4px}.stat{font-size:9px;padding:4px 7px;white-space:nowrap}.stat:last-child{display:none}#gamebox{flex:0 1 auto;min-height:0;width:min(100vw,177.7778dvh);max-height:100%;aspect-ratio:16/9;margin:auto;border:0;border-radius:0;display:flex;align-items:center;justify-content:center;background:#345e47}.game-controls{display:block}canvas{display:block;width:100%;height:100%;aspect-ratio:16/9;object-fit:fill;touch-action:none}.bottom{display:none}.chat-toggle{display:block;position:absolute;z-index:9;top:12px;right:12px;width:46px;height:46px;border-radius:50%;padding:0;background:#142b35ed;border:2px solid #b7c8bc;font-size:18px}.bottom.chat-open{width:min(350px,70%);max-height:78%;right:8px;bottom:8px}.bottom.chat-open .chatlog{height:120px}.chatrow input{font-size:12px}.chatrow button{padding:8px 10px}
 }
-@media(max-width:760px) and (orientation:portrait){
- body.playing #gamebox,body.playing .game-controls,body.playing .bottom.chat-open{visibility:hidden!important}
- body.playing:after{content:"برای ادامه بازی، گوشی را افقی کنید";position:fixed;top:50%;left:50%;width:100dvh;height:100vw;transform:translate(-50%,-50%) rotate(90deg);z-index:19000;display:flex;align-items:center;justify-content:center;padding:28px;background:#091116;color:#f1d28d;text-align:center;font:800 20px Tahoma,sans-serif}
-}
-@media(max-width:760px) and (orientation:portrait){
- body{width:100vw;height:100dvh;overflow:hidden;padding:0}
-  .wrap{display:none!important}
-  #rotatePrompt{display:flex;position:fixed;inset:0;width:100vw;height:100dvh;padding:0;overflow:hidden}
-  #rotatePrompt .rotate-card{width:min(440px,88dvh);max-width:none;max-height:88vw;overflow:auto;transform:rotate(90deg);transform-origin:center;flex:0 0 auto}
-  #rotatePrompt .rotate-title{font-size:clamp(20px,4dvh,28px)}
-  #rotatePrompt .rotate-card p{font-size:clamp(13px,2.4dvh,17px)}
-  #rotatePrompt .rotate-card button{min-height:44px}
-  #rotatePrompt .build-version{font-size:clamp(10px,1.8dvh,12px)}
-}
+
+
 @media(max-width:900px) and (orientation:landscape){
  body{padding:0}.wrap{width:100%;height:100dvh;max-width:none}.card{padding:0;border:0;border-radius:0;box-shadow:none;gap:0;justify-content:center}#gamebox{border:0;border-radius:0;width:min(100vw,177.7778dvh);max-height:100%;aspect-ratio:16/9;flex:0 1 auto;margin:auto}.bar{padding:3px 6px}.field label{font-size:9px}.field input,.field select{padding:4px 6px}.bar button{padding:4px 7px;font-size:10px}.stats{padding:0 5px 3px}.stat{font-size:8px;padding:3px 6px}.joy-base{width:116px;height:116px;left:18px;bottom:14px}.joy-knob{width:52px;height:52px;margin:-26px}.right-controls{right:18px;bottom:14px}.game-btn{width:62px;height:62px}.game-btn.run{width:78px;height:78px}.side-controls{top:10px;left:12px}.side-controls .game-btn{width:42px;height:42px}
 }
@@ -123,8 +111,23 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 
 /* After leaving the game, restore the ordinary portrait-friendly site page. */
 .exit-to-page #rotatePrompt{display:none!important}
-@media(max-width:760px) and (orientation:portrait){body.exit-to-page .wrap{display:flex!important;width:100vw;height:100dvh;min-height:100dvh;max-width:none;flex-direction:column;justify-content:center}body.exit-to-page .card{display:flex!important;flex:1;min-height:0;justify-content:center;padding:12px}body.exit-to-page #gamebox{width:100%;max-height:42dvh;aspect-ratio:16/9;flex:0 1 auto}body.exit-to-page canvas{width:100%;height:auto;aspect-ratio:16/9}}
-\n/* Portrait phones: rotate the complete game stage into a landscape viewport. */\n@media(max-width:760px) and (orientation:portrait){\n body.playing .wrap{position:fixed!important;inset:auto!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;width:100dvh!important;height:100vw!important;min-height:0!important;transform:translate(-50%,-50%) rotate(90deg)!important;transform-origin:center center!important;display:block!important;overflow:hidden!important}\n body.playing .card{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;display:block!important;overflow:hidden!important}\n body.playing #gamebox{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;aspect-ratio:auto!important}\n body.playing #game{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;aspect-ratio:auto!important;object-fit:fill!important}\n body.playing .game-controls{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}\n body.playing .bottom.chat-open{position:absolute!important;right:10px!important;bottom:10px!important}\n}\n</style>
+
+
+/* Portrait phone support: rotate the entire landscape game stage, not the device. */
+@media(max-width:760px) and (orientation:portrait){
+ body.playing .wrap{
+  position:fixed!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
+  width:100dvh!important;height:100vw!important;min-height:0!important;
+  transform:translate(-50%,-50%) rotate(90deg)!important;transform-origin:center center!important;
+  display:block!important;overflow:hidden!important;
+ }
+ body.playing .card{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;display:block!important;overflow:hidden!important}
+ body.playing #gamebox{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;aspect-ratio:auto!important}
+ body.playing #game{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;aspect-ratio:auto!important;object-fit:fill!important}
+ body.playing .game-controls{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
+ body.playing .bottom.chat-open{position:absolute!important;right:10px!important;bottom:10px!important}
+}
+</style>
 </head>
 <body>
 <main class="wrap">
@@ -170,9 +173,9 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
   </div>
  </div>
 </div>
-<div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای ورود، دکمه زیر را بزن؛ بازی در همین صفحه افقی نمایش داده می‌شود</p><button id="startLandscape" class="primary">شروع بازی افقی</button><small>پس از ورود، نمای بازی به‌صورت افقی و تمام‌صفحه نمایش داده می‌شود.</small><div id="connectionError" role="alert" style="display:none;margin-top:12px;padding:10px;border:1px solid #b87568;border-radius:10px;color:#ffd2c9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت 6</div></div></div>
+<div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای ورود، دکمه زیر را بزن؛ بازی در همین صفحه افقی نمایش داده می‌شود</p><button id="startLandscape" class="primary">شروع بازی افقی</button><small>پس از ورود، نمای بازی به‌صورت افقی و تمام‌صفحه نمایش داده می‌شود.</small><div id="connectionError" role="alert" style="display:none;margin-top:12px;padding:10px;border:1px solid #b87568;border-radius:10px;color:#ffd2c9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۷</div></div></div>
 <script type="module">
-import { createRipOnline } from "../online/multiplayer.js?v=6";
+import { createRipOnline } from "../online/multiplayer.js?v=7";
 const $=id=>document.getElementById(id),canvas=$("game"),ctx=canvas.getContext("2d");
 const W=2400,H=1800,ROOM="mm-world-main";
 const skins={teal:"#35c4b2",gold:"#e7b84f",violet:"#a98bdf",red:"#df7770"};
