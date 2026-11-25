@@ -205,6 +205,13 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 #loadingMessage{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(orientation:portrait){#loadingScreen{width:100dvh;height:100vw;inset:auto;left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%) rotate(90deg);padding:0 5vw 24px;background-size:cover;background-position:center}.loading-ui{width:86vw;margin-bottom:5vh}}
 @media(prefers-reduced-motion:reduce){.loading-fill{transition:none}}
+
+/* Loading bar redesigned to match the reference: wide track, centered percentage, no extra copy. */
+.loading-ui{width:94vw;max-width:none;margin-bottom:clamp(16px,5vh,52px);}
+.loading-track{position:relative;width:100%;height:clamp(26px,4.2vh,36px);padding:3px;overflow:hidden;}
+.loading-fill{min-width:0;}
+.loading-percent{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:clamp(13px,2.1vw,17px);font-weight:900;line-height:1;text-shadow:0 1px 3px #00101e,0 0 5px #00101e;pointer-events:none;z-index:1;}
+@media(orientation:portrait){.loading-ui{width:94vw;margin-bottom:5vh}.loading-track{height:clamp(26px,4.2vh,36px)}}
 </style>
 </head>
 <body>
@@ -251,7 +258,7 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
   </div>
  </div>
 </div>
-<div id="loadingScreen" role="status" aria-live="polite" aria-label="در حال بارگذاری بازی"><div class="loading-ui"><div class="loading-title">در حال بارگذاری MM WORLD</div><div class="loading-track"><div id="loadingFill" class="loading-fill"></div></div><div class="loading-meta"><span id="loadingMessage">در حال آماده‌سازی بازی...</span><span id="loadingPercent">۳٪</span></div></div></div>
+<div id="loadingScreen" role="status" aria-live="polite" aria-label="در حال بارگذاری بازی"><div class="loading-ui"><div class="loading-track"><div id="loadingFill" class="loading-fill"></div><span id="loadingPercent" class="loading-percent">۳٪</span></div></div></div>
  <div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای ورود به سایت، دکمه زیر را بزن؛ صفحه در همین لحظه تمام‌صفحه و افقی می‌شود.</p><button id="startLandscape" class="primary">ورود به سایت</button><small>با لمس این دکمه، تمام‌صفحه فعال می‌شود و سپس اتصال به دنیای آنلاین آغاز خواهد شد.</small><div id="connectionError" role="alert" style="display:none;margin-top:12px;padding:10px;border:1px solid #b87568;border-radius:10px;color:#ffd2c9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۱۱</div></div></div>
 <script type="module">
 import { createRipOnline } from "../online/multiplayer.js?v=8";
@@ -299,7 +306,7 @@ const buildings=[{x:1050,y:650,w:280,h:150,label:"تالار دهکده",color:"
 function persist(){localStorage.setItem("mmworld-profile",JSON.stringify({name:player.name,skin:player.skin,coins,herbs,questStarted,questDone,collected:[...collected]}));}
 function sayToast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2100);}
 function status(t){$("status").textContent=t;}
-function setLoadingProgress(value,message){const n=Math.max(0,Math.min(100,Math.round(value)));$("loadingFill").style.width=n+"%";$("loadingPercent").textContent=new Intl.NumberFormat("fa-IR").format(n)+"٪";$("loadingMessage").textContent=message||"در حال بارگذاری...";}
+function setLoadingProgress(value,message){const n=Math.max(0,Math.min(100,Math.round(value)));$("loadingFill").style.width=n+"%";$("loadingPercent").textContent=new Intl.NumberFormat("fa-IR").format(n)+"٪";}
 function showLoading(){ $("loadingScreen").classList.add("visible");setLoadingProgress(3,"در حال آماده‌سازی بازی..."); }
 function hideLoading(){ $("loadingScreen").classList.remove("visible"); }
 
