@@ -294,7 +294,7 @@ renderer3D.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer3D.outputColor
 threeRoot.appendChild(renderer3D.domElement);
 const hemi3D=new THREE.HemisphereLight(0xffffff,0x557044,1.15);scene3D.add(hemi3D);
 const sun3D=new THREE.DirectionalLight(0xffffff,0.85);sun3D.position.set(-35,70,25);scene3D.add(sun3D);
-const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(24,24);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(500,500),groundMaterial3D);
+const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(30,30);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(500,500),groundMaterial3D);
 ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 scene3D.add(camera3D);
 const CHARACTER_ASSETS={hero:"blocky_01_hero.glb",knight:"blocky_03_knight.glb",wizard:"blocky_05_wizard.glb",pirate:"blocky_06_pirate.glb",astronaut:"blocky_07_astronaut.glb",robot:"blocky_08_robot.glb",zombie:"blocky_09_zombie.glb",princess:"blocky_19_princess.glb"};
@@ -543,6 +543,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=82",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=83",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
