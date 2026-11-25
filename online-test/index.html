@@ -324,8 +324,9 @@ function setAvatarMoving(record,moving){
 let lookYaw=0,lookPitch=0,lookPointer=null,lastLookX=0,lastLookY=0;
 function resize3D(){const w=Math.max(1,threeRoot.clientWidth),h=Math.max(1,threeRoot.clientHeight);renderer3D.setSize(w,h,false);camera3D.aspect=w/h;camera3D.updateProjectionMatrix();}
 new ResizeObserver(resize3D).observe(threeRoot);resize3D();
-threeRoot.addEventListener("pointerdown",e=>{if(e.target.closest("button")||e.target.closest("#joystick"))return;lookPointer=e.pointerId;lastLookX=e.clientX;lastLookY=e.clientY;try{threeRoot.setPointerCapture(e.pointerId);}catch(_){}});
-threeRoot.addEventListener("pointermove",e=>{if(lookPointer!==e.pointerId)return;const dx=e.clientX-lastLookX,dy=e.clientY-lastLookY;lastLookX=e.clientX;lastLookY=e.clientY;lookYaw-=dx*.004;lookPitch=clamp(lookPitch-dy*.003,-1.15,1.15);});
+threeRoot.style.touchAction="none";
+threeRoot.addEventListener("pointerdown",e=>{if(e.target.closest("button")||e.target.closest("#joystick")||e.target.closest("#runButton")||e.target.closest("[data-dir]"))return;e.preventDefault();e.stopPropagation();lookPointer=e.pointerId;lastLookX=e.clientX;lastLookY=e.clientY;try{threeRoot.setPointerCapture(e.pointerId);}catch(_){}});
+threeRoot.addEventListener("pointermove",e=>{if(lookPointer!==e.pointerId)return;e.preventDefault();e.stopPropagation();const dx=e.clientX-lastLookX,dy=e.clientY-lastLookY;lastLookX=e.clientX;lastLookY=e.clientY;lookYaw-=dx*.004;lookPitch=clamp(lookPitch-dy*.003,-1.15,1.15);});
 function endLook(e){if(lookPointer===e.pointerId)lookPointer=null;}
 threeRoot.addEventListener("pointerup",endLook);threeRoot.addEventListener("pointercancel",endLook);threeRoot.addEventListener("lostpointercapture",()=>lookPointer=null);
 
@@ -377,6 +378,7 @@ function blocked(x,y){
  return false;
 }
 function move(dt){
+ if(lookPointer!==null){player.moving=false;return;}
  let forward=(keys.up?1:0)-(keys.down?1:0),strafe=(keys.right?1:0)-(keys.left?1:0);
  if(!forward&&!strafe){player.moving=false;return;}
  player.moving=true;
@@ -496,6 +498,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=44",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=45",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
