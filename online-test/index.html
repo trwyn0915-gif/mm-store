@@ -206,15 +206,15 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 <div id="exitConfirm" class="exit-overlay" aria-hidden="true">
  <div class="exit-dialog" role="dialog" aria-modal="true" aria-labelledby="exitTitle" aria-describedby="exitMessage">
   <div class="exit-mark" aria-hidden="true">MM</div>
-  <h2 id="exitTitle">خروج از دنیای MM؟</h2>
-  <p id="exitMessage">آیا مطمئن هستید که می‌خواهید از بازی خارج شوید؟ با تأیید، اتصال شما به دنیای آنلاین قطع می‌شود.</p>
+  <h2 id="exitTitle">خروج از سایت؟</h2>
+  <p id="exitMessage">آیا مطمئن هستید می‌خواهید از سایت بازی خارج شوید؟ با تأیید، از صفحه بازی خارج می‌شوید.</p>
   <div class="exit-actions">
    <button type="button" id="stayInGame" class="exit-stay">ادامه بازی</button>
-   <button type="button" id="confirmExit" class="exit-leave">بله، خروج از بازی</button>
+   <button type="button" id="confirmExit" class="exit-leave">بله، خروج از سایت</button>
   </div>
  </div>
 </div>
-<div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای ورود، دکمه زیر را بزن؛ بازی در همین صفحه افقی نمایش داده می‌شود</p><button id="startLandscape" class="primary">شروع بازی افقی</button><small>پس از ورود، نمای بازی به‌صورت افقی و تمام‌صفحه نمایش داده می‌شود.</small><div id="connectionError" role="alert" style="display:none;margin-top:12px;padding:10px;border:1px solid #b87568;border-radius:10px;color:#ffd2c9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۹</div></div></div>
+<div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای ورود، دکمه زیر را بزن؛ بازی در همین صفحه افقی نمایش داده می‌شود</p><button id="startLandscape" class="primary">شروع بازی افقی</button><small>پس از ورود، نمای بازی به‌صورت افقی و تمام‌صفحه نمایش داده می‌شود.</small><div id="connectionError" role="alert" style="display:none;margin-top:12px;padding:10px;border:1px solid #b87568;border-radius:10px;color:#ffd2c9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۱۰</div></div></div>
 <script type="module">
 import { createRipOnline } from "../online/multiplayer.js?v=8";
 const $=id=>document.getElementById(id),canvas=$("game"),ctx=canvas.getContext("2d");
@@ -330,8 +330,8 @@ function hideExitConfirm(){const modal=$("exitConfirm");modal.classList.remove("
 window.addEventListener("popstate",()=>{if(!document.body.classList.contains("playing")||exitApproved)return;history.pushState({mmWorldGuard:true},"",location.href);showExitConfirm();});
 // Portrait devices use a rotated landscape game viewport; no physical rotation is required.
 $("stayInGame").addEventListener("click",hideExitConfirm);
-async function returnToGameStart(reason=""){const wasPlaying=document.body.classList.contains("playing");document.body.classList.remove("playing");document.body.classList.add("exit-to-page");if(online){try{await online.leave();}catch(e){console.warn("Leave failed",e);}}online=null;connected=false;players={};userId="";exitApproved=false;hideExitConfirm();try{if(document.fullscreenElement&&document.exitFullscreen)await document.exitFullscreen();}catch(e){console.warn("Could not exit fullscreen",e);}try{screen.orientation?.unlock?.();}catch(e){console.info("Orientation unlock unavailable",e);}const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");const connectButton=$("connect");connectButton.disabled=false;connectButton.textContent="ورود به دنیای آنلاین";status("وضعیت: آفلاین");resetJoy();sprinting=false;Object.keys(keys).forEach(k=>keys[k]=false);if(reason)sayToast(reason);}
-$("confirmExit").addEventListener("click",()=>returnToGameStart("از بازی خارج شدی؛ برای ورود دوباره حالت افقی را فعال کن."));
+function confirmExitSite(){exitApproved=true;hideExitConfirm();if(history.length>2){history.go(-2);return;}if(document.referrer){location.replace(document.referrer);return;}location.replace("https://github.com/trwyn0915-gif/mm-store");}
+$("confirmExit").addEventListener("click",confirmExitSite);
 function toggleChat(){if(!connected){sayToast("برای چت باید ابتدا وارد دنیای آنلاین شوی");return;}const bottom=document.querySelector(".bottom");bottom.classList.toggle("chat-open");}
 $("chatToggle").addEventListener("click",toggleChat);
 $("quickChat").addEventListener("click",toggleChat);
@@ -364,6 +364,6 @@ function showFatalGameError(message){
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=28",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=29",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
