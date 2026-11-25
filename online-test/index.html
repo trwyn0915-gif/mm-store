@@ -170,7 +170,7 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
   </div>
  </div>
 </div>
-<div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای اجرای بازی افقی، دکمه زیر را بزن</p><button id="startLandscape" class="primary">شروع بازی افقی</button><small>در صورت پشتیبانی مرورگر، صفحه و بازی خودکار افقی و تمام‌صفحه می‌شوند.</small><div id="connectionError" role="alert" style="display:none;margin-top:12px;padding:10px;border:1px solid #b87568;border-radius:10px;color:#ffd2c9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت 3</div></div></div>
+<div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای اجرای بازی افقی، دکمه زیر را بزن</p><button id="startLandscape" class="primary">شروع بازی افقی</button><small>در صورت پشتیبانی مرورگر، صفحه و بازی خودکار افقی و تمام‌صفحه می‌شوند.</small><div id="connectionError" role="alert" style="display:none;margin-top:12px;padding:10px;border:1px solid #b87568;border-radius:10px;color:#ffd2c9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت 4</div></div></div>
 <script type="module">
 import { createRipOnline } from "../online/multiplayer.js?v=6";
 const $=id=>document.getElementById(id),canvas=$("game"),ctx=canvas.getContext("2d");
@@ -311,8 +311,16 @@ window.addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(["arrowup",
 window.addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="w"||k==="arrowup")keys.up=false;if(k==="s"||k==="arrowdown")keys.down=false;if(k==="a"||k==="arrowleft")keys.left=false;if(k==="d"||k==="arrowright")keys.right=false;});
 window.addEventListener("blur",()=>{Object.keys(keys).forEach(k=>keys[k]=false);sprinting=false;resetJoy();});window.addEventListener("pagehide",()=>{if(online)online.leave().catch(()=>{});});
 function frame(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(connected){move(dt);camera.x=clamp(player.x-480,0,W-960);camera.y=clamp(player.y-270,0,H-540);if(t-lastSend>250){lastSend=t;online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin}).catch(console.error);}if(t-lastSave>2000){lastSave=t;online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp}).catch(console.error);}drawWorld();}else{ctx.clearRect(0,0,canvas.width,canvas.height);}requestAnimationFrame(frame);}
-window.addEventListener("error",event=>{const box=$("connectionError");if(box){box.textContent="خطای اجرای بازی: "+(event.message||"خطای نامشخص");box.classList.add("visible");const p=$("rotatePrompt");p.hidden=false;p.classList.remove("hidden");}});
-window.addEventListener("unhandledrejection",event=>{const box=$("connectionError");if(box){box.textContent="خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"));box.classList.add("visible");const p=$("rotatePrompt");p.hidden=false;p.classList.remove("hidden");}});
+function showFatalGameError(message){
+ connected=false;
+ document.body.classList.remove("playing");
+ const p=$("rotatePrompt");p.hidden=false;p.classList.remove("hidden");
+ const box=$("connectionError");box.textContent=message;box.classList.add("visible");
+ const btn=$("startLandscape");btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";
+ status("خطا در اجرای بازی");
+}
+window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
+window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 </script>
