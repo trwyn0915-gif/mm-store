@@ -341,7 +341,7 @@ function setAvatarMoving(record,moving){
  if(!next||next===record.activeAction)return;
  next.reset().fadeIn(.18).play();record.activeAction?.fadeOut(.18);record.activeAction=next;
 }
-let lookYaw=0,lookYawTarget=0,lookPitch=0,lookPointer=null,lastLookX=0,lastLookY=0;
+let lookYaw=.16,lookYawTarget=.16,lookPitch=.18,lookPointer=null,lastLookX=0,lastLookY=0;
 function resize3D(){const w=Math.max(1,threeRoot.clientWidth),h=Math.max(1,threeRoot.clientHeight);renderer3D.setSize(w,h,false);camera3D.aspect=w/h;camera3D.updateProjectionMatrix();}
 new ResizeObserver(resize3D).observe(threeRoot);resize3D();
 threeRoot.style.touchAction="none";
@@ -567,6 +567,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=92",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=93",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
