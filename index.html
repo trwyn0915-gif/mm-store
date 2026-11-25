@@ -1517,10 +1517,16 @@ html.mobile-access-block .mobile-access-block-screen{
   }
 }
 
+
+.online-panel{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:10px 12px;border:1px solid #52606b;border-radius:12px;background:#101820;color:#e9eef2;font:600 14px Vazirmatn,sans-serif}
+.online-panel input{min-width:130px;max-width:190px;padding:9px 11px;border:1px solid #647482;border-radius:8px;background:#0b1117;color:#fff;font:inherit}
+.online-panel button{padding:9px 14px;border:0;border-radius:8px;background:#b88b48;color:#17120a;font:700 14px Vazirmatn,sans-serif;cursor:pointer}
+#onlineStatus{font-size:13px;color:#c6d2dc}
 </style></head>
 <body><div class="mobile-access-block-screen" role="alert" aria-live="polite"><div class="mobile-access-card"><div class="access-mark">RIP</div><span class="access-kicker">LAST SHIFT · ACCESS CONTROL</span><h1>ورود با موبایل امکان‌پذیر نیست</h1><div class="access-rule"></div><p>این بازی برای نمایش در صفحه‌نمایش بزرگ طراحی شده است.<br>برای ورود، از <strong>کامپیوتر یا لپ‌تاپ ویندوز</strong> استفاده کنید.</p><span class="access-foot">RIP AMOO AMIR · DESKTOP EXPERIENCE</span></div></div><main class="wrap">
 <header class="top"><div><div class="brand">RIP عمو امیر | آخرین شیفت</div><div class="subtitle">یک داستان تعاملی ترسناک در رستورانی دورافتاده</div></div><div class="tag">نسخه داستانی · فصل اول</div></header>
 <section class="panel">
+<div class="online-panel"><input id="onlineName" maxlength="20" value="بازیکن" aria-label="نام بازیکن"><button id="onlineConnect" type="button">ورود به دنیای آنلاین</button><span id="onlineStatus" role="status">آنلاین: قطع</span></div>
 <div class="hud"><span class="pill" id="chapter">پرونده: آخرین شیفت</span><span class="pill" id="objective">هدف: شروع ماجرا</span><span class="pill" id="clock">ساعت ۰۰:۴۷</span></div>
 <div class="controls"><div class="dpad"><button data-k="up">▲</button><button data-k="left">◀</button><button data-k="down">▼</button><button data-k="right">▶</button></div></div>
 <div id="stage"><canvas id="game" width="960" height="540" aria-label="بازی داستانی دوبعدی"></canvas><div id="toast"></div>
@@ -2227,7 +2233,45 @@ function move(dt){
  const now=performance.now();if(now-lastStep>330){sfx('step');lastStep=now}
 }
 function update(dt){if(scene==='chapterTwoStation'&&chapterTwoAsgharPresent&&chapterTwoAsgharMoving){chapterTwoAsgharX=Math.max(740,chapterTwoAsgharX-dt*90);if(chapterTwoAsgharX<=740)chapterTwoAsgharMoving=false;}if(scene==='introStory'||scene==='drive'){roadMotion+=dt*150;driveTravel=roadMotion;driveSpeed=1}if(scene==='drive'&&driveStart){let dialogActive=$('dialog').classList.contains('show')||choicesOpen;let elapsed=performance.now()-driveStart;if(!dialogActive&&elapsed>4700&&!driveBrakeStart){driveBrakeStart=performance.now();sfx('brake');toast('عمو امیر ترمز می‌گیرد...')}if(driveBrakeStart){driveSpeed=Math.max(0,1-(performance.now()-driveBrakeStart)/1400);if(performance.now()-driveBrakeStart>=1400){driveStart=0;driveBrakeStart=0;driveSpeed=0;enterRoadside()}}driveTravel+=dt*driveSpeed*150}if(scene==='restaurant'&&cleaned===3&&knocks===0){}if(scene==='basement'&&breaker&&scene!=='reveal'){}if((scene==='restaurant'||scene==='basement'||scene==='chapterTwoOutside')&&!$('dialog').classList.contains('show')&&!choicesOpen&&performance.now()-lastAtmosphere>26000){lastAtmosphere=performance.now();if(Math.random()>.45){shadowStart=performance.now();shadowUntil=shadowStart+1400;shadowOrigin=player.x+(Math.random()>.5?190:-190);sfx('creak');toast('سایه‌ای از گوشه چشم رد شد...')}else{sfx('wind');toast('باد سردی از لای پنجره‌ها گذشت...')}}updateTruthEscape(dt);if(!truthEscape.active)move(dt);updateMhFollower(dt);updateMHChase(dt);updateMHApproach(dt);let near=nearObject();$('interact').textContent='تعامل / E';$('clock').textContent=scene==='basement'?'ساعت ۰۱:۱۳':scene==='reveal'||scene==='final'?'ساعت ۰۱:۲۷':'ساعت ۰۰:۴۷'}
-let driveStart=0,last=0,driveTravel=0,driveSpeed=0,driveBrakeStart=0,roadMotion=0;function loop(t){let dt=Math.min(.04,(t-last)/1000||0);last=t;update(dt);draw();requestAnimationFrame(loop)}
+
+let ripOnline=null,ripOnlineReady=false,ripOnlineBusy=false,ripOnlineRoom="",ripOnlineLastSend=0,ripOnlinePlayers={};
+const onlineStatus=$('onlineStatus'),onlineButton=$('onlineConnect'),onlineName=$('onlineName');
+function onlineRoomForScene(){return 'rip-'+(scene==='restaurant'||scene==='basement'||scene==='reveal'||scene==='final'?'chapter1':scene==='chapterTwoOutside'||scene==='chapterTwoStation'?'chapter2':scene==='roadside'?'roadside':scene==='drive'?'drive':'lobby')+'-'+scene;}
+function setOnlineStatus(text){if(onlineStatus)onlineStatus.textContent=text;}
+async function connectRipOnline(){
+ if(ripOnlineBusy||ripOnlineReady)return;
+ ripOnlineBusy=true;onlineButton.disabled=true;setOnlineStatus('در حال اتصال...');
+ try{
+  const mod=await import('./online/multiplayer.js');
+  ripOnline=mod.createRipOnline();
+  const auth=await ripOnline.connect();
+  const name=(onlineName.value||'بازیکن').trim().slice(0,20)||'بازیکن';
+  await ripOnline.saveCharacter({displayName:name,roomId:onlineRoomForScene(),x:player.x,y:player.y,facing:player.face});
+  await joinRipOnlineRoom();
+  ripOnlineReady=true;onlineButton.textContent='متصل شدی';setOnlineStatus('متصل · شناسه '+auth.userId.slice(0,6));
+ }catch(err){console.error('RIP online connection failed',err);setOnlineStatus('اتصال ناموفق؛ دوباره تلاش کن');onlineButton.disabled=false;ripOnline=null;}
+ finally{ripOnlineBusy=false;}
+}
+async function joinRipOnlineRoom(){
+ if(!ripOnline)return;
+ const room=onlineRoomForScene();if(room===ripOnlineRoom)return;
+ ripOnlineRoom=room;ripOnlinePlayers={};
+ await ripOnline.joinRoom(room,{onPlayers:state=>{ripOnlinePlayers={};for(const [key,metas] of Object.entries(state||{})){const m=Array.isArray(metas)?metas[metas.length-1]:metas;if(m?.userId&&m.userId!==undefined)ripOnlinePlayers[m.userId]=m;}},onMove:p=>{if(p?.userId)ripOnlinePlayers[p.userId]={...ripOnlinePlayers[p.userId],...p};}});
+}
+function drawRipOnlinePlayers(){
+ if(!ripOnlineReady||!['restaurant','basement','chapterTwoOutside','chapterTwoStation','reveal','final'].includes(scene))return;
+ for(const p of Object.values(ripOnlinePlayers)){
+  if(!Number.isFinite(p.x)||!Number.isFinite(p.y))continue;
+  ctx.save();ctx.fillStyle='#67d8ff';ctx.strokeStyle='#07131b';ctx.lineWidth=3;
+  ctx.beginPath();ctx.arc(p.x,p.y,12,0,Math.PI*2);ctx.fill();ctx.stroke();
+  ctx.font='bold 13px Vazirmatn,sans-serif';ctx.textAlign='center';ctx.direction='rtl';
+  ctx.lineWidth=3;ctx.strokeStyle='#07131b';ctx.strokeText(String(p.displayName||'بازیکن').slice(0,20),p.x,p.y-20);
+  ctx.fillStyle='#fff';ctx.fillText(String(p.displayName||'بازیکن').slice(0,20),p.x,p.y-20);ctx.restore();
+ }
+}
+onlineButton.addEventListener('click',connectRipOnline);
+
+let driveStart=0,last=0,driveTravel=0,driveSpeed=0,driveBrakeStart=0,roadMotion=0;function loop(t){let dt=Math.min(.04,(t-last)/1000||0);last=t;update(dt);if(ripOnlineReady){const room=onlineRoomForScene();if(room!==ripOnlineRoom)joinRipOnlineRoom().catch(e=>{console.error(e);setOnlineStatus('اتصال اتاق قطع شد')});if(t-ripOnlineLastSend>120&&['restaurant','basement','chapterTwoOutside','chapterTwoStation','reveal','final'].includes(scene)){ripOnlineLastSend=t;ripOnline.publishMove({x:player.x,y:player.y,facing:player.face,displayName:(onlineName.value||'بازیکن').trim().slice(0,20)}).catch(e=>console.error('move sync failed',e));}}draw();drawRipOnlinePlayers();requestAnimationFrame(loop)}
 function startChapterTwo(){showGameControls(true);mysteriousPresent=false;
  audioStart();if(window.speechSynthesis)speechSynthesis.cancel();ending=false;roadMotion=0;driveTravel=0;driveSpeed=1;driveStart=0;driveBrakeStart=0;scene='introStory';$('intro').classList.add('hidden');$('ending').classList.add('hidden');$('chapterTwoEnd').style.display='none';$('dialog').classList.remove('show');$('choices').innerHTML='';music('suspense');$('chapter').textContent='پرونده: فرار از مه · فصل دوم';setObjective('ادامه مسیر عمو امیر و ام‌اچ');
  runDialog([
