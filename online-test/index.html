@@ -175,7 +175,7 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 </div>
 <div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای ورود، دکمه زیر را بزن؛ بازی در همین صفحه افقی نمایش داده می‌شود</p><button id="startLandscape" class="primary">شروع بازی افقی</button><small>پس از ورود، نمای بازی به‌صورت افقی و تمام‌صفحه نمایش داده می‌شود.</small><div id="connectionError" role="alert" style="display:none;margin-top:12px;padding:10px;border:1px solid #b87568;border-radius:10px;color:#ffd2c9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۷</div></div></div>
 <script type="module">
-import { createRipOnline } from "../online/multiplayer.js?v=7";
+import { createRipOnline } from "../online/multiplayer.js?v=8";
 const $=id=>document.getElementById(id),canvas=$("game"),ctx=canvas.getContext("2d");
 const W=2400,H=1800,ROOM="mm-world-main";
 const skins={teal:"#35c4b2",gold:"#e7b84f",violet:"#a98bdf",red:"#df7770"};
@@ -276,7 +276,7 @@ async function connect(){
  }
 }
 async function waitForStableViewport(){let lastW=0,lastH=0,stableSince=0;const began=performance.now();while(performance.now()-began<2200){const w=Math.round(window.visualViewport?.width||window.innerWidth),h=Math.round(window.visualViewport?.height||window.innerHeight);if(w===lastW&&h===lastH){if(!stableSince)stableSince=performance.now();if(performance.now()-stableSince>=350)return true;}else{lastW=w;lastH=h;stableSince=0;}await new Promise(resolve=>setTimeout(resolve,80));}return true;}
-async function startFromPage(){const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال آماده‌سازی...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}await waitForStableViewport();document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
+async function startFromPage(){const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال فعال‌سازی حالت افقی و تمام‌صفحه...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{if(screen.orientation?.lock)await screen.orientation.lock("landscape");}catch(e){console.info("Landscape lock unavailable; using the rotated landscape game stage",e);}await waitForStableViewport();document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
 $("connect").addEventListener("click",startFromPage);
 $("startLandscape").addEventListener("click",startFromPage);
 $("skin").addEventListener("change",()=>{player.skin=$("skin").value;persist();});
