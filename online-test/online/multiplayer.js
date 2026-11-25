@@ -8,9 +8,7 @@ const validConfig =
   !SUPABASE_ANON_KEY.includes("YOUR_SUPABASE");
 
 export function createRipOnline() {
-  if (!validConfig) {
-    throw new Error("تنظیمات سرور آنلاین هنوز وارد نشده است.");
-  }
+  if (!validConfig) throw new Error("تنظیمات سرور آنلاین هنوز وارد نشده است.");
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: { persistSession: true, autoRefreshToken: true }
@@ -20,10 +18,8 @@ export function createRipOnline() {
   let currentUser = null;
 
   async function connect() {
-    const { data: sessionData, error: sessionError } =
-      await supabase.auth.getSession();
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
     if (sessionError) throw sessionError;
-
     let user = sessionData.session?.user;
     if (!user) {
       const { data, error } = await supabase.auth.signInAnonymously();
@@ -34,8 +30,20 @@ export function createRipOnline() {
     return { userId: user.id };
   }
 
+  async function loadCharacter() {
+    if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
+    const { data, error } = await supabase
+      .from("world_players")
+      .select("display_name,character_id,room_id,x,y,facing,level,experience")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  }
+
   async function saveCharacter(character) {
     if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
+    const now = new Date().toISOString();
     const row = {
       user_id: currentUser.id,
       display_name: String(character.displayName || "بازیکن").trim().slice(0, 20),
@@ -43,10 +51,11 @@ export function createRipOnline() {
       room_id: String(character.roomId || "station").slice(0, 40),
       x: Number.isFinite(character.x) ? character.x : 480,
       y: Number.isFinite(character.y) ? character.y : 270,
-      facing: ["up", "down", "left", "right"].includes(character.facing)
-        ? character.facing : "down",
-      last_seen_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      facing: ["up", "down", "left", "right"].includes(character.facing) ? character.facing : "down",
+      level: Number.isInteger(character.level) ? Math.max(1, character.level) : 1,
+      experience: Number.isInteger(character.experience) ? Math.max(0, character.experience) : 0,
+      last_seen_at: now,
+      updated_at: now
     };
     const { error } = await supabase.from("world_players").upsert(row);
     if (error) throw error;
@@ -56,64 +65,54 @@ export function createRipOnline() {
   async function joinRoom(roomId, handlers = {}) {
     if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
     if (channel) await supabase.removeChannel(channel);
-
-    channel = supabase.channel("rip-world:" + String(roomId).slice(0, 40), {
+    const room = String(roomId).slice(0, 40);
+    channel = supabase.channel("rip-world:" + room, {
       config: { presence: { key: currentUser.id }, broadcast: { self: false } }
     });
-
     channel
-      .on("presence", { event: "sync" }, () => {
-        handlers.onPlayers?.(channel.presenceState());
-      })
+      .on("presence", { event: "sync" }, () => handlers.onPlayers?.(channel.presenceState()))
       .on("broadcast", { event: "move" }, ({ payload }) => {
-        if (payload?.userId !== currentUser.id) handlers.onMove?.(payload);
+        if (payload?.userId && payload.userId !== currentUser.id) handlers.onMove?.(payload);
       })
       .on("broadcast", { event: "chat" }, ({ payload }) => {
-        handlers.onChat?.(payload);
+        if (payload?.userId !== currentUser.id) handlers.onChat?.(payload);
       });
 
-    const status = await new Promise((resolve, reject) => {
-      channel.subscribe(async state => {
+    await new Promise((resolve, reject) => {
+      channel.subscribe(state => {
         if (state === "SUBSCRIBED") resolve(state);
         if (state === "CHANNEL_ERROR" || state === "TIMED_OUT") {
           reject(new Error("اتصال به اتاق بازی برقرار نشد."));
         }
       });
     });
-    return status;
+    return "SUBSCRIBED";
   }
 
   async function publishMove(position) {
     if (!channel || !currentUser) return;
-    await channel.track({
+    const payload = {
       userId: currentUser.id,
-      x: Number(position.x) || 0,
-      y: Number(position.y) || 0,
-      facing: position.facing || "down",
-      displayName: String(position.displayName || "بازیکن").slice(0, 20),
+      x: Number.isFinite(position.x) ? position.x : 0,
+      y: Number.isFinite(position.y) ? position.y : 0,
+      facing: ["up", "down", "left", "right"].includes(position.facing) ? position.facing : "down",
+      displayName: String(position.displayName || "بازیکن").trim().slice(0, 20),
+      skin: String(position.skin || "teal").slice(0, 20),
       sentAt: Date.now()
-    });
-    await channel.send({
-      type: "broadcast",
-      event: "move",
-      payload: {
-        userId: currentUser.id,
-        x: Number(position.x) || 0,
-        y: Number(position.y) || 0,
-        facing: position.facing || "down",
-        displayName: String(position.displayName || "بازیکن").slice(0, 20)
-      }
-    });
+    };
+    await channel.track(payload);
+    await channel.send({ type: "broadcast", event: "move", payload });
   }
 
   async function sendChat(roomId, message, displayName) {
     if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
     const clean = String(message || "").trim().slice(0, 300);
     if (!clean) return;
+    const safeName = String(displayName || "بازیکن").trim().slice(0, 20);
     const { error } = await supabase.from("world_chat").insert({
       user_id: currentUser.id,
       room_id: String(roomId).slice(0, 40),
-      display_name: String(displayName || "بازیکن").trim().slice(0, 20),
+      display_name: safeName,
       message: clean
     });
     if (error) throw error;
@@ -121,7 +120,7 @@ export function createRipOnline() {
       await channel.send({
         type: "broadcast",
         event: "chat",
-        payload: { userId: currentUser.id, displayName, message: clean }
+        payload: { userId: currentUser.id, displayName: safeName, message: clean }
       });
     }
   }
@@ -144,5 +143,5 @@ export function createRipOnline() {
     }
   }
 
-  return { connect, saveCharacter, joinRoom, publishMove, sendChat, loadRecentChat, leave };
+  return { connect, loadCharacter, saveCharacter, joinRoom, publishMove, sendChat, loadRecentChat, leave };
 }
