@@ -137,6 +137,7 @@ export function createRipOnline() {
       displayName: String(position.displayName || "بازیکن").trim().slice(0, 20),
       skin: String(position.skin || "hero").slice(0, 20),
       yaw: Number.isFinite(position.yaw) ? position.yaw : 0,
+      moving: Boolean(position.moving),
       sentAt: Date.now()
     };
     const now = Date.now();
