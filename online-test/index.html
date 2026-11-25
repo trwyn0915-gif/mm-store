@@ -35,6 +35,25 @@ button,input,select{font:inherit}button{border:1px solid #65766d;border-radius:1
 /* Single-screen game mode: controls remain visible in fullscreen on every mobile viewport. */
 
 /* Final fullscreen layout: the game itself is the only visible screen. */
+
+/* Hard override: one full-screen game scene; no setup/help panels. */
+html,body{width:100%;height:100%;min-height:100%;margin:0}
+body.playing{position:fixed;inset:0;width:100vw;height:100dvh;min-height:100dvh;padding:0!important;margin:0!important;overflow:hidden!important;background:#071015}
+body.playing .head,body.playing .foot,body.playing .bar,body.playing .stats,
+body.playing .bottom:not(.chat-open),body.playing #rotatePrompt{display:none!important}
+body.playing .wrap,body.playing .card{position:fixed!important;inset:0!important;display:block!important;width:100vw!important;height:100dvh!important;min-height:0!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;background:transparent!important;box-shadow:none!important}
+body.playing #gamebox{position:fixed!important;inset:0!important;display:block!important;width:100vw!important;height:100dvh!important;min-width:100vw!important;min-height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;aspect-ratio:auto!important;overflow:hidden!important;background:#071015!important}
+body.playing #game{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;margin:0!important;aspect-ratio:auto!important;object-fit:cover!important;touch-action:none}
+body.playing .game-controls{position:fixed!important;inset:0!important;display:block!important;width:100vw!important;height:100dvh!important;z-index:500!important;pointer-events:none!important}
+body.playing .joy-base,body.playing .right-controls,body.playing .side-controls{pointer-events:auto!important}
+body.playing .joy-base{position:absolute!important;left:max(18px,env(safe-area-inset-left))!important;bottom:max(18px,env(safe-area-inset-bottom))!important}
+body.playing .right-controls{position:absolute!important;right:max(18px,env(safe-area-inset-right))!important;bottom:max(18px,env(safe-area-inset-bottom))!important}
+body.playing .side-controls{position:absolute!important;left:max(12px,env(safe-area-inset-left))!important;top:max(12px,env(safe-area-inset-top))!important}
+body.playing .bottom.chat-open{display:block!important;position:fixed!important;z-index:700!important;right:10px!important;bottom:10px!important;left:auto!important;top:auto!important;width:min(360px,78vw)!important;max-height:70dvh!important;margin:0!important;pointer-events:auto!important}
+body.playing .bottom.chat-open .panel:first-child{display:block!important}
+body.playing .bottom.chat-open .panel:last-child{display:none!important}
+body.playing #toast{z-index:800!important}
+
 html:fullscreen,html:fullscreen body{width:100%;height:100%;min-height:100%;margin:0;padding:0;overflow:hidden;background:#071015}
 html:fullscreen body .head,html:fullscreen body .foot,
 html:fullscreen body .bar,html:fullscreen body .stats,
