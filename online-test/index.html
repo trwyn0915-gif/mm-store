@@ -358,14 +358,14 @@ function drawPerson(p,isSelf=false){const q=worldToScreen(p.x,p.y),color=skins[p
 function drawWorld(dt=0){
  const px=(player.x-1200)/8,pz=(player.y-900)/8;
  const selfRecord=avatarRecords.get("self");
- if(selfRecord){selfRecord.group.position.set(px,-.04,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
+ if(selfRecord){selfRecord.group.position.set(px,-.14,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
  const orbitPitch=clamp(.18+lookPitch*.7,-.75,.8);
  const orbitHorizontal=10*Math.cos(orbitPitch);
  camera3D.position.set(px-Math.sin(lookYaw)*orbitHorizontal,1.4+10*Math.sin(orbitPitch),pz+Math.cos(lookYaw)*orbitHorizontal);
  camera3D.lookAt(px,1.4,pz);
  for(const [id,p] of Object.entries(players)){
   const record=avatarRecords.get(id);
-  if(record){record.group.position.set((p.x-1200)/8,-.04,(p.y-900)/8);record.group.rotation.y=Number.isFinite(p.yaw)?p.yaw:Math.PI;setAvatarMoving(record,!!p.moving);record.mixer?.update(dt);}
+  if(record){record.group.position.set((p.x-1200)/8,-.14,(p.y-900)/8);record.group.rotation.y=Number.isFinite(p.yaw)?p.yaw:Math.PI;setAvatarMoving(record,!!p.moving);record.mixer?.update(dt);}
  }
  renderer3D.render(scene3D,camera3D);
 }
@@ -509,6 +509,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=51",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=52",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
