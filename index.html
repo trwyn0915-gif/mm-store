@@ -2244,7 +2244,7 @@ async function connectRipOnline(){
  try{
   const mod=await import('./online/multiplayer.js');
   ripOnline=mod.createRipOnline();
-  const auth=await ripOnline.connect();
+  const auth=await ripOnline.connect();ripOnlineUserId=auth.userId;
   const name=(onlineName.value||'بازیکن').trim().slice(0,20)||'بازیکن';
   await ripOnline.saveCharacter({displayName:name,roomId:onlineRoomForScene(),x:player.x,y:player.y,facing:player.face});
   await joinRipOnlineRoom();
@@ -2256,7 +2256,7 @@ async function joinRipOnlineRoom(){
  if(!ripOnline)return;
  const room=onlineRoomForScene();if(room===ripOnlineRoom)return;
  ripOnlineRoom=room;ripOnlinePlayers={};
- await ripOnline.joinRoom(room,{onPlayers:state=>{ripOnlinePlayers={};for(const [key,metas] of Object.entries(state||{})){const m=Array.isArray(metas)?metas[metas.length-1]:metas;if(m?.userId&&m.userId!==undefined)ripOnlinePlayers[m.userId]=m;}},onMove:p=>{if(p?.userId)ripOnlinePlayers[p.userId]={...ripOnlinePlayers[p.userId],...p};}});
+ await ripOnline.joinRoom(room,{onPlayers:state=>{ripOnlinePlayers={};for(const [key,metas] of Object.entries(state||{})){const m=Array.isArray(metas)?metas[metas.length-1]:metas;if(m?.userId&&m.userId!==ripOnlineUserId)ripOnlinePlayers[m.userId]=m;}},onMove:p=>{if(p?.userId&&p.userId!==ripOnlineUserId)ripOnlinePlayers[p.userId]={...ripOnlinePlayers[p.userId],...p};}});
 }
 function drawRipOnlinePlayers(){
  if(!ripOnlineReady||!['restaurant','basement','chapterTwoOutside','chapterTwoStation','reveal','final'].includes(scene))return;
