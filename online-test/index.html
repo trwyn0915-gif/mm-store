@@ -276,13 +276,7 @@ const hemi3D=new THREE.HemisphereLight(0xffffff,0x557044,2.1);scene3D.add(hemi3D
 const sun3D=new THREE.DirectionalLight(0xffffff,1.25);sun3D.position.set(-35,70,25);scene3D.add(sun3D);
 const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(500,500),new THREE.MeshStandardMaterial({color:0x4b9b45,roughness:1}));
 ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
-const arms3D=new THREE.Group();camera3D.add(arms3D);scene3D.add(camera3D);
-const armMat3D=new THREE.MeshStandardMaterial({color:0x35a88e,roughness:.9});
-const handMat3D=new THREE.MeshStandardMaterial({color:0xd9a77e,roughness:.9});
-for(const side of [-1,1]){
- const arm=new THREE.Mesh(new THREE.BoxGeometry(.16,.48,.18),armMat3D);arm.position.set(side*.28,-.38,-.48);arm.rotation.z=side*-.12;arms3D.add(arm);
- const hand=new THREE.Mesh(new THREE.BoxGeometry(.17,.16,.19),handMat3D);hand.position.set(side*.28,-.64,-.51);arms3D.add(hand);
-}
+scene3D.add(camera3D); // Pure first-person camera: no player skin or body mesh is rendered.
 let lookYaw=0,lookPitch=0,lookPointer=null,lastLookX=0,lastLookY=0;
 function resize3D(){const w=Math.max(1,threeRoot.clientWidth),h=Math.max(1,threeRoot.clientHeight);renderer3D.setSize(w,h,false);camera3D.aspect=w/h;camera3D.updateProjectionMatrix();}
 new ResizeObserver(resize3D).observe(threeRoot);resize3D();
