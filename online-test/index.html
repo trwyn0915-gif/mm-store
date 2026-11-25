@@ -370,7 +370,7 @@ function drawPerson(p,isSelf=false){const q=worldToScreen(p.x,p.y),color=skins[p
 function drawWorld(dt=0){
  const px=(player.x-1200)/8,pz=(player.y-900)/8;
  const selfRecord=avatarRecords.get("self");
- if(selfRecord){selfRecord.group.position.set(px,selfRecord.characterId==="hero"?-.5775:selfRecord.characterId==="robot"?-.415:-.404,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
+ if(selfRecord){selfRecord.group.position.set(px,selfRecord.characterId==="hero"?-.57625:selfRecord.characterId==="robot"?-.415:-.404,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
  const orbitPitch=clamp(.18+lookPitch*.7,-.75,.8);
  const orbitHorizontal=10*Math.cos(orbitPitch);
  camera3D.position.set(px-Math.sin(lookYaw)*orbitHorizontal,1.4+10*Math.sin(orbitPitch),pz+Math.cos(lookYaw)*orbitHorizontal);
@@ -379,8 +379,8 @@ function drawWorld(dt=0){
   const record=avatarRecords.get(id);
   if(record){
    const targetX=(p.x-1200)/8,targetZ=(p.y-900)/8;
-   if(!record.remotePositionReady){record.group.position.set(targetX,record.characterId==="hero"?-.5775:record.characterId==="robot"?-.415:-.404,targetZ);record.remotePositionReady=true;}
-   else{const blend=1-Math.exp(-18*Math.min(dt,.05));record.group.position.x+=(targetX-record.group.position.x)*blend;record.group.position.z+=(targetZ-record.group.position.z)*blend;record.group.position.y=record.characterId==="hero"?-.5775:record.characterId==="robot"?-.415:-.404;}
+   if(!record.remotePositionReady){record.group.position.set(targetX,record.characterId==="hero"?-.57625:record.characterId==="robot"?-.415:-.404,targetZ);record.remotePositionReady=true;}
+   else{const blend=1-Math.exp(-18*Math.min(dt,.05));record.group.position.x+=(targetX-record.group.position.x)*blend;record.group.position.z+=(targetZ-record.group.position.z)*blend;record.group.position.y=record.characterId==="hero"?-.57625:record.characterId==="robot"?-.415:-.404;}
    const targetYaw=Number.isFinite(p.yaw)?p.yaw:Math.PI;
    record.group.rotation.y+=Math.atan2(Math.sin(targetYaw-record.group.rotation.y),Math.cos(targetYaw-record.group.rotation.y))*(1-Math.exp(-12*Math.min(dt,.05)));
    setAvatarMoving(record,!!p.moving);record.mixer?.update(dt);
@@ -459,7 +459,7 @@ async function connect(){
   const log=$("chatlog");
   if(log.children.length===1&&log.firstChild.textContent.includes("برای گفت‌وگو"))log.innerHTML="";
   history.forEach(m=>addChat(m.display_name,m.message,m.id));
-  await online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw});
+  await online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw,moving:!!player.moving});
   setLoadingProgress(100,"ورود به دنیای MM موفق بود");await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));hideLoading();
   stats();sayToast("با موفقیت وارد دنیای آنلاین شدی");persist();
  }catch(e){
@@ -516,7 +516,7 @@ $("full").addEventListener("click",()=>{if(!document.fullscreenElement)enterImme
 window.addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault();if(k==="w"||k==="arrowup")keys.up=true;if(k==="s"||k==="arrowdown")keys.down=true;if(k==="a"||k==="arrowleft")keys.left=true;if(k==="d"||k==="arrowright")keys.right=true;if(k==="e"||k===" ")interact();});
 window.addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="w"||k==="arrowup")keys.up=false;if(k==="s"||k==="arrowdown")keys.down=false;if(k==="a"||k==="arrowleft")keys.left=false;if(k==="d"||k==="arrowright")keys.right=false;});
 window.addEventListener("blur",()=>{Object.keys(keys).forEach(k=>keys[k]=false);resetJoy();});window.addEventListener("pagehide",()=>{if(online)online.leave().catch(()=>{});});
-function frame(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(connected){move(dt);camera.x=clamp(player.x-480,0,W-960);camera.y=clamp(player.y-270,0,H-540);if(t-lastSend>120&&!movementSending){lastSend=t;movementSending=true;online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw}).catch(console.error).finally(()=>{movementSending=false;});}if(t-lastSave>2000){lastSave=t;online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp}).catch(console.error);}drawWorld(dt);}else{ctx.clearRect(0,0,canvas.width,canvas.height);}requestAnimationFrame(frame);}
+function frame(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(connected){move(dt);camera.x=clamp(player.x-480,0,W-960);camera.y=clamp(player.y-270,0,H-540);if(t-lastSend>120&&!movementSending){lastSend=t;movementSending=true;online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw,moving:!!player.moving}).catch(console.error).finally(()=>{movementSending=false;});}if(t-lastSave>2000){lastSave=t;online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp}).catch(console.error);}drawWorld(dt);}else{ctx.clearRect(0,0,canvas.width,canvas.height);}requestAnimationFrame(frame);}
 function showFatalGameError(message){hideLoading();
  connected=false;
  document.body.classList.remove("playing");
@@ -528,6 +528,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=65",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=66",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
