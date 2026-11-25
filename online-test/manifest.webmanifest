@@ -1,0 +1,11 @@
+{
+  "name": "MM World - دنیای نقش‌آفرینی",
+  "short_name": "MM World",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#091116",
+  "theme_color": "#101a20",
+  "icons": []
+}
