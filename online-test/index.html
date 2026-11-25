@@ -36,6 +36,20 @@ button,input,select{font:inherit}button{border:1px solid #65766d;border-radius:1
 
 /* Final fullscreen layout: the game itself is the only visible screen. */
 
+/* In-game exit confirmation */
+.exit-overlay{position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(2,9,12,.78);backdrop-filter:blur(5px);direction:rtl}
+.exit-overlay.open{display:flex!important}
+.exit-dialog{width:min(440px,92vw);padding:26px 24px 22px;border:1px solid #c6a45e;border-radius:22px;background:linear-gradient(160deg,#17272b,#0c171c);box-shadow:0 18px 70px #000b;text-align:center;color:#f5f0e5}
+.exit-mark{width:48px;height:48px;margin:0 auto 12px;border:2px solid #d5b66e;border-radius:15px;display:grid;place-items:center;color:#f0d18a;font-weight:900;letter-spacing:1px}
+.exit-dialog h2{margin:0 0 12px;color:#f1d28d;font-size:clamp(19px,4vw,25px)}
+.exit-dialog p{margin:0 auto 22px;max-width:34ch;color:#e3e8e5;font-size:clamp(14px,3vw,17px);line-height:1.9}
+.exit-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.exit-actions button{min-height:48px;padding:10px 18px;border-radius:13px;font:700 14px inherit;cursor:pointer}
+.exit-stay{background:#d1ad65;color:#17130b;border:1px solid #f1d89e}
+.exit-leave{background:#263a40;color:#f4eeee;border:1px solid #789097}
+.exit-actions button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+
 /* Hard override: one full-screen game scene; no setup/help panels. */
 html,body{width:100%;height:100%;min-height:100%;margin:0}
 body.playing{position:fixed;inset:0;width:100vw;height:100dvh;min-height:100dvh;padding:0!important;margin:0!important;overflow:hidden!important;background:#071015}
@@ -127,6 +141,17 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 </section>
 <div class="foot">MM WORLD · دنیای مشترک آنلاین · اطلاعات اتصال از Supabase Realtime</div>
 </main>
+<div id="exitConfirm" class="exit-overlay" aria-hidden="true">
+ <div class="exit-dialog" role="dialog" aria-modal="true" aria-labelledby="exitTitle" aria-describedby="exitMessage">
+  <div class="exit-mark" aria-hidden="true">MM</div>
+  <h2 id="exitTitle">خروج از دنیای MM؟</h2>
+  <p id="exitMessage">آیا مطمئن هستید که می‌خواهید از بازی خارج شوید؟ با تأیید، اتصال شما به دنیای آنلاین قطع می‌شود.</p>
+  <div class="exit-actions">
+   <button type="button" id="stayInGame" class="exit-stay">ادامه بازی</button>
+   <button type="button" id="confirmExit" class="exit-leave">بله، خروج از بازی</button>
+  </div>
+ </div>
+</div>
 <div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای اجرای بازی افقی، دکمه زیر را بزن</p><button id="startLandscape" class="primary">شروع بازی افقی</button><small>در صورت پشتیبانی مرورگر، صفحه و بازی خودکار افقی و تمام‌صفحه می‌شوند.</small></div></div>
 <script type="module">
 import { createRipOnline } from "../online/multiplayer.js?v=6";
@@ -180,12 +205,19 @@ function blocked(x,y){
 function move(dt){let dx=(keys.right?1:0)-(keys.left?1:0),dy=(keys.down?1:0)-(keys.up?1:0);if(!dx&&!dy)return;if(dx&&dy){dx*=.7071;dy*=.7071;}const speed=sprinting?315:190;const nx=clamp(player.x+dx*speed*dt,30,W-30),ny=clamp(player.y+dy*speed*dt,30,H-30);if(!blocked(nx,player.y))player.x=nx;if(!blocked(player.x,ny))player.y=ny;player.face=Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up");}
 function nearest(){const candidates=[{...npc,type:"npc"},...herbsSpots.filter(h=>!h.taken).map(h=>({...h,type:"herb"}))];let best=null,d=65;for(const o of candidates){let n=Math.hypot(player.x-o.x,player.y-o.y);if(n<d){d=n;best=o;}}return best;}
 function interact(){const o=nearest();if(!o){sayToast("چیزی در نزدیکی تو نیست");return;}if(o.type==="npc"){if(!questStarted){questStarted=true;sayToast("ماموریت: سه گیاه درخشان جمع کن");}else if(!questDone&&herbs>=3){questDone=true;coins+=100;addXP(80);sayToast("ماموریت کامل شد؛ ۱۰۰ سکه پاداش گرفتی");}else if(questDone){sayToast("ممنون که به دهکده کمک کردی");}else{sayToast("هنوز "+Math.max(0,3-herbs)+" گیاه دیگر لازم داری");}}else{const spot=herbsSpots.find(h=>h.id===o.id);if(spot&&!spot.taken){spot.taken=true;collected.add(spot.id);herbs++;coins+=3;addXP(12);sayToast("گیاه جمع شد؛ +۳ سکه");}}persist();stats();}
-async function connect(){if(connected)return;const name=$("playerName").value.trim().slice(0,20);if(name.length<2){sayToast("نام باید حداقل دو حرف باشد");return;}player.name=name;player.skin=$("skin").value;const btn=$("connect");btn.disabled=true;status("در حال اتصال...");try{online=createRipOnline();const auth=await online.connect();userId=auth.userId;const saved=await online.loadCharacter();if(saved){player.x=clamp(saved.x||player.x,30,W-30);player.y=clamp(saved.y||player.y,30,H-30);player.level=saved.level||1;player.xp=saved.experience||0;if(skins[saved.character_id])player.skin=saved.character_id;}await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});await online.joinRoom(ROOM,{onPlayers:state=>{players={};for(const metas of Object.values(state||{})){const p=Array.isArray(metas)?metas[metas.length-1]:metas;if(p?.userId&&p.userId!==userId)players[p.userId]=p;}stats();},onMove:p=>{if(p?.userId&&p.userId!==userId)players[p.userId]={...players[p.userId],...p};stats();},onPlayerUpdate:p=>{if(p?.userId&&p.userId!==userId)players[p.userId]={...players[p.userId],...p};stats();},onChat:p=>{if(p?.userId!==userId)addChat(p.displayName||"بازیکن",p.message||"",p.id);}});connected=true;document.body.classList.add("playing");status("متصل · جهان مشترک فعال");btn.textContent="متصل شدی";btn.disabled=true;const history=await online.loadRecentChat(ROOM,30);const log=$("chatlog");if(log.children.length===1&&log.firstChild.textContent.includes("برای گفت‌وگو"))log.innerHTML="";history.forEach(m=>addChat(m.display_name,m.message,m.id));await online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin});stats();sayToast("به دنیای MM خوش آمدی");persist();}catch(e){console.error(e);status("اتصال برقرار نشد؛ دوباره تلاش کن");btn.disabled=false;online=null;}}
+async function connect(){if(connected)return;const name=$("playerName").value.trim().slice(0,20);if(name.length<2){sayToast("نام باید حداقل دو حرف باشد");return;}player.name=name;player.skin=$("skin").value;const btn=$("connect");btn.disabled=true;status("در حال اتصال...");try{online=createRipOnline();const auth=await online.connect();userId=auth.userId;const saved=await online.loadCharacter();if(saved){player.x=clamp(saved.x||player.x,30,W-30);player.y=clamp(saved.y||player.y,30,H-30);player.level=saved.level||1;player.xp=saved.experience||0;if(skins[saved.character_id])player.skin=saved.character_id;}await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});await online.joinRoom(ROOM,{onPlayers:state=>{players={};for(const metas of Object.values(state||{})){const p=Array.isArray(metas)?metas[metas.length-1]:metas;if(p?.userId&&p.userId!==userId)players[p.userId]=p;}stats();},onMove:p=>{if(p?.userId&&p.userId!==userId)players[p.userId]={...players[p.userId],...p};stats();},onPlayerUpdate:p=>{if(p?.userId&&p.userId!==userId)players[p.userId]={...players[p.userId],...p};stats();},onChat:p=>{if(p?.userId!==userId)addChat(p.displayName||"بازیکن",p.message||"",p.id);}});connected=true;document.body.classList.add("playing");installExitGuard();status("متصل · جهان مشترک فعال");btn.textContent="متصل شدی";btn.disabled=true;const history=await online.loadRecentChat(ROOM,30);const log=$("chatlog");if(log.children.length===1&&log.firstChild.textContent.includes("برای گفت‌وگو"))log.innerHTML="";history.forEach(m=>addChat(m.display_name,m.message,m.id));await online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin});stats();sayToast("به دنیای MM خوش آمدی");persist();}catch(e){console.error(e);status("اتصال برقرار نشد؛ دوباره تلاش کن");btn.disabled=false;online=null;}}
 $("connect").addEventListener("click",connect);
 $("startLandscape").addEventListener("click",()=>{const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");const root=document.documentElement;let fsPromise=null;if(!document.fullscreenElement&&root.requestFullscreen){try{fsPromise=root.requestFullscreen();}catch(e){console.warn("Fullscreen request failed",e);}}try{const p=screen.orientation?.lock?.("landscape");p?.catch(e=>console.info("Landscape lock unavailable",e));}catch(e){console.info("Landscape lock unavailable",e);}connect();if(fsPromise&&typeof fsPromise.then==="function")fsPromise.catch(e=>console.info("Fullscreen unavailable",e));});
 $("skin").addEventListener("change",()=>{player.skin=$("skin").value;persist();});
 $("playerName").addEventListener("change",()=>{player.name=$("playerName").value.trim().slice(0,20)||"بازیکن MM";persist();});
 $("chatform").addEventListener("submit",async e=>{e.preventDefault();const msg=$("chatinput").value.trim();if(!msg)return;if(!connected){sayToast("اول وارد دنیای آنلاین شو");return;}if(Date.now()-lastChat<1200){sayToast("کمی صبر کن و دوباره بفرست");return;}lastChat=Date.now();try{const sent=await online.sendChat(ROOM,msg,player.name);addChat(player.name,msg,sent?.id);$("chatinput").value="";}catch(err){console.error(err);sayToast("پیام ارسال نشد");}});
+let exitGuardInstalled=false,exitApproved=false;
+function installExitGuard(){if(exitGuardInstalled)return;exitGuardInstalled=true;history.pushState({mmWorldGuard:true},"",location.href);}
+function showExitConfirm(){const modal=$("exitConfirm");modal.classList.add("open");modal.setAttribute("aria-hidden","false");$("stayInGame").focus();}
+function hideExitConfirm(){const modal=$("exitConfirm");modal.classList.remove("open");modal.setAttribute("aria-hidden","true");}
+window.addEventListener("popstate",()=>{if(!document.body.classList.contains("playing")||exitApproved)return;history.pushState({mmWorldGuard:true},"",location.href);showExitConfirm();});
+$("stayInGame").addEventListener("click",hideExitConfirm);
+$("confirmExit").addEventListener("click",async()=>{if(exitApproved)return;exitApproved=true;hideExitConfirm();try{if(online)await online.leave();}catch(e){console.warn("Leave failed",e);}history.back();});
 function toggleChat(){const bottom=document.querySelector(".bottom");bottom.classList.toggle("chat-open");}
 $("chatToggle").addEventListener("click",toggleChat);
 $("quickChat").addEventListener("click",toggleChat);
