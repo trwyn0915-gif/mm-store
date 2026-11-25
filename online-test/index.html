@@ -326,7 +326,7 @@ function resize3D(){const w=Math.max(1,threeRoot.clientWidth),h=Math.max(1,three
 new ResizeObserver(resize3D).observe(threeRoot);resize3D();
 threeRoot.style.touchAction="none";
 threeRoot.addEventListener("pointerdown",e=>{if(e.target.closest("button")||e.target.closest("#joystick")||e.target.closest("#runButton")||e.target.closest("[data-dir]"))return;e.preventDefault();e.stopPropagation();lookPointer=e.pointerId;lastLookX=e.clientX;lastLookY=e.clientY;try{threeRoot.setPointerCapture(e.pointerId);}catch(_){}});
-threeRoot.addEventListener("pointermove",e=>{if(lookPointer!==e.pointerId)return;e.preventDefault();e.stopPropagation();const dx=e.clientX-lastLookX,dy=e.clientY-lastLookY;lastLookX=e.clientX;lastLookY=e.clientY;lookYaw-=dx*.004;lookPitch=clamp(lookPitch-dy*.003,-1.15,1.15);});
+threeRoot.addEventListener("pointermove",e=>{if(lookPointer!==e.pointerId)return;e.preventDefault();e.stopPropagation();const dx=e.clientX-lastLookX,dy=e.clientY-lastLookY;lastLookX=e.clientX;lastLookY=e.clientY;lookYaw+=dx*.004;lookPitch=clamp(lookPitch+dy*.003,-1.15,1.15);});
 function endLook(e){if(lookPointer===e.pointerId)lookPointer=null;}
 threeRoot.addEventListener("pointerup",endLook);threeRoot.addEventListener("pointercancel",endLook);threeRoot.addEventListener("lostpointercapture",()=>lookPointer=null);
 
@@ -498,6 +498,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=47",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=48",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
