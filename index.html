@@ -2255,7 +2255,7 @@ async function connectRipOnline(){
 async function joinRipOnlineRoom(){
  if(!ripOnline)return;
  const room=onlineRoomForScene();
- if(room===ripOnlineRoom||room===ripOnlineJoiningRoom)return;
+ if(room===ripOnlineRoom||ripOnlineJoiningRoom)return;
  ripOnlineJoiningRoom=room;
  try{
   await ripOnline.joinRoom(room,{onPlayers:state=>{ripOnlinePlayers={};for(const [key,metas] of Object.entries(state||{})){const m=Array.isArray(metas)?metas[metas.length-1]:metas;if(m?.userId&&m.userId!==ripOnlineUserId)ripOnlinePlayers[m.userId]=m;}},onMove:p=>{if(p?.userId&&p.userId!==ripOnlineUserId)ripOnlinePlayers[p.userId]={...ripOnlinePlayers[p.userId],...p};}});
