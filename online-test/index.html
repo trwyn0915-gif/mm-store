@@ -281,7 +281,8 @@ const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/thr
 const { GLTFLoader } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
 const { clone: cloneSkinned } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js");
 const $=id=>document.getElementById(id),canvas=$("game"),ctx=canvas.getContext("2d");
-const mobileDevice=/Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.userAgent);\nconst desktopDevice=!mobileDevice;
+const mobileDevice=/Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.userAgent);;
+const desktopDevice=!mobileDevice;
 if(desktopDevice)document.body.classList.add("desktop-blocked");
 const threeRoot=$("threeRoot");
 const scene3D=new THREE.Scene();scene3D.background=new THREE.Color(0x87b8d0);
@@ -542,6 +543,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=75",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=76",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
