@@ -260,6 +260,7 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 </div>
 <div id="loadingScreen" role="status" aria-live="polite" aria-label="در حال بارگذاری بازی"><div class="loading-ui"><div class="loading-track"><div id="loadingFill" class="loading-fill"></div><span id="loadingPercent" class="loading-percent">۳٪</span></div></div></div>
  <div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای ورود به سایت، دکمه زیر را بزن؛ صفحه در همین لحظه تمام‌صفحه و افقی می‌شود.</p><button id="startLandscape" class="primary">ورود به سایت</button><small>با لمس این دکمه، تمام‌صفحه فعال می‌شود و سپس اتصال به دنیای آنلاین آغاز خواهد شد.</small><div id="connectionError" role="alert" style="display:none;margin-top:12px;padding:10px;border:1px solid #b87568;border-radius:10px;color:#ffd2c9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۱۱</div></div></div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
 import { createRipOnline } from "../online/multiplayer.js?v=9";
 const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
