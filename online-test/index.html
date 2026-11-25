@@ -140,7 +140,7 @@ const run=$("runButton");run.addEventListener("pointerdown",e=>{e.preventDefault
 
 document.querySelectorAll("[data-dir]").forEach(b=>{const k=b.dataset.dir;const down=e=>{e.preventDefault();keys[k]=true;};const up=e=>{e.preventDefault();keys[k]=false;};b.addEventListener("pointerdown",down);b.addEventListener("pointerup",up);b.addEventListener("pointercancel",up);b.addEventListener("pointerleave",up);});
 $("touchInteract").addEventListener("click",interact);
-function enterImmersive(){const root=document.documentElement;if(!document.fullscreenElement&&root.requestFullscreen)root.requestFullscreen().catch(()=>{});try{screen.orientation?.lock?.("landscape").catch(()=>{});}catch(_){}}
+function enterImmersive(){const lockLandscape=()=>{try{const p=screen.orientation?.lock?.("landscape");p?.catch(()=>{});}catch(_){}};const root=document.documentElement;if(!document.fullscreenElement&&root.requestFullscreen)root.requestFullscreen().then(lockLandscape).catch(()=>{});else lockLandscape();}
 $("full").addEventListener("click",()=>{if(!document.fullscreenElement)enterImmersive();else document.exitFullscreen?.();});
 window.addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault();if(k==="w"||k==="arrowup")keys.up=true;if(k==="s"||k==="arrowdown")keys.down=true;if(k==="a"||k==="arrowleft")keys.left=true;if(k==="d"||k==="arrowright")keys.right=true;if(k==="e"||k===" ")interact();});
 window.addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="w"||k==="arrowup")keys.up=false;if(k==="s"||k==="arrowdown")keys.down=false;if(k==="a"||k==="arrowleft")keys.left=false;if(k==="d"||k==="arrowright")keys.right=false;});
