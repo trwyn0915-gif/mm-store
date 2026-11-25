@@ -408,7 +408,7 @@ function move(dt){
  smoothStrafe+=(targetStrafe-smoothStrafe)*blend;
  if(Math.hypot(smoothForward,smoothStrafe)<.025&&inputLength===0){smoothForward=0;smoothStrafe=0;player.moving=false;return;}
  player.moving=Math.hypot(smoothForward,smoothStrafe)>.06;
- const speed=48.45,worldSpeed=speed/8;
+ const speed=45.0585,worldSpeed=speed/8;
  const dx=(Math.sin(lookYaw)*smoothForward+Math.cos(lookYaw)*smoothStrafe)*worldSpeed*dt;
  const dz=(-Math.cos(lookYaw)*smoothForward+Math.sin(lookYaw)*smoothStrafe)*worldSpeed*dt;
  player.x=clamp(player.x+dx*8,30,W-30);player.y=clamp(player.y+dz*8,30,H-30);
@@ -528,6 +528,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=69",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=70",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
