@@ -149,6 +149,25 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
  body.playing .joy-base,body.playing .right-controls,body.playing .side-controls{pointer-events:auto!important}
 }
 
+
+/* Initial entry screen: keep the start panel landscape on portrait phones too. */
+@media(max-width:760px) and (orientation:portrait){
+ #rotatePrompt{
+  position:fixed!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
+  width:100dvh!important;height:100vw!important;min-height:0!important;
+  padding:12px!important;transform:translate(-50%,-50%) rotate(90deg)!important;
+  transform-origin:center center!important;overflow:hidden!important;
+ }
+ #rotatePrompt .rotate-card{
+  width:min(82%,560px)!important;max-width:560px!important;max-height:92%!important;
+  overflow:auto!important;padding:clamp(16px,3vw,28px)!important;
+ }
+ #rotatePrompt .rotate-title{font-size:clamp(22px,4vw,32px)!important}
+ #rotatePrompt p{font-size:clamp(13px,2.2vw,19px)!important;line-height:1.6!important}
+ #rotatePrompt button{font-size:clamp(13px,2vw,18px)!important;padding:10px 20px!important}
+ #rotatePrompt small{font-size:clamp(11px,1.7vw,15px)!important}
+}
+
 </style>
 </head>
 <body>
