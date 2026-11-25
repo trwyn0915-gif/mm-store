@@ -2245,7 +2245,7 @@ async function connectRipOnline(){
   const mod=await import('./online/multiplayer.js');
   ripOnline=mod.createRipOnline();
   const auth=await ripOnline.connect();ripOnlineUserId=auth.userId;
-  const name=(onlineName.value||'بازیکن').trim().slice(0,20)||'بازیکن';
+  const typedName=(onlineName.value||'بازیکن').trim().slice(0,20);const name=typedName.length>=2?typedName:'بازیکن';onlineName.value=name;
   await ripOnline.saveCharacter({displayName:name,roomId:onlineRoomForScene(),x:player.x,y:player.y,facing:player.face});
   await joinRipOnlineRoom();
   ripOnlineReady=true;onlineButton.textContent='متصل شدی';setOnlineStatus('متصل · شناسه '+auth.userId.slice(0,6));
