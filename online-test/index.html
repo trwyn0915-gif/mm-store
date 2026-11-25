@@ -445,7 +445,7 @@ async function connect(){
   await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});setLoadingProgress(68,"در حال ورود به دنیای MM...");
   await online.joinRoom(ROOM,{
    onPlayers:state=>{players={};for(const metas of Object.values(state||{})){const p=Array.isArray(metas)?metas[metas.length-1]:metas;if(p?.userId&&p.userId!==userId){players[p.userId]=p;ensureAvatar(p.userId,p.skin).catch(console.error);}}for(const [id,record] of avatarRecords){if(id!=="self"&&!players[id]){scene3D.remove(record.group);avatarRecords.delete(id);avatarLoading.delete(id);}}stats();},
-   onMove:p=>{if(p?.userId&&p.userId!==userId){players[p.userId]={...players[p.userId],...p};ensureAvatar(p.userId,p.skin).catch(console.error);}stats();},
+   onMove:p=>{if(p?.userId&&p.userId!==userId){const previous=players[p.userId];const hasPosition=previous&&Number.isFinite(Number(previous.x))&&Number.isFinite(Number(previous.y))&&Number.isFinite(Number(p.x))&&Number.isFinite(Number(p.y));const moved=hasPosition&&Math.hypot(Number(p.x)-Number(previous.x),Number(p.y)-Number(previous.y))>.02;players[p.userId]={...previous,...p,moving:Boolean(p.moving)||moved};ensureAvatar(p.userId,p.skin).catch(console.error);}stats();},
    onPlayerUpdate:p=>{if(p?.userId&&p.userId!==userId){players[p.userId]={...players[p.userId],...p};ensureAvatar(p.userId,p.skin).catch(console.error);}stats();},
    onChat:p=>{if(p?.userId!==userId)addChat(p.displayName||"بازیکن",p.message||"",p.id);}
   });
@@ -528,6 +528,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=66",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=67",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
