@@ -75,6 +75,9 @@ export function createRipOnline() {
       .on("broadcast", { event: "move" }, ({ payload }) => {
         if (payload?.userId && payload.userId !== currentUser.id) handlers.onMove?.(payload);
       })
+      .on("broadcast", { event: "chat" }, ({ payload }) => {
+        if (payload?.userId && payload.userId !== currentUser.id) handlers.onChat?.(payload);
+      })
       .on("postgres_changes", {
         event: "INSERT",
         schema: "public",
@@ -115,9 +118,17 @@ export function createRipOnline() {
       sentAt: Date.now()
     };
     const now = Date.now();
-    if (now - lastPresenceTrack >= 900) {
+    // Presence is for the online-player roster, not continuous movement.
+    // Tracking every 900ms exceeds Supabase's presence rate limit.
+    if (now - lastPresenceTrack >= 10000) {
       lastPresenceTrack = now;
-      await channel.track(payload);
+      try {
+        const presenceResult = await channel.track(payload);
+        if (presenceResult !== "ok") console.warn("Presence update was not accepted:", presenceResult);
+      } catch (presenceError) {
+        // A presence limit/error must not prevent movement broadcasts.
+        console.warn("Presence update failed; movement broadcast will continue:", presenceError);
+      }
     }
     const result = await channel.send({ type: "broadcast", event: "move", payload });
     if (result !== "ok") throw new Error("ارسال موقعیت بازیکن در Realtime ناموفق بود.");
@@ -139,6 +150,26 @@ export function createRipOnline() {
       .select("id,user_id,display_name,message,created_at")
       .single();
     if (error) throw error;
+    // Persist chat first, then broadcast it for instant delivery to connected players.
+    // Postgres Changes remains enabled as a second delivery path; the UI deduplicates by id.
+    if (channel) {
+      try {
+        const result = await channel.send({
+          type: "broadcast",
+          event: "chat",
+          payload: {
+            id: data.id,
+            userId: data.user_id,
+            displayName: data.display_name,
+            message: data.message,
+            createdAt: data.created_at
+          }
+        });
+        if (result !== "ok") console.warn("Chat broadcast was not accepted:", result);
+      } catch (broadcastError) {
+        console.warn("Chat was saved, but live broadcast failed:", broadcastError);
+      }
+    }
     return data;
   }
 
