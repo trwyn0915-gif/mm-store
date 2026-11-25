@@ -127,6 +127,28 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
  body.playing .game-controls{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
  body.playing .bottom.chat-open{position:absolute!important;right:10px!important;bottom:10px!important}
 }
+
+/* MM World viewport correction: portrait phones rotate one fixed landscape stage. */
+@media(max-width:760px) and (orientation:portrait){
+ body.playing .wrap{position:fixed!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;width:100dvh!important;height:100vw!important;min-height:0!important;max-width:none!important;margin:0!important;padding:0!important;transform:translate(-50%,-50%) rotate(90deg)!important;transform-origin:center center!important;display:block!important;overflow:hidden!important}
+ body.playing .card{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;margin:0!important;padding:0!important;display:block!important;overflow:hidden!important}
+ body.playing #gamebox{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;aspect-ratio:auto!important}
+ body.playing #game{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;aspect-ratio:auto!important;object-fit:fill!important}
+ body.playing .game-controls{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;pointer-events:none!important}
+ body.playing .joy-base{position:absolute!important;left:18px!important;bottom:18px!important}
+ body.playing .right-controls{position:absolute!important;right:18px!important;bottom:18px!important}
+ body.playing .side-controls{position:absolute!important;left:12px!important;top:12px!important}
+ body.playing .bottom.chat-open{position:absolute!important;right:10px!important;bottom:10px!important;left:auto!important;top:auto!important}
+}
+@media(max-width:900px) and (orientation:landscape){
+ body.playing .wrap{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;margin:0!important;padding:0!important;transform:none!important;display:block!important;overflow:hidden!important}
+ body.playing .card{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;margin:0!important;padding:0!important;display:block!important;overflow:hidden!important}
+ body.playing #gamebox{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;aspect-ratio:auto!important}
+ body.playing #game{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;aspect-ratio:auto!important;object-fit:contain!important}
+ body.playing .game-controls{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;pointer-events:none!important}
+ body.playing .joy-base,body.playing .right-controls,body.playing .side-controls{pointer-events:auto!important}
+}
+
 </style>
 </head>
 <body>
@@ -323,6 +345,6 @@ function showFatalGameError(message){
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=27",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
