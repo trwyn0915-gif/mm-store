@@ -23,7 +23,8 @@ button,input,select{font:inherit}button{border:1px solid #65766d;border-radius:1
 #gamebox{position:relative;border:1px solid #3c5558;border-radius:15px;overflow:hidden;background:#345e47;touch-action:none}canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;touch-action:none}
 #toast{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:#0b171beF;border:1px solid #9b8755;color:#f4dfaa;border-radius:24px;padding:7px 14px;font-size:12px;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;z-index:12}#toast.show{opacity:1}
 .bottom{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:10px;margin-top:10px}.panel{background:#101a20;border:1px solid var(--line);border-radius:14px;padding:10px}.panel h2{font-size:15px;margin:0 0 8px;color:var(--gold)}.help{font-size:12px;line-height:1.9;color:#c5d0cb}.chatlog{height:150px;overflow:auto;display:flex;flex-direction:column;gap:5px;font-size:12px;line-height:1.7}.chatline{overflow-wrap:anywhere;color:#dfe8e3}.chatline b{color:var(--gold)}.chatrow{display:flex;gap:6px;margin-top:8px}.chatrow input{flex:1}.foot{text-align:center;color:#83928e;font-size:11px;padding:12px}
-.game-controls{display:none;position:absolute;inset:0;z-index:8;pointer-events:none;direction:ltr}.joy-base{position:absolute;left:22px;bottom:20px;width:128px;height:128px;border-radius:50%;border:2px solid #d6e3dc88;background:#142a35a8;box-shadow:inset 0 0 0 8px #ffffff0b;pointer-events:auto;touch-action:none}.joy-knob{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px;border-radius:50%;background:#3a8795e8;border:2px solid #c1e1df;box-shadow:0 4px 12px #0008;pointer-events:none}.right-controls{position:absolute;right:22px;bottom:20px;display:flex;align-items:flex-end;gap:12px;pointer-events:auto}.game-btn{width:70px;height:70px;border-radius:50%;padding:0;background:#122b35eF;border:2px solid #9ab6b2;box-shadow:0 5px 15px #0008;font-size:14px}.game-btn.run{width:88px;height:88px;background:#c39a50;color:#17130c;border-color:#f1d79b;font-size:16px}.side-controls{position:absolute;left:16px;top:16px;display:flex;flex-direction:column;gap:9px;pointer-events:auto}.side-controls .game-btn{width:45px;height:45px;font-size:12px}.bottom.chat-open{position:absolute;z-index:11;right:12px;bottom:12px;width:min(360px,48%);display:block;margin:0;pointer-events:auto}.bottom.chat-open .panel:first-child{box-shadow:0 8px 28px #000b}.bottom.chat-open .panel:last-child{display:none}.chat-toggle{display:none}
+.game-controls{display:none;position:absolute;inset:0;z-index:8;pointer-events:none;direction:ltr}.joy-base{position:absolute;left:22px;bottom:20px;width:128px;height:128px;border-radius:50%;border:2px solid #d6e3dc88;background:#142a35a8;box-shadow:inset 0 0 0 8px #ffffff0b;pointer-events:auto;touch-action:none}.joy-knob{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px;border-radius:50%;background:#3a8795e8;border:2px solid #c1e1df;box-shadow:0 4px 12px #0008;pointer-events:none}.right-controls{position:absolute;right:22px;bottom:20px;display:flex;align-items:flex-end;gap:12px;pointer-events:auto}.game-btn{width:70px;height:70px;border-radius:50%;padding:0;background:#122b35eF;border:2px solid #9ab6b2;box-shadow:0 5px 15px #0008;font-size:14px}.game-btn.run{width:88px;height:88px;background:#c39a50;color:#17130c;border-color:#f1d79b;font-size:16px}.side-controls{position:absolute;left:16px;top:16px;display:flex;flex-direction:column;gap:9px;pointer-events:auto}.side-controls .game-btn{width:45px;height:45px;font-size:12px}
+.shop-overlay{position:fixed;inset:0;z-index:18000;display:none;align-items:center;justify-content:center;padding:14px;background:#02090cdd;backdrop-filter:blur(6px);direction:rtl}.shop-overlay.open{display:flex!important}.shop-dialog{width:min(760px,96vw);max-height:88dvh;overflow:auto;padding:18px;border:1px solid #c6a45e;border-radius:20px;background:linear-gradient(155deg,#17272b,#0b151a);box-shadow:0 18px 70px #000b}.shop-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.shop-head h2{margin:0;color:#f1d28d;font-size:clamp(20px,4vw,27px)}.shop-balance{color:#f4dfaa;font-weight:900}.shop-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}.shop-item{padding:12px;border:1px solid #42595a;border-radius:14px;background:#132329;display:flex;flex-direction:column;gap:7px}.shop-item strong{font-size:15px;color:#f5e8c8}.shop-item small{color:#b7c8c0;font-size:12px}.shop-item button{margin-top:auto;min-height:40px}.shop-close{min-width:86px}.shop-note{color:#a8b7b5;font-size:12px;line-height:1.8;margin:12px 0 0}@media(max-width:480px){.shop-dialog{padding:12px}.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shop-item{padding:9px}}.bottom.chat-open{position:absolute;z-index:11;right:12px;bottom:12px;width:min(360px,48%);display:block;margin:0;pointer-events:auto}.bottom.chat-open .panel:first-child{box-shadow:0 8px 28px #000b}.bottom.chat-open .panel:last-child{display:none}.chat-toggle{display:none}
 #rotatePrompt{display:flex;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;padding:24px;background:#091116dd;color:#f4f2e9;text-align:center;backdrop-filter:blur(4px)}.rotate-card{max-width:340px;padding:24px;border:1px solid #52665d;border-radius:20px;background:#101a20;box-shadow:0 15px 45px #0009}.rotate-title{font-weight:900;font-size:26px;color:#e8c477}.rotate-card p{font-weight:700}.rotate-card button{margin:8px auto 12px;padding:13px 24px}.rotate-card small{display:block;color:#a8b7b5;line-height:1.8}.build-version{margin-top:14px;padding-top:10px;border-top:1px solid #34464a;color:#d9bd7a;font-size:12px;font-weight:800;letter-spacing:.3px;text-align:center}
 @media(max-width:760px){
  body{padding:0;background:#081116;overflow:hidden;min-height:100dvh}.wrap{width:100%;max-width:none;height:100dvh;margin:0;display:flex;flex-direction:column;justify-content:center}.head,.foot{display:none}.card{border:0;border-radius:0;padding:0;box-shadow:none;flex:1;min-height:0;display:flex;flex-direction:column;gap:0;justify-content:center}.bar{flex:0 0 auto;display:flex;gap:5px;margin:0;padding:5px;align-items:center}.field{flex:1 1 28%;gap:4px}.field label{font-size:10px}.field input,.field select{padding:6px 7px;font-size:12px}.bar button{padding:7px 9px;font-size:11px}.status{font-size:10px;min-width:0;flex:1 1 100%;text-align:center}.stats{flex:0 0 auto;display:flex;flex-wrap:nowrap;overflow:hidden;gap:4px;margin:0;padding:0 5px 4px}.stat{font-size:9px;padding:4px 7px;white-space:nowrap}.stat:last-child{display:none}#gamebox{flex:0 1 auto;min-height:0;width:min(100vw,177.7778dvh);max-height:100%;aspect-ratio:16/9;margin:auto;border:0;border-radius:0;display:flex;align-items:center;justify-content:center;background:#345e47}.game-controls{display:block}canvas{display:block;width:100%;height:100%;aspect-ratio:16/9;object-fit:fill;touch-action:none}.bottom{display:none}.chat-toggle{display:block;position:absolute;z-index:9;top:12px;right:12px;width:46px;height:46px;border-radius:50%;padding:0;background:#142b35ed;border:2px solid #b7c8bc;font-size:18px}.bottom.chat-open{width:min(350px,70%);max-height:78%;right:8px;bottom:8px}.bottom.chat-open .chatlog{height:120px}.chatrow input{font-size:12px}.chatrow button{padding:8px 10px}
@@ -235,7 +236,7 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
  <div id="threeRoot" aria-label="محیط سه‌بعدی بازی"></div><canvas id="game" width="960" height="540" aria-label="نقشه دنیای MM"></canvas><div id="toast"></div>
  <button class="chat-toggle" id="chatToggle" aria-label="گفت‌وگوی جهانی">چت</button>
  <div class="game-controls" id="gameControls">
-  <div class="side-controls"><button class="game-btn" id="quickChat" aria-label="چت">چت</button><button class="game-btn" id="quickInteract" aria-label="تعامل">تعامل</button></div>
+  <div class="side-controls"><button class="game-btn" id="quickChat" aria-label="چت">چت</button><button class="game-btn" id="quickInteract" aria-label="تعامل">تعامل</button><button class="game-btn" id="openShop" aria-label="فروشگاه کاراکترها">فروشگاه</button></div>
   <div class="joy-base" id="joystick" aria-label="جوی‌استیک حرکت"><div class="joy-knob" id="joyKnob"></div></div>
   <div class="right-controls"><button class="game-btn run" id="runButton" aria-label="دویدن">دویدن</button></div>
  </div>
@@ -247,6 +248,7 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 </section>
 <div class="foot">MM WORLD · دنیای مشترک آنلاین · اطلاعات اتصال از Supabase Realtime</div>
 </main>
+<div id="characterShop" class="shop-overlay" aria-hidden="true"><section class="shop-dialog" role="dialog" aria-modal="true" aria-labelledby="shopTitle"><div class="shop-head"><h2 id="shopTitle">فروشگاه کاراکترها</h2><strong class="shop-balance">سکه: <span id="shopCoins">۰</span></strong><button type="button" class="shop-close" id="closeShop">بستن</button></div><div class="shop-grid" id="shopItems"></div><p class="shop-note">ربات کاراکتر رایگان و پیش‌فرض است. برای خرید کاراکترهای دیگر از سکه‌های بازی استفاده کن.</p></section></div>
 <div id="exitConfirm" class="exit-overlay" aria-hidden="true">
  <div class="exit-dialog" role="dialog" aria-modal="true" aria-labelledby="exitTitle" aria-describedby="exitMessage">
   <div class="exit-mark" aria-hidden="true">MM</div>
@@ -282,6 +284,8 @@ ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 scene3D.add(camera3D);
 const CHARACTER_ASSETS={hero:"blocky_01_hero.glb",knight:"blocky_03_knight.glb",wizard:"blocky_05_wizard.glb",pirate:"blocky_06_pirate.glb",astronaut:"blocky_07_astronaut.glb",robot:"blocky_08_robot.glb",zombie:"blocky_09_zombie.glb",princess:"blocky_19_princess.glb"};
 const CHARACTER_IDS=Object.keys(CHARACTER_ASSETS);
+const CHARACTER_PRICES={hero:100,knight:180,wizard:220,pirate:160,astronaut:300,zombie:140,princess:260};
+const CHARACTER_NAMES={robot:"ربات",hero:"قهرمان",knight:"شوالیه",wizard:"جادوگر",pirate:"دزد دریایی",astronaut:"فضانورد",zombie:"زامبی",princess:"شاهزاده"};
 const gltfLoader=new GLTFLoader(),gltfCache=new Map(),avatarRecords=new Map(),avatarLoading=new Map();
 const randomCharacter=()=>CHARACTER_IDS[Math.floor(Math.random()*CHARACTER_IDS.length)];
 function loadCharacterModel(characterId){
@@ -333,8 +337,10 @@ threeRoot.addEventListener("pointerup",endLook);threeRoot.addEventListener("poin
 const W=2400,H=1800,ROOM="mm-world-main";
 const skins={teal:"#35c4b2",gold:"#e7b84f",violet:"#a98bdf",red:"#df7770"};
 const stored=JSON.parse(localStorage.getItem("mmworld-profile")||"{}");
-$("playerName").value=stored.name||"بازیکن MM";$("skin").value=stored.skin||"teal";
-let player={x:1190,y:1060,face:"down",avatarYaw:Math.PI,name:$("playerName").value,skin:CHARACTER_IDS.includes(stored.skin)?stored.skin:randomCharacter(),level:1,xp:0,moving:false};
+const ownedCharacters=new Set(["robot",...(Array.isArray(stored.ownedCharacters)?stored.ownedCharacters.filter(id=>CHARACTER_IDS.includes(id)):[])]);
+const savedSkin=CHARACTER_IDS.includes(stored.skin)&&ownedCharacters.has(stored.skin)?stored.skin:"robot";
+$("playerName").value=stored.name||"بازیکن MM";$("skin").value=savedSkin;
+let player={x:1190,y:1060,face:"down",avatarYaw:Math.PI,name:$("playerName").value,skin:savedSkin,level:1,xp:0,moving:false};
 let coins=Number(stored.coins)||0,herbs=Number(stored.herbs)||0,questStarted=!!stored.questStarted,questDone=!!stored.questDone;const collected=new Set(Array.isArray(stored.collected)?stored.collected:[]);
 let online=null,userId="",connected=false,players={},lastSend=0,lastSave=0,lastChat=0,chatCooldown=0;const seenChatIds=new Set();
 let camera={x:0,y:0},keys={up:false,down:false,left:false,right:false},last=0,toastTimer=0,sprinting=false;
@@ -342,7 +348,13 @@ const trees=[];for(let i=0;i<100;i++){let x=120+((i*317)%2140),y=100+((i*197)%15
 const herbsSpots=[{x:520,y:420},{x:690,y:520},{x:390,y:690},{x:1750,y:420},{x:1940,y:610},{x:1640,y:760},{x:570,y:1390},{x:820,y:1510},{x:1830,y:1390},{x:2070,y:1200}].map((p,i)=>({...p,id:i,taken:collected.has(i)}));
 const npc={x:1190,y:860,name:"نگهبان دهکده"};
 const buildings=[{x:1050,y:650,w:280,h:150,label:"تالار دهکده",color:"#98734e"},{x:1440,y:900,w:210,h:145,label:"بازارچه",color:"#846d52"},{x:920,y:1160,w:180,h:125,label:"خانه مسافر",color:"#6b7760"}];
-function persist(){localStorage.setItem("mmworld-profile",JSON.stringify({name:player.name,skin:player.skin,coins,herbs,questStarted,questDone,collected:[...collected]}));}
+function persist(){localStorage.setItem("mmworld-profile",JSON.stringify({name:player.name,skin:player.skin,coins,herbs,questStarted,questDone,collected:[...collected],ownedCharacters:[...ownedCharacters]}));}
+function openCharacterShop(){renderCharacterShop();$("characterShop").classList.add("open");$("characterShop").setAttribute("aria-hidden","false");}
+function closeCharacterShop(){$("characterShop").classList.remove("open");$("characterShop").setAttribute("aria-hidden","true");}
+function renderCharacterShop(){const list=$("shopItems");$("shopCoins").textContent=new Intl.NumberFormat("fa-IR").format(coins);list.replaceChildren();for(const id of ["robot","hero","knight","wizard","pirate","astronaut","zombie","princess"]){const owned=ownedCharacters.has(id),price=CHARACTER_PRICES[id]||0,card=document.createElement("article");card.className="shop-item";const name=document.createElement("strong");name.textContent=CHARACTER_NAMES[id];const detail=document.createElement("small");detail.textContent=id==="robot"?"رایگان · کاراکتر پیش‌فرض":owned?"خریداری‌شده":new Intl.NumberFormat("fa-IR").format(price)+" سکه";const action=document.createElement("button");action.type="button";action.dataset.character=id;action.dataset.action=owned?"equip":"buy";action.className=owned?"":"primary";action.textContent=owned?(player.skin===id?"انتخاب شده":"انتخاب کاراکتر"):"خرید و انتخاب";card.append(name,detail,action);list.append(card);}}
+async function chooseCharacter(id){if(!ownedCharacters.has(id))return;player.skin=id;persist();renderCharacterShop();if(connected){await ensureAvatar("self",id);await online.saveCharacter({displayName:player.name,characterId:id,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});}sayToast("کاراکتر "+CHARACTER_NAMES[id]+" انتخاب شد");}
+$("shopItems").addEventListener("click",async e=>{const btn=e.target.closest("button[data-character]");if(!btn)return;const id=btn.dataset.character;if(btn.dataset.action==="equip"){await chooseCharacter(id);return;}const price=CHARACTER_PRICES[id];if(!price||ownedCharacters.has(id))return;if(coins<price){sayToast("سکه کافی برای خرید این کاراکتر نداری");return;}coins-=price;ownedCharacters.add(id);persist();stats();await chooseCharacter(id);renderCharacterShop();});
+$("openShop").addEventListener("click",openCharacterShop);$("closeShop").addEventListener("click",closeCharacterShop);$("characterShop").addEventListener("click",e=>{if(e.target===$("characterShop"))closeCharacterShop();});
 function sayToast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2100);}
 function status(t){$("status").textContent=t;}
 function setLoadingProgress(value,message){const n=Math.max(0,Math.min(100,Math.round(value)));$("loadingFill").style.width=n+"%";$("loadingPercent").textContent=new Intl.NumberFormat("fa-IR").format(n)+"٪";}
@@ -358,14 +370,14 @@ function drawPerson(p,isSelf=false){const q=worldToScreen(p.x,p.y),color=skins[p
 function drawWorld(dt=0){
  const px=(player.x-1200)/8,pz=(player.y-900)/8;
  const selfRecord=avatarRecords.get("self");
- if(selfRecord){selfRecord.group.position.set(px,-.29,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
+ if(selfRecord){selfRecord.group.position.set(px,-.33,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
  const orbitPitch=clamp(.18+lookPitch*.7,-.75,.8);
  const orbitHorizontal=10*Math.cos(orbitPitch);
  camera3D.position.set(px-Math.sin(lookYaw)*orbitHorizontal,1.4+10*Math.sin(orbitPitch),pz+Math.cos(lookYaw)*orbitHorizontal);
  camera3D.lookAt(px,1.4,pz);
  for(const [id,p] of Object.entries(players)){
   const record=avatarRecords.get(id);
-  if(record){record.group.position.set((p.x-1200)/8,-.29,(p.y-900)/8);record.group.rotation.y=Number.isFinite(p.yaw)?p.yaw:Math.PI;setAvatarMoving(record,!!p.moving);record.mixer?.update(dt);}
+  if(record){record.group.position.set((p.x-1200)/8,-.33,(p.y-900)/8);record.group.rotation.y=Number.isFinite(p.yaw)?p.yaw:Math.PI;setAvatarMoving(record,!!p.moving);record.mixer?.update(dt);}
  }
  renderer3D.render(scene3D,camera3D);
 }
@@ -416,9 +428,9 @@ async function connect(){
   if(saved){
    player.x=clamp(saved.x||player.x,30,W-30);player.y=clamp(saved.y||player.y,30,H-30);
    player.level=saved.level||1;player.xp=saved.experience||0;
-   if(CHARACTER_ASSETS[saved.character_id])player.skin=saved.character_id;
-   else player.skin=randomCharacter();
-  }else{player.skin=randomCharacter();}
+   if(CHARACTER_ASSETS[saved.character_id]&&ownedCharacters.has(saved.character_id))player.skin=saved.character_id;
+   else player.skin="robot";
+  }else{player.skin="robot";}
   persist();
   setLoadingProgress(60,"در حال بارگذاری کاراکتر سه‌بعدی...");
   await ensureAvatar("self",player.skin);
@@ -462,7 +474,7 @@ async function waitForStableViewport(){let lastW=0,lastH=0,stableSince=0;const b
 async function startFromPage(){const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");showLoading();const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال فعال‌سازی حالت افقی و تمام‌صفحه...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{if(screen.orientation?.lock)await screen.orientation.lock("landscape");}catch(e){console.info("Landscape lock unavailable; using the rotated landscape game stage",e);}await waitForStableViewport();setLoadingProgress(8,"در حال آماده‌سازی محیط سه‌بعدی...");document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
 $("connect").addEventListener("click",startFromPage);
 $("startLandscape").addEventListener("click",startFromPage);
-$("skin").addEventListener("change",()=>{player.skin=randomCharacter();persist();ensureAvatar("self",player.skin).catch(console.error);});
+$("skin").addEventListener("change",()=>{player.skin=ownedCharacters.has($("skin").value)?$("skin").value:"robot";persist();ensureAvatar("self",player.skin).catch(console.error);});
 $("playerName").addEventListener("change",()=>{player.name=$("playerName").value.trim().slice(0,20)||"بازیکن MM";persist();});
 $("chatform").addEventListener("submit",async e=>{e.preventDefault();const msg=$("chatinput").value.trim();if(!msg)return;if(!connected){sayToast("اول وارد دنیای آنلاین شو");return;}if(Date.now()-lastChat<1200){sayToast("کمی صبر کن و دوباره بفرست");return;}lastChat=Date.now();try{const sent=await online.sendChat(ROOM,msg,player.name);addChat(player.name,msg,sent?.id);$("chatinput").value="";}catch(err){console.error(err);sayToast("پیام ارسال نشد");}});
 let exitGuardInstalled=false,exitApproved=false;
@@ -475,7 +487,7 @@ window.addEventListener("fullscreenchange",()=>{if(document.body.classList.conta
 // Portrait devices use a rotated landscape game viewport; no physical rotation is required.
 async function stayInGame(){if(!document.fullscreenElement){const root=document.documentElement;if(!root.requestFullscreen){sayToast("این مرورگر امکان بازگشت به تمام‌صفحه را نمی‌دهد");return;}try{await root.requestFullscreen();}catch(e){sayToast("برای ادامه، حالت تمام‌صفحه را از مرورگر فعال کن");return;}}try{await screen.orientation?.lock?.("landscape");}catch(_){}hideExitConfirm();}
 $("stayInGame").addEventListener("click",stayInGame);
-async function confirmExitSite(){exitApproved=true;hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";sprinting=false;resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";const startBtn=$("startLandscape");startBtn.disabled=false;startBtn.textContent="ورود به سایت";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
+async function confirmExitSite(){exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";sprinting=false;resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";const startBtn=$("startLandscape");startBtn.disabled=false;startBtn.textContent="ورود به سایت";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
 $("confirmExit").addEventListener("click",confirmExitSite);
 function toggleChat(){if(!connected){sayToast("برای چت باید ابتدا وارد دنیای آنلاین شوی");return;}const bottom=document.querySelector(".bottom");bottom.classList.toggle("chat-open");}
 $("chatToggle").addEventListener("click",toggleChat);
@@ -509,6 +521,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=54",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=55",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
