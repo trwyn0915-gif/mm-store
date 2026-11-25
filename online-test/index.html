@@ -214,7 +214,7 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
   </div>
  </div>
 </div>
-<div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای ورود، دکمه زیر را بزن؛ بازی در همین صفحه افقی نمایش داده می‌شود</p><button id="startLandscape" class="primary">شروع بازی افقی</button><small>پس از ورود، نمای بازی به‌صورت افقی و تمام‌صفحه نمایش داده می‌شود.</small><div id="connectionError" role="alert" style="display:none;margin-top:12px;padding:10px;border:1px solid #b87568;border-radius:10px;color:#ffd2c9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۸</div></div></div>
+<div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای ورود، دکمه زیر را بزن؛ بازی در همین صفحه افقی نمایش داده می‌شود</p><button id="startLandscape" class="primary">شروع بازی افقی</button><small>پس از ورود، نمای بازی به‌صورت افقی و تمام‌صفحه نمایش داده می‌شود.</small><div id="connectionError" role="alert" style="display:none;margin-top:12px;padding:10px;border:1px solid #b87568;border-radius:10px;color:#ffd2c9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۹</div></div></div>
 <script type="module">
 import { createRipOnline } from "../online/multiplayer.js?v=8";
 const $=id=>document.getElementById(id),canvas=$("game"),ctx=canvas.getContext("2d");
@@ -364,6 +364,6 @@ function showFatalGameError(message){
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=27",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=28",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
