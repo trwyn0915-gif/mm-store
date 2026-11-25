@@ -244,6 +244,7 @@ async function connect(){
   });
   connected=true;
   document.body.classList.remove("exit-to-page");
+  const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
   document.body.classList.add("playing");
   installExitGuard();status("متصل · دنیای آنلاین فعال");
   btn.textContent="متصل شدی";btn.disabled=true;
@@ -261,13 +262,13 @@ async function connect(){
   document.body.classList.remove("playing");
   btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";
   status("اتصال برقرار نشد؛ دوباره تلاش کن");
-  const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");
+  const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");$("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";
   sayToast("اتصال به سرور برقرار نشد؛ نقشه تا زمان اتصال نمایش داده نمی‌شود");
   ctx.clearRect(0,0,canvas.width,canvas.height);stats();
  }
 }
 async function waitForStableViewport(){let lastW=0,lastH=0,stableSince=0;const began=performance.now();while(performance.now()-began<2200){const w=Math.round(window.visualViewport?.width||window.innerWidth),h=Math.round(window.visualViewport?.height||window.innerHeight);if(w===lastW&&h===lastH){if(!stableSince)stableSince=performance.now();if(performance.now()-stableSince>=350)return true;}else{lastW=w;lastH=h;stableSince=0;}await new Promise(resolve=>setTimeout(resolve,80));}return true;}
-async function startFromPage(){const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال آماده‌سازی...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{await screen.orientation?.lock?.("landscape");}catch(e){console.info("Landscape lock unavailable",e);}if(window.matchMedia("(orientation: portrait)").matches){btn.disabled=false;btn.textContent="شروع بازی افقی";sayToast("برای ورود به بازی، گوشی را افقی کنید.");return;}await waitForStableViewport();if(window.matchMedia("(orientation: portrait)").matches){btn.disabled=false;btn.textContent="شروع بازی افقی";sayToast("برای ورود به بازی، گوشی را افقی کنید.");return;}document.body.classList.remove("exit-to-page");$("rotatePrompt").hidden=true;$("rotatePrompt").classList.add("hidden");connect();}
+async function startFromPage(){const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال آماده‌سازی...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{await screen.orientation?.lock?.("landscape");}catch(e){console.info("Landscape lock unavailable",e);}if(window.matchMedia("(orientation: portrait)").matches){btn.disabled=false;btn.textContent="شروع بازی افقی";sayToast("برای ورود به بازی، گوشی را افقی کنید.");return;}await waitForStableViewport();if(window.matchMedia("(orientation: portrait)").matches){btn.disabled=false;btn.textContent="شروع بازی افقی";sayToast("برای ورود به بازی، گوشی را افقی کنید.");return;}document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");$("startLandscape").textContent="در حال اتصال به دنیای آنلاین...";$("startLandscape").disabled=true;connect();}
 $("connect").addEventListener("click",startFromPage);
 $("startLandscape").addEventListener("click",startFromPage);
 $("skin").addEventListener("change",()=>{player.skin=$("skin").value;persist();});
