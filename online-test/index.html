@@ -56,7 +56,7 @@ body.playing .head,body.playing .foot,body.playing .bar,body.playing .stats,
 body.playing .bottom:not(.chat-open),body.playing #rotatePrompt{display:none!important}
 body.playing .wrap,body.playing .card{position:fixed!important;inset:0!important;display:block!important;width:100vw!important;height:100dvh!important;min-height:0!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;background:transparent!important;box-shadow:none!important}
 body.playing #gamebox{position:fixed!important;inset:0!important;display:block!important;width:100vw!important;height:100dvh!important;min-width:100vw!important;min-height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;aspect-ratio:auto!important;overflow:hidden!important;background:#071015!important}
-body.playing #game{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;margin:0!important;aspect-ratio:auto!important;object-fit:cover!important;touch-action:none};body:not(.playing) #game{visibility:hidden!important}
+body.playing #game{display:none!important}body.playing #threeRoot{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;touch-action:none}body.playing #threeRoot canvas{display:block;width:100%!important;height:100%!important;touch-action:none}body:not(.playing) #threeRoot{display:none!important}body.playing #game{position:absolute!important;inset:0!important;display:none!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;margin:0!important;aspect-ratio:auto!important;object-fit:cover!important;touch-action:none};body:not(.playing) #game{visibility:hidden!important}
 body:not(.playing) #gamebox,body:not(.playing) .game-controls{visibility:hidden!important;pointer-events:none!important}
 body.playing #gamebox,body.playing .game-controls{visibility:visible!important}
 body.playing .game-controls{position:fixed!important;inset:0!important;display:block!important;width:100vw!important;height:100dvh!important;z-index:500!important;pointer-events:none!important}
@@ -236,7 +236,35 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 <div id="rotatePrompt"><div class="rotate-card"><div class="rotate-title">MM WORLD</div><p>برای ورود به سایت، دکمه زیر را بزن؛ صفحه در همین لحظه تمام‌صفحه و افقی می‌شود.</p><button id="startLandscape" class="primary">ورود به سایت</button><small>با لمس این دکمه، تمام‌صفحه فعال می‌شود و سپس اتصال به دنیای آنلاین آغاز خواهد شد.</small><div id="connectionError" role="alert" style="display:none;margin-top:12px;padding:10px;border:1px solid #b87568;border-radius:10px;color:#ffd2c9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۱۱</div></div></div>
 <script type="module">
 import { createRipOnline } from "../online/multiplayer.js?v=8";
+const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
 const $=id=>document.getElementById(id),canvas=$("game"),ctx=canvas.getContext("2d");
+const threeRoot=$("threeRoot");
+const scene3D=new THREE.Scene();scene3D.background=new THREE.Color(0x87b8d0);
+scene3D.fog=new THREE.Fog(0x87b8d0,90,260);
+const camera3D=new THREE.PerspectiveCamera(75,1,0.1,500);
+camera3D.position.set(0,1.7,0);
+const renderer3D=new THREE.WebGLRenderer({antialias:true,alpha:false});
+renderer3D.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer3D.outputColorSpace=THREE.SRGBColorSpace;
+threeRoot.appendChild(renderer3D.domElement);
+const hemi3D=new THREE.HemisphereLight(0xffffff,0x557044,2.1);scene3D.add(hemi3D);
+const sun3D=new THREE.DirectionalLight(0xffffff,1.25);sun3D.position.set(-35,70,25);scene3D.add(sun3D);
+const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(500,500),new THREE.MeshStandardMaterial({color:0x4b9b45,roughness:1}));
+ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
+const arms3D=new THREE.Group();camera3D.add(arms3D);scene3D.add(camera3D);
+const armMat3D=new THREE.MeshStandardMaterial({color:0x35a88e,roughness:.9});
+const handMat3D=new THREE.MeshStandardMaterial({color:0xd9a77e,roughness:.9});
+for(const side of [-1,1]){
+ const arm=new THREE.Mesh(new THREE.BoxGeometry(.16,.48,.18),armMat3D);arm.position.set(side*.28,-.38,-.48);arm.rotation.z=side*-.12;arms3D.add(arm);
+ const hand=new THREE.Mesh(new THREE.BoxGeometry(.17,.16,.19),handMat3D);hand.position.set(side*.28,-.64,-.51);arms3D.add(hand);
+}
+let lookYaw=0,lookPitch=0,lookPointer=null,lastLookX=0,lastLookY=0;
+function resize3D(){const w=Math.max(1,threeRoot.clientWidth),h=Math.max(1,threeRoot.clientHeight);renderer3D.setSize(w,h,false);camera3D.aspect=w/h;camera3D.updateProjectionMatrix();}
+new ResizeObserver(resize3D).observe(threeRoot);resize3D();
+threeRoot.addEventListener("pointerdown",e=>{if(e.target.closest("button")||e.target.closest("#joystick"))return;lookPointer=e.pointerId;lastLookX=e.clientX;lastLookY=e.clientY;try{threeRoot.setPointerCapture(e.pointerId);}catch(_){}});
+threeRoot.addEventListener("pointermove",e=>{if(lookPointer!==e.pointerId)return;const dx=e.clientX-lastLookX,dy=e.clientY-lastLookY;lastLookX=e.clientX;lastLookY=e.clientY;lookYaw-=dx*.004;lookPitch=clamp(lookPitch-dy*.003,-1.15,1.15);});
+function endLook(e){if(lookPointer===e.pointerId)lookPointer=null;}
+threeRoot.addEventListener("pointerup",endLook);threeRoot.addEventListener("pointercancel",endLook);threeRoot.addEventListener("lostpointercapture",()=>lookPointer=null);
+
 const W=2400,H=1800,ROOM="mm-world-main";
 const skins={teal:"#35c4b2",gold:"#e7b84f",violet:"#a98bdf",red:"#df7770"};
 const stored=JSON.parse(localStorage.getItem("mmworld-profile")||"{}");
@@ -258,24 +286,12 @@ function addChat(name,message,id=null){if(id!==null&&id!==undefined){const key=S
 function worldToScreen(x,y){return{x:x-camera.x,y:y-camera.y};}
 function drawTree(x,y,r){const p=worldToScreen(x,y);ctx.fillStyle="#4b392b";ctx.fillRect(p.x-5,p.y+5,10,22);ctx.fillStyle="#1d4e3d";ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fill();ctx.fillStyle="#28654a";ctx.beginPath();ctx.arc(p.x-r*.25,p.y-r*.25,r*.65,0,Math.PI*2);ctx.fill();}
 function drawPerson(p,isSelf=false){const q=worldToScreen(p.x,p.y),color=skins[p.skin]||"#35c4b2";ctx.save();ctx.fillStyle="#10201d";ctx.beginPath();ctx.ellipse(q.x,q.y+10,13,6,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=color;ctx.beginPath();ctx.arc(q.x,q.y,11,0,Math.PI*2);ctx.fill();ctx.strokeStyle=isSelf?"#fff0b5":"#14252a";ctx.lineWidth=3;ctx.stroke();ctx.fillStyle="#f8f5e8";ctx.font="bold 13px Vazirmatn";ctx.textAlign="center";ctx.direction="rtl";ctx.lineWidth=3;ctx.strokeStyle="#071116";ctx.strokeText(p.name||"بازیکن",q.x,q.y-19);ctx.fillText(p.name||"بازیکن",q.x,q.y-19);if(isSelf){ctx.fillStyle="#fff1b6";ctx.font="10px Vazirmatn";ctx.fillText("شما",q.x,q.y+27);}ctx.restore();}
-function drawWorld(){ctx.clearRect(0,0,960,540);ctx.fillStyle="#477b56";ctx.fillRect(0,0,960,540);
- // soft grass texture
- for(let i=0;i<90;i++){let x=(i*131-camera.x*.25)%960,y=(i*83-camera.y*.25)%540;ctx.fillStyle=i%2?"#57845d":"#3f704e";ctx.fillRect((x+960)%960,(y+540)%540,3,3);}
- // paths
- ctx.fillStyle="#b9a078";ctx.beginPath();ctx.moveTo(1080-camera.x,0-camera.y);ctx.lineTo(1320-camera.x,0-camera.y);ctx.lineTo(1320-camera.x,1800-camera.y);ctx.lineTo(1080-camera.x,1800-camera.y);ctx.fill();
- ctx.beginPath();ctx.moveTo(0-camera.x,850-camera.y);ctx.lineTo(2400-camera.x,850-camera.y);ctx.lineTo(2400-camera.x,970-camera.y);ctx.lineTo(0-camera.x,970-camera.y);ctx.fill();
- // lake
- let lake=worldToScreen(480,1120);ctx.fillStyle="#327d91";ctx.beginPath();ctx.ellipse(lake.x,lake.y,210,125,-.18,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#8cc5c2";ctx.lineWidth=5;ctx.stroke();
- // village square
- let sq=worldToScreen(1200,900);ctx.fillStyle="#c5ae7f";ctx.beginPath();ctx.arc(sq.x,sq.y,180,0,Math.PI*2);ctx.fill();
- for(const b of buildings){let q=worldToScreen(b.x,b.y);ctx.fillStyle="#3b3026";ctx.fillRect(q.x+6,q.y+9,b.w,b.h);ctx.fillStyle=b.color;ctx.fillRect(q.x,q.y,b.w,b.h);ctx.fillStyle="#d6bd8c";ctx.fillRect(q.x+b.w*.38,q.y+b.h*.52,b.w*.24,b.h*.48);ctx.fillStyle="#473d32";ctx.beginPath();ctx.moveTo(q.x-12,q.y);ctx.lineTo(q.x+b.w/2,q.y-55);ctx.lineTo(q.x+b.w+12,q.y);ctx.fill();ctx.fillStyle="#fff1d0";ctx.font="bold 14px Vazirmatn";ctx.textAlign="center";ctx.fillText(b.label,q.x+b.w/2,q.y-62);}
- for(const t of trees){if(t.x<camera.x-60||t.x>camera.x+1020||t.y<camera.y-60||t.y>camera.y+600)continue;drawTree(t.x,t.y,t.r);}
- for(const h of herbsSpots){if(h.taken)continue;let q=worldToScreen(h.x,h.y);ctx.fillStyle="#d6e68b";ctx.beginPath();ctx.arc(q.x,q.y,8,0,Math.PI*2);ctx.fill();ctx.fillStyle="#4a9b5a";ctx.fillRect(q.x-2,q.y,4,13);}
- let n=worldToScreen(npc.x,npc.y);ctx.fillStyle="#e8c477";ctx.beginPath();ctx.arc(n.x,n.y,14,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#382b18";ctx.lineWidth=3;ctx.stroke();ctx.fillStyle="#fff4d5";ctx.font="bold 13px Vazirmatn";ctx.textAlign="center";ctx.fillText("نگهبان دهکده",n.x,n.y-25);
- for(const p of Object.values(players)){if(Number.isFinite(p.x)&&Number.isFinite(p.y))drawPerson({x:p.x,y:p.y,name:p.displayName||"بازیکن",skin:p.skin||"teal"});}
- drawPerson(player,true);
- ctx.fillStyle="#f6e8bd";ctx.font="bold 16px Vazirmatn";ctx.textAlign="right";ctx.fillText("دهکده MM",930,28);
+function drawWorld(){
+ camera3D.position.set((player.x-1200)/8,1.7,(player.y-900)/8);
+ camera3D.rotation.order="YXZ";camera3D.rotation.y=lookYaw;camera3D.rotation.x=lookPitch;
+ renderer3D.render(scene3D,camera3D);
 }
+
 function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
 function blocked(x,y){
  for(const b of buildings){if(x>b.x-20&&x<b.x+b.w+20&&y>b.y-20&&y<b.y+b.h+20)return true;}
@@ -283,7 +299,17 @@ function blocked(x,y){
  for(const t of trees){if(Math.hypot(x-t.x,y-t.y)<t.r+13)return true;}
  return false;
 }
-function move(dt){let dx=(keys.right?1:0)-(keys.left?1:0),dy=(keys.down?1:0)-(keys.up?1:0);if(!dx&&!dy)return;if(dx&&dy){dx*=.7071;dy*=.7071;}const speed=sprinting?315:190;const nx=clamp(player.x+dx*speed*dt,30,W-30),ny=clamp(player.y+dy*speed*dt,30,H-30);if(!blocked(nx,player.y))player.x=nx;if(!blocked(player.x,ny))player.y=ny;player.face=Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up");}
+function move(dt){
+ let forward=(keys.up?1:0)-(keys.down?1:0),strafe=(keys.right?1:0)-(keys.left?1:0);
+ if(!forward&&!strafe)return;
+ const length=Math.hypot(forward,strafe)||1;forward/=length;strafe/=length;
+ const speed=sprinting?315:190,worldSpeed=speed/8;
+ const dx=(Math.sin(lookYaw)*forward+Math.cos(lookYaw)*strafe)*worldSpeed*dt;
+ const dz=(-Math.cos(lookYaw)*forward+Math.sin(lookYaw)*strafe)*worldSpeed*dt;
+ player.x=clamp(player.x+dx*8,30,W-30);player.y=clamp(player.y+dz*8,30,H-30);
+ player.face=Math.abs(forward)>Math.abs(strafe)?(forward>0?"forward":"back"):(strafe>0?"right":"left");
+}
+
 function nearest(){const candidates=[{...npc,type:"npc"},...herbsSpots.filter(h=>!h.taken).map(h=>({...h,type:"herb"}))];let best=null,d=65;for(const o of candidates){let n=Math.hypot(player.x-o.x,player.y-o.y);if(n<d){d=n;best=o;}}return best;}
 function interact(){const o=nearest();if(!o){sayToast("چیزی در نزدیکی تو نیست");return;}if(o.type==="npc"){if(!questStarted){questStarted=true;sayToast("ماموریت: سه گیاه درخشان جمع کن");}else if(!questDone&&herbs>=3){questDone=true;coins+=100;addXP(80);sayToast("ماموریت کامل شد؛ ۱۰۰ سکه پاداش گرفتی");}else if(questDone){sayToast("ممنون که به دهکده کمک کردی");}else{sayToast("هنوز "+Math.max(0,3-herbs)+" گیاه دیگر لازم داری");}}else{const spot=herbsSpots.find(h=>h.id===o.id);if(spot&&!spot.taken){spot.taken=true;collected.add(spot.id);herbs++;coins+=3;addXP(12);sayToast("گیاه جمع شد؛ +۳ سکه");}}persist();stats();}
 async function connect(){
@@ -386,6 +412,6 @@ function showFatalGameError(message){
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=35",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=36",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
