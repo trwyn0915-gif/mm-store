@@ -213,9 +213,21 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 .loading-fill{min-width:0;}
 .loading-percent{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:clamp(13px,2.1vw,17px);font-weight:900;line-height:1;text-shadow:0 1px 3px #00101e,0 0 5px #00101e;pointer-events:none;z-index:1;}
 @media(orientation:portrait){.loading-ui{width:94vw;margin-bottom:5vh}.loading-track{height:clamp(26px,4.2vh,36px)}}
+
+/* Desktop access gate: MM WORLD is designed for touch-screen phones. */
+body.desktop-blocked{overflow:hidden!important;background:#091116!important}
+body.desktop-blocked .wrap,body.desktop-blocked #rotatePrompt,body.desktop-blocked #loadingScreen,body.desktop-blocked .exit-overlay{display:none!important}
+#desktopBlock{display:none;position:fixed;inset:0;z-index:50000;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at top,#1d3436,#091116 72%);direction:rtl;text-align:center}
+body.desktop-blocked #desktopBlock{display:flex!important}
+.desktop-block-card{width:min(520px,92vw);padding:34px 28px;border:1px solid #c6a45e;border-radius:24px;background:linear-gradient(155deg,#17272b,#0b151a);box-shadow:0 18px 70px #000b}
+.desktop-block-card h1{margin:0 0 14px;color:#e8c477;font-size:clamp(25px,4vw,34px)}
+.desktop-block-card p{margin:0;color:#e3e8e5;font-size:clamp(15px,2vw,19px);font-weight:700;line-height:2}
+.desktop-block-card small{display:block;margin-top:16px;color:#a8b7b5;line-height:1.9}
+
 </style>
 </head>
 <body>
+<div id="desktopBlock" role="alert" aria-live="assertive"><div class="desktop-block-card"><h1>MM WORLD</h1><p>این بازی فقط برای گوشی طراحی شده است.</p><p>لطفاً لینک بازی را با تلفن همراه باز کنید.</p><small>ورود از طریق کامپیوتر امکان‌پذیر نیست.</small></div></div>
 <main class="wrap">
 <header class="head"><div><div class="brand">MM WORLD</div><div class="sub">دنیای آزاد نقش‌آفرینی اتحادیه MM</div></div><span class="tag">نسخه آنلاین آزمایشی</span></header>
 <section class="card">
@@ -269,6 +281,8 @@ const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/thr
 const { GLTFLoader } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
 const { clone: cloneSkinned } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js");
 const $=id=>document.getElementById(id),canvas=$("game"),ctx=canvas.getContext("2d");
+const desktopDevice=window.matchMedia("(min-width: 900px) and (hover: hover) and (pointer: fine)").matches||window.matchMedia("(min-width: 1200px)").matches;
+if(desktopDevice)document.body.classList.add("desktop-blocked");
 const threeRoot=$("threeRoot");
 const scene3D=new THREE.Scene();scene3D.background=new THREE.Color(0x87b8d0);
 scene3D.fog=new THREE.Fog(0x87b8d0,90,260);
@@ -478,7 +492,7 @@ async function connect(){
  }
 }
 async function waitForStableViewport(){let lastW=0,lastH=0,stableSince=0;const began=performance.now();while(performance.now()-began<2200){const w=Math.round(window.visualViewport?.width||window.innerWidth),h=Math.round(window.visualViewport?.height||window.innerHeight);if(w===lastW&&h===lastH){if(!stableSince)stableSince=performance.now();if(performance.now()-stableSince>=350)return true;}else{lastW=w;lastH=h;stableSince=0;}await new Promise(resolve=>setTimeout(resolve,80));}return true;}
-async function startFromPage(){const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");showLoading();const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال فعال‌سازی حالت افقی و تمام‌صفحه...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{if(screen.orientation?.lock)await screen.orientation.lock("landscape");}catch(e){console.info("Landscape lock unavailable; using the rotated landscape game stage",e);}await waitForStableViewport();setLoadingProgress(8,"در حال آماده‌سازی محیط سه‌بعدی...");document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
+async function startFromPage(){if(desktopDevice){document.body.classList.add("desktop-blocked");return;}const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");showLoading();const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال فعال‌سازی حالت افقی و تمام‌صفحه...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{if(screen.orientation?.lock)await screen.orientation.lock("landscape");}catch(e){console.info("Landscape lock unavailable; using the rotated landscape game stage",e);}await waitForStableViewport();setLoadingProgress(8,"در حال آماده‌سازی محیط سه‌بعدی...");document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
 $("connect").addEventListener("click",startFromPage);
 $("startLandscape").addEventListener("click",startFromPage);
 $("skin").addEventListener("change",()=>{player.skin=ownedCharacters.has($("skin").value)?$("skin").value:"robot";persist();ensureAvatar("self",player.skin).catch(console.error);});
@@ -528,6 +542,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=72",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=73",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
