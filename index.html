@@ -2371,5 +2371,19 @@ window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false});
 document.querySelectorAll('[data-k]').forEach(b=>{const k=b.dataset.k;const down=e=>{e.preventDefault();keys[k]=true},up=e=>{e.preventDefault();keys[k]=false};b.addEventListener('pointerdown',down);b.addEventListener('pointerup',up);b.addEventListener('pointerleave',up);b.addEventListener('pointercancel',up)});
 document.addEventListener('pointerup',()=>{for(const k in keys)keys[k]=false});
 reset();requestAnimationFrame(loop);
+// Start the first chapter immediately when the game page opens.
+startStory();
+
+// Browsers require a real user gesture before entering fullscreen.
+// The first tap/click or key press requests fullscreen and resumes game audio.
+let fullscreenActivated=false;
+const activateFullscreen=()=>{
+ if(fullscreenActivated)return;
+ fullscreenActivated=true;
+ requestGameFullscreen();
+ if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+};
+window.addEventListener('pointerdown',activateFullscreen,{once:true,capture:true});
+window.addEventListener('keydown',activateFullscreen,{once:true,capture:true});
 })();
 </script></body></html>
