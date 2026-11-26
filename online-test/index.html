@@ -330,7 +330,7 @@ renderer3D.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer3D.outputColor
 threeRoot.appendChild(renderer3D.domElement);
 const hemi3D=new THREE.HemisphereLight(0xffffff,0x557044,1.15);scene3D.add(hemi3D);
 const sun3D=new THREE.DirectionalLight(0xffffff,0.85);sun3D.position.set(-35,70,25);scene3D.add(sun3D);
-const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(150,150);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(10000,10000),groundMaterial3D);
+const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(300,300);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(10000,10000),groundMaterial3D);
 ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 scene3D.background=new THREE.Color(0x20b9d5);
 const skyPanoramaLoader3D=new THREE.TextureLoader();
@@ -475,7 +475,7 @@ function move(dt){
  const speed=45.0585,worldSpeed=speed/8;
  const dx=(Math.sin(lookYaw)*smoothForward+Math.cos(lookYaw)*smoothStrafe)*worldSpeed*dt;
  const dz=(-Math.cos(lookYaw)*smoothForward+Math.sin(lookYaw)*smoothStrafe)*worldSpeed*dt;
- player.x=clamp(player.x+dx*8,30,W-30);player.y=clamp(player.y+dz*8,30,H-30);
+ player.x+=dx*8;player.y+=dz*8;
  if(Math.hypot(dx,dz)>.0001){
   const targetYaw=Math.atan2(dx,dz);
   player.avatarYaw+=Math.atan2(Math.sin(targetYaw-player.avatarYaw),Math.cos(targetYaw-player.avatarYaw))*Math.min(1,dt*12);
@@ -497,7 +497,7 @@ async function connect(){
   const auth=await online.connect();userId=auth.userId;setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
   const saved=await online.loadCharacter();setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
   if(saved){
-   player.x=clamp(saved.x||player.x,30,W-30);player.y=clamp(saved.y||player.y,30,H-30);
+   player.x=Number.isFinite(saved.x)?saved.x:player.x;player.y=Number.isFinite(saved.y)?saved.y:player.y;
    player.level=saved.level||1;player.xp=saved.experience||0;
    if(saved.character_id==="robot")player.skin="hero";
    else if(CHARACTER_ASSETS[saved.character_id]&&ownedCharacters.has(saved.character_id))player.skin=saved.character_id;
