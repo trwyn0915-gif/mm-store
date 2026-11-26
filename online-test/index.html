@@ -500,7 +500,7 @@ function move(dt){
  const speed=40.55265,worldSpeed=speed/8;
  const dx=(Math.sin(lookYaw)*smoothForward+Math.cos(lookYaw)*smoothStrafe)*worldSpeed*dt*8;
  const dz=(-Math.cos(lookYaw)*smoothForward+Math.sin(lookYaw)*smoothStrafe)*worldSpeed*dt*8;
- const playerCollisionRadius=12;
+ const playerCollisionRadius=10;
  const canMoveTo=(x,y)=>{
   for(const other of Object.values(players)){
    const ox=Number(other.x),oy=Number(other.y);
@@ -665,6 +665,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=157",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=158",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
