@@ -323,7 +323,7 @@ if(desktopDevice)document.body.classList.add("desktop-blocked");
 const threeRoot=$("threeRoot");
 const scene3D=new THREE.Scene();scene3D.background=new THREE.Color(0x20b9d5);
 scene3D.fog=new THREE.Fog(0x20b9d5,90,260);
-const camera3D=new THREE.PerspectiveCamera(75,1,0.1,1500);
+const camera3D=new THREE.PerspectiveCamera(75,1,0.1,500);
 camera3D.position.set(0,1.7,0);
 const renderer3D=new THREE.WebGLRenderer({antialias:true,alpha:false});
 renderer3D.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer3D.outputColorSpace=THREE.SRGBColorSpace;
@@ -335,13 +335,12 @@ ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 const skyPanoramaLoader3D=new THREE.TextureLoader();
 skyPanoramaLoader3D.load("./assets/mm-world-sky-panorama.webp",texture=>{
  texture.colorSpace=THREE.SRGBColorSpace;
+ texture.mapping=THREE.EquirectangularReflectionMapping;
+ texture.generateMipmaps=true;
+ texture.minFilter=THREE.LinearMipmapLinearFilter;
+ texture.magFilter=THREE.LinearFilter;
  texture.anisotropy=renderer3D.capabilities.getMaxAnisotropy();
- const skyMaterial=new THREE.MeshBasicMaterial({map:texture,side:THREE.BackSide,transparent:true,depthWrite:false,fog:false});
- const skyDome=new THREE.Mesh(new THREE.SphereGeometry(1000,96,64),skyMaterial);
- skyDome.position.y=14;
- skyDome.renderOrder=-1;
- skyDome.frustumCulled=false;
- scene3D.add(skyDome);
+ scene3D.background=texture;
 });
 
 scene3D.add(camera3D);
@@ -623,6 +622,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=107",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=108",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
