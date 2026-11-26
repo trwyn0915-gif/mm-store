@@ -65,7 +65,8 @@ export function createRipOnline() {
         display_name: row.display_name,
         character_id: row.character_id,
         room_id: row.room_id,
-        facing: row.facing
+        facing: row.facing,
+        last_seen_at: now
       })
       .eq("user_id", currentUser.id)
       .eq("room_id", row.room_id)
@@ -145,8 +146,9 @@ export function createRipOnline() {
     if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
     const { data, error } = await supabase
       .from("world_players")
-      .select("user_id,display_name,character_id,room_id,x,y,facing,level,experience")
-      .eq("room_id", String(roomId).slice(0, 40));
+      .select("user_id,display_name,character_id,room_id,x,y,facing,level,experience,last_seen_at")
+      .eq("room_id", String(roomId).slice(0, 40))
+      .gte("last_seen_at", new Date(Date.now() - 45000).toISOString());
     if (error) throw error;
     return data || [];
   }
@@ -162,6 +164,7 @@ export function createRipOnline() {
       skin: String(position.skin || "hero").slice(0, 20)
     };
     const now = Date.now();
+    const lastSeenAt = new Date(now).toISOString();
 
     // Presence is only a connection hint. It is not trusted for identity or position.
     if (now - lastPresenceTrack >= 10000) {
@@ -188,7 +191,8 @@ export function createRipOnline() {
         facing: payload.facing,
         display_name: payload.displayName,
         character_id: payload.skin,
-        room_id: currentRoom
+        room_id: currentRoom,
+        last_seen_at: lastSeenAt
       })
       .eq("user_id", currentUser.id)
       .eq("room_id", currentRoom)
