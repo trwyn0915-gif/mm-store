@@ -315,7 +315,6 @@ body.desktop-blocked #desktopBlock{display:flex!important}
 import { createRipOnline } from "../online/multiplayer.js?v=12";
 const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
 const { GLTFLoader } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
-const { RGBELoader } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/RGBELoader.js");
 const { clone: cloneSkinned } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js");
 const $=id=>document.getElementById(id),canvas=$("game"),ctx=canvas.getContext("2d");
 const mobileDevice=/Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.userAgent);;
@@ -334,12 +333,17 @@ const sun3D=new THREE.DirectionalLight(0xffffff,0.85);sun3D.position.set(-35,70,
 const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(30,30);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(500,500),groundMaterial3D);
 ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 scene3D.background=new THREE.Color(0x20b9d5);
-const skyHDRLoader3D=new RGBELoader();
-skyHDRLoader3D.load("https://d2ol7oe51mr4n9.cloudfront.net/user_3K50FCJs1msSTbBAWUvYyhaT9CO/e3380d4e-68ee-4b98-9c30-d1dfb391ec83.zip",texture=>{
+const skyPanoramaLoader3D=new THREE.TextureLoader();
+skyPanoramaLoader3D.load("./assets/mm-world-sky-panorama.webp",texture=>{
+ texture.colorSpace=THREE.SRGBColorSpace;
  texture.mapping=THREE.EquirectangularReflectionMapping;
+ texture.generateMipmaps=true;
+ texture.minFilter=THREE.LinearMipmapLinearFilter;
+ texture.magFilter=THREE.LinearFilter;
+ texture.anisotropy=renderer3D.capabilities.getMaxAnisotropy();
  texture.needsUpdate=true;
  scene3D.background=texture;
-},undefined,error=>console.error("MM WORLD HDR sky failed to load:",error));
+},undefined,error=>console.error("MM WORLD sky panorama failed to load:",error));
 
 scene3D.add(camera3D);
 const CHARACTER_ASSETS={hero:"blocky_01_hero.glb",knight:"blocky_03_knight.glb",wizard:"blocky_05_wizard.glb",pirate:"blocky_06_pirate.glb",astronaut:"blocky_07_astronaut.glb",robot:"blocky_08_robot.glb",zombie:"blocky_09_zombie.glb",princess:"blocky_19_princess.glb"};
