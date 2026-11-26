@@ -312,7 +312,7 @@ body.desktop-blocked #desktopBlock{display:flex!important}
  <div id="rotatePrompt"><section class="home-menu" aria-label="منوی اصلی MM WORLD"><div class="home-brand"><div class="home-crown">♛</div><div class="home-logo">MM</div><div class="home-world">WORLD</div><div class="home-tagline">دنیای آزاد نقش‌آفرینی آنلاین</div><div class="home-divider"></div><div class="home-union">اتحادیه MM</div><a class="creator-panel-link" href="https://trwyn0915-gif.github.io/mm-clan-site-2026/" target="_blank" rel="noopener noreferrer">پنل خدمات سازنده</a></div><div class="home-actions"><button id="startLandscape" class="home-action home-enter"><span class="home-action-icon">▶</span><span><b>ورود به بازی</b><small>ورود به دنیای آنلاین MM</small></span><span class="home-arrow">‹</span></button><button id="homeShop" class="home-action"><span class="home-action-icon">▣</span><span><b>فروشگاه</b><small>انتخاب و خرید کاراکتر</small></span><span class="home-arrow">‹</span></button><button id="homeSettings" class="home-action"><span class="home-action-icon">⚙</span><span><b>تنظیمات</b><small>مدیریت نام بازیکن</small></span><span class="home-arrow">‹</span></button><button id="homeHelp" class="home-action"><span class="home-action-icon">?</span><span><b>راهنمای بازی</b><small>آشنایی با کنترل‌ها و مأموریت‌ها</small></span><span class="home-arrow">‹</span></button><div id="connectionError" role="alert" style="display:none;margin-top:4px;padding:10px;border:1px solid #ff7b88;border-radius:10px;color:#ffd2d9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۱۲ · نسخه آنلاین</div><a class="creator-panel-link-mobile" href="https://trwyn0915-gif.github.io/mm-clan-site-2026/" target="_blank" rel="noopener noreferrer">پنل خدمات سازنده</a></div></section></div><div id="homeSettingsModal" class="home-modal" aria-hidden="true"><section class="home-modal-card"><h2>تنظیمات بازیکن</h2><label for="homePlayerName">نام بازیکن</label><input id="homePlayerName" maxlength="20" minlength="2" value="بازیکن MM"><div class="home-modal-actions"><button id="saveHomeSettings" class="home-modal-primary">ذخیره</button><button class="home-modal-close" data-home-close="homeSettingsModal">بستن</button></div></section></div><div id="homeHelpModal" class="home-modal" aria-hidden="true"><section class="home-modal-card"><h2>راهنمای MM WORLD</h2><p>حرکت: جوی‌استیک پایین صفحه یا کلیدهای جهت‌دار و WASD</p><p>تعامل: دکمه تعامل یا کلید E</p><p>مأموریت: با نگهبان دهکده صحبت کن و گیاهان جنگل را جمع‌آوری کن</p><p>بازیکنان دیگر را به‌صورت زنده در دنیای مشترک می‌بینی</p><div class="home-modal-actions"><button class="home-modal-primary" data-home-close="homeHelpModal">متوجه شدم</button></div></section></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
-import { createRipOnline } from "../online/multiplayer.js?v=13";
+import { createRipOnline } from "../online/multiplayer.js?v=14";
 const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
 const { GLTFLoader } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
 const { clone: cloneSkinned } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js");
@@ -417,6 +417,17 @@ const stored=JSON.parse(localStorage.getItem("mmworld-profile")||"{}");
 const ownedCharacters=new Set(["robot","hero",...(Array.isArray(stored.ownedCharacters)?stored.ownedCharacters.filter(id=>CHARACTER_IDS.includes(id)):[])]);
 const savedSkin=stored.skin==="robot"?"hero":CHARACTER_IDS.includes(stored.skin)&&ownedCharacters.has(stored.skin)?stored.skin:"hero";
 $("playerName").value=stored.name||"بازیکن MM";$("skin").value=savedSkin;
+const spawnPoints=Array.from({length:50},(_,i)=>({x:W/2+((i%10)-4.5)*42,y:H/2+(Math.floor(i/10)-2)*42}));
+function chooseSpawnPoint(){
+ let best=spawnPoints[0],bestScore=-Infinity;
+ for(const point of spawnPoints){
+  const distances=Object.values(players).filter(p=>Number.isFinite(Number(p.x))&&Number.isFinite(Number(p.y))).map(p=>Math.hypot(point.x-Number(p.x),point.y-Number(p.y)));
+  const nearest=distances.length?Math.min(...distances):Infinity;
+  if(nearest>=38)return point;
+  if(nearest>bestScore){bestScore=nearest;best=point;}
+ }
+ return best;
+}
 let player={x:W/2,y:H/2,face:"down",avatarYaw:Math.PI,name:$("playerName").value,skin:savedSkin,level:1,xp:0,moving:false};
 let coins=Number(stored.coins)||0,herbs=Number(stored.herbs)||0,questStarted=!!stored.questStarted,questDone=!!stored.questDone;const collected=new Set(Array.isArray(stored.collected)?stored.collected:[]);
 let online=null,userId="",connected=false,players={},lastSend=0,lastSave=0,lastChat=0,chatCooldown=0;const seenChatIds=new Set();
@@ -513,7 +524,6 @@ async function connect(){
   const auth=await online.connect();userId=auth.userId;setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
   const saved=await online.loadCharacter();setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
   if(saved){
-   player.x=W/2;player.y=H/2;
    player.level=saved.level||1;player.xp=saved.experience||0;
    if(saved.character_id==="robot")player.skin="hero";
    else if(CHARACTER_ASSETS[saved.character_id]&&ownedCharacters.has(saved.character_id))player.skin=saved.character_id;
@@ -523,13 +533,15 @@ async function connect(){
   setLoadingProgress(60,"در حال بارگذاری کاراکتر سه‌بعدی...");
   await ensureAvatar("self",player.skin);
   if(!avatarRecords.has("self"))throw new Error("مدل کاراکتر بارگذاری نشد؛ اتصال اینترنت را بررسی کن.");
-  await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});setLoadingProgress(68,"در حال ورود به دنیای MM...");
+  setLoadingProgress(68,"در حال ورود به دنیای MM...");
   await online.joinRoom(ROOM,{
-   onPlayers:state=>{players={};for(const metas of Object.values(state||{})){const p=Array.isArray(metas)?metas[metas.length-1]:metas;if(p?.userId&&p.userId!==userId){players[p.userId]=p;ensureAvatar(p.userId,p.skin).catch(console.error);}}for(const [id,record] of avatarRecords){if(id!=="self"&&!players[id]){scene3D.remove(record.group);avatarRecords.delete(id);avatarLoading.delete(id);}}stats();},
+   onPlayers:state=>{const present=new Set();for(const metas of Object.values(state||{})){const p=Array.isArray(metas)?metas[metas.length-1]:metas;if(p?.userId&&p.userId!==userId){present.add(p.userId);if(!players[p.userId])players[p.userId]=p;ensureAvatar(p.userId,p.skin).catch(console.error);}}for(const id of Object.keys(players)){if(!present.has(id)){delete players[id];const record=avatarRecords.get(id);if(record)scene3D.remove(record.group);avatarRecords.delete(id);avatarLoading.delete(id);}}stats();},
    onMove:p=>{if(p?.userId&&p.userId!==userId){const previous=players[p.userId];const hasPosition=previous&&Number.isFinite(Number(previous.x))&&Number.isFinite(Number(previous.y))&&Number.isFinite(Number(p.x))&&Number.isFinite(Number(p.y));const moved=hasPosition&&Math.hypot(Number(p.x)-Number(previous.x),Number(p.y)-Number(previous.y))>.02;players[p.userId]={...previous,...p,moving:Boolean(p.moving)||moved};ensureAvatar(p.userId,p.skin).catch(console.error);}stats();},
    onPlayerUpdate:p=>{if(p?.userId&&p.userId!==userId){players[p.userId]={...players[p.userId],...p};ensureAvatar(p.userId,p.skin).catch(console.error);}stats();},
    onChat:p=>{if(p?.userId!==userId)addChat(p.displayName||"بازیکن",p.message||"",p.id);}
   });
+  player.x=chooseSpawnPoint().x;player.y=chooseSpawnPoint().y;
+  await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});
   connected=true;for(const p of Object.values(players))if(p?.userId)ensureAvatar(p.userId,p.skin).catch(console.error);setLoadingProgress(90,"دنیای بازی آماده شد...");
   document.body.classList.remove("exit-to-page");
   const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
@@ -640,6 +652,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=154",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=155",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
