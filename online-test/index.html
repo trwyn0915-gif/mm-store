@@ -442,7 +442,7 @@ function drawWorld(dt=0){
  for(const [id,p] of Object.entries(players)){
   const record=avatarRecords.get(id);
   if(record){
-   const remoteX=p.x<=2400?p.x*10:p.x,remoteY=p.y<=1800?p.y*10:p.y;const targetX=(remoteX-W/2)/8,targetZ=(remoteY-H/2)/8;
+   const legacyRemote=p.x<=2400&&p.y<=1800,remoteX=legacyRemote?p.x*10:p.x,remoteY=legacyRemote?p.y*10:p.y;const targetX=(remoteX-W/2)/8,targetZ=(remoteY-H/2)/8;
    if(!record.remotePositionReady){record.group.position.set(targetX,record.characterId==="hero"?-.57250:record.characterId==="robot"?-.415:-.404,targetZ);record.remotePositionReady=true;}
    else{const blend=1-Math.exp(-18*Math.min(dt,.05));record.group.position.x+=(targetX-record.group.position.x)*blend;record.group.position.z+=(targetZ-record.group.position.z)*blend;record.group.position.y=record.characterId==="hero"?-.57250:record.characterId==="robot"?-.415:-.404;}
    const targetYaw=Number.isFinite(p.yaw)?p.yaw:Math.PI;
@@ -497,7 +497,7 @@ async function connect(){
   const auth=await online.connect();userId=auth.userId;setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
   const saved=await online.loadCharacter();setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
   if(saved){
-   const savedX=Number(saved.x)||player.x,savedY=Number(saved.y)||player.y;player.x=clamp(savedX<=2400?savedX*10:savedX,300,W-300);player.y=clamp(savedY<=1800?savedY*10:savedY,300,H-300);
+   const savedX=Number(saved.x)||player.x,savedY=Number(saved.y)||player.y,legacySave=savedX<=2400&&savedY<=1800;player.x=clamp(legacySave?savedX*10:savedX,300,W-300);player.y=clamp(legacySave?savedY*10:savedY,300,H-300);
    player.level=saved.level||1;player.xp=saved.experience||0;
    if(saved.character_id==="robot")player.skin="hero";
    else if(CHARACTER_ASSETS[saved.character_id]&&ownedCharacters.has(saved.character_id))player.skin=saved.character_id;
