@@ -186,8 +186,11 @@ export function createRipOnline() {
       displayName: String(position.displayName || "بازیکن").trim().slice(0, 20),
       skin: String(position.skin || "hero").slice(0, 20)
     };
-    const now = Date.now();
-    const lastSeenAt = new Date(now).toISOString();
+    const now = performance.now();
+    const lastSeenAt = new Date(Date.now()).toISOString();
+
+    // Cap durable position writes to 4 per second per player. This keeps
+    // Postgres Changes from flooding mobile clients while preserving RLS identity.
 
     // Presence is only a connection hint. It is not trusted for identity or position.
     if (now - lastPresenceTrack >= 10000) {
@@ -203,6 +206,7 @@ export function createRipOnline() {
     const moved = !lastWrittenPosition ||
       Math.hypot(payload.x - lastWrittenPosition.x, payload.y - lastWrittenPosition.y) >= 0.25;
     const heartbeat = now - lastMovementWrite >= 2000;
+    if (lastMovementWrite && now - lastMovementWrite < 250) return;
     if (!moved && !heartbeat) return;
 
     // RLS binds this update to auth.uid(); peers receive the committed database row.
