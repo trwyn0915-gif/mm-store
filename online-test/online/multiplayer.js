@@ -16,6 +16,7 @@ export function createRipOnline() {
 
   let channel = null;
   let currentUser = null;
+  let presenceTracked = false;
 
   async function connect() {
     const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
@@ -65,6 +66,7 @@ export function createRipOnline() {
   async function joinRoom(roomId, handlers = {}) {
     if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
     if (channel) await supabase.removeChannel(channel);
+    presenceTracked = false;
     const room = String(roomId).slice(0, 40);
     channel = supabase.channel("rip-world:" + room, {
       config: { presence: { key: currentUser.id }, broadcast: { self: false } }
@@ -102,7 +104,10 @@ export function createRipOnline() {
       moving: Boolean(position.moving),
       sentAt: Date.now()
     };
-    await channel.track(payload);
+    if (!presenceTracked) {
+      await channel.track(payload);
+      presenceTracked = true;
+    }
     await channel.send({ type: "broadcast", event: "move", payload });
   }
 
@@ -142,6 +147,7 @@ export function createRipOnline() {
     if (channel) {
       await supabase.removeChannel(channel);
       channel = null;
+      presenceTracked = false;
     }
   }
 
