@@ -442,7 +442,7 @@ function drawWorld(dt=0){
  for(const [id,p] of Object.entries(players)){
   const record=avatarRecords.get(id);
   if(record){
-   const targetX=(p.x-(p.x<=2400?p.x*10:p.x)-W/2)/8,targetZ=(p.y-(p.y<=1800?p.y*10:p.y)-H/2)/8;
+   const remoteX=p.x<=2400?p.x*10:p.x,remoteY=p.y<=1800?p.y*10:p.y;const targetX=(remoteX-W/2)/8,targetZ=(remoteY-H/2)/8;
    if(!record.remotePositionReady){record.group.position.set(targetX,record.characterId==="hero"?-.57250:record.characterId==="robot"?-.415:-.404,targetZ);record.remotePositionReady=true;}
    else{const blend=1-Math.exp(-18*Math.min(dt,.05));record.group.position.x+=(targetX-record.group.position.x)*blend;record.group.position.z+=(targetZ-record.group.position.z)*blend;record.group.position.y=record.characterId==="hero"?-.57250:record.characterId==="robot"?-.415:-.404;}
    const targetYaw=Number.isFinite(p.yaw)?p.yaw:Math.PI;
