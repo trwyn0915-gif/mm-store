@@ -334,7 +334,7 @@ const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp
 ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 
 let skyDome3D=null;
-fetch("./assets/mm-world-clear-sky.webp.b64?v=152").then(response=>{if(!response.ok)throw new Error("Clear sky panorama file unavailable");return response.text();}).then(encoded=>{
+fetch("./assets/mm-world-clear-sky.webp.b64?v=153").then(response=>{if(!response.ok)throw new Error("Clear sky panorama file unavailable");return response.text();}).then(encoded=>{
  const skyImage3D=new Image();
  skyImage3D.onload=()=>{
   const texture=new THREE.Texture(skyImage3D);
@@ -489,11 +489,18 @@ function move(dt){
  const speed=40.55265,worldSpeed=speed/8;
  const dx=(Math.sin(lookYaw)*smoothForward+Math.cos(lookYaw)*smoothStrafe)*worldSpeed*dt*8;
  const dz=(-Math.cos(lookYaw)*smoothForward+Math.sin(lookYaw)*smoothStrafe)*worldSpeed*dt*8;
- const playerCollisionRadius=24;
- const overlapsOtherPlayer=(x,y)=>Object.values(players).some(other=>Number.isFinite(Number(other.x))&&Number.isFinite(Number(other.y))&&Math.hypot(x-Number(other.x),y-Number(other.y))<playerCollisionRadius*2);
+ const playerCollisionRadius=12;
+ const canMoveTo=(x,y)=>Object.values(players).every(other=>{
+  const ox=Number(other.x),oy=Number(other.y);
+  if(!Number.isFinite(ox)||!Number.isFinite(oy))return true;
+  const currentDistance=Math.hypot(player.x-ox,player.y-oy);
+  const nextDistance=Math.hypot(x-ox,y-oy);
+  const minimumDistance=playerCollisionRadius*2;
+  return nextDistance>=minimumDistance||nextDistance>=currentDistance;
+ });
  const nextX=clamp(player.x+dx,30,W-30),nextY=clamp(player.y+dz,30,H-30);
- if(!overlapsOtherPlayer(nextX,player.y))player.x=nextX;
- if(!overlapsOtherPlayer(player.x,nextY))player.y=nextY;
+ if(canMoveTo(nextX,player.y))player.x=nextX;
+ if(canMoveTo(player.x,nextY))player.y=nextY;
  if(Math.hypot(dx,dz)>.0001){
   const targetYaw=Math.atan2(dx,dz);
   player.avatarYaw+=Math.atan2(Math.sin(targetYaw-player.avatarYaw),Math.cos(targetYaw-player.avatarYaw))*Math.min(1,dt*12);
@@ -642,6 +649,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=152",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=153",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
