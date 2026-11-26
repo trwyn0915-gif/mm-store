@@ -65,8 +65,7 @@ export function createRipOnline() {
         display_name: row.display_name,
         character_id: row.character_id,
         room_id: row.room_id,
-        facing: row.facing,
-        last_seen_at: now
+        facing: row.facing
       })
       .eq("user_id", currentUser.id)
       .eq("room_id", row.room_id)
