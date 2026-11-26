@@ -391,7 +391,7 @@ function updateAvatarNameTag(record,name){
  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearFilter;texture.magFilter=THREE.LinearFilter;
  if(record.nameTag){record.group.remove(record.nameTag);record.nameTag.material.map?.dispose();record.nameTag.material.dispose();}
  const material=new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:true,depthWrite:false});
- const sprite=new THREE.Sprite(material);sprite.position.set(0,2.55,0);sprite.scale.set(2.65,.66,1);sprite.renderOrder=20;
+ const sprite=new THREE.Sprite(material);sprite.position.set(0,3.15,0);sprite.scale.set(2.65,.66,1);sprite.renderOrder=20;
  record.group.add(sprite);record.nameTag=sprite;record.nameTagText=label;
 }
 async function ensureAvatar(id,characterId){
@@ -755,6 +755,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=176",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=177",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
