@@ -524,7 +524,7 @@ function drawWorld(dt=0){
   const remoteFrameNow=performance.now();
  const px=(player.x-W/2)/8,pz=(player.y-H/2)/8;
  const selfRecord=avatarRecords.get("self");
- if(selfRecord){selfRecord.group.position.set(px,selfRecord.characterId==="hero"?-.52250:selfRecord.characterId==="robot"?-.415:-.404,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
+ if(selfRecord){selfRecord.group.position.set(px,selfRecord.characterId==="hero"?-.54250:selfRecord.characterId==="robot"?-.415:-.404,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
  const orbitPitch=clamp(.18+lookPitch*.7,.12,.8);
  const cameraDistance=12;
  const orbitHorizontal=cameraDistance*Math.cos(orbitPitch);
@@ -549,8 +549,8 @@ function drawWorld(dt=0){
    }else if(samples.length===1){renderX=samples[0].x;renderY=samples[0].y;}
    p.renderX=renderX;p.renderY=renderY;
    const targetX=(renderX-W/2)/8,targetZ=(renderY-H/2)/8;
-   if(!record.remotePositionReady){record.group.position.set(targetX,record.characterId==="hero"?-.52250:record.characterId==="robot"?-.415:-.404,targetZ);record.remotePositionReady=true;}
-   else{record.group.position.x=targetX;record.group.position.z=targetZ;record.group.position.y=record.characterId==="hero"?-.52250:record.characterId==="robot"?-.415:-.404;}
+   if(!record.remotePositionReady){record.group.position.set(targetX,record.characterId==="hero"?-.54250:record.characterId==="robot"?-.415:-.404,targetZ);record.remotePositionReady=true;}
+   else{record.group.position.x=targetX;record.group.position.z=targetZ;record.group.position.y=record.characterId==="hero"?-.54250:record.characterId==="robot"?-.415:-.404;}
    const targetYaw=Number.isFinite(p.yaw)?p.yaw:Math.PI;
    record.group.rotation.y+=Math.atan2(Math.sin(targetYaw-record.group.rotation.y),Math.cos(targetYaw-record.group.rotation.y))*(1-Math.exp(-12*Math.min(dt,.05)));
    const remoteMoving=!!p.samples&&p.samples.length>1&&Math.hypot(p.samples[p.samples.length-1].x-p.samples[p.samples.length-2].x,p.samples[p.samples.length-1].y-p.samples[p.samples.length-2].y)>.02&&remoteFrameNow-(p.receivedAtMono||0)<700;setAvatarMoving(record,remoteMoving);record.mixer?.update(dt);
@@ -755,6 +755,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=185",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=186",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
