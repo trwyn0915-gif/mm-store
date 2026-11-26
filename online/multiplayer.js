@@ -113,25 +113,19 @@ export function createRipOnline() {
       .on("broadcast", { event: "chat" }, ({ payload }) => {
         if (payload?.userId && payload.userId !== currentUser.id) handlers.onChat?.(payload);
       })
-      // Durable position updates provide a fallback if a transient broadcast is missed.
-      .on("postgres_changes", {
-        event: "*",
-        schema: "public",
-        table: "world_players",
-        filter: `room_id=eq.${room}`
-      }, ({ new: row }) => {
-        if (row?.user_id && row.user_id !== currentUser.id) {
+      // Positions are broadcast by a database trigger after the authenticated row update.
+      .on("broadcast", { event: "player_position" }, ({ payload }) => {
+        if (payload?.user_id && payload.user_id !== currentUser.id) {
           handlers.onPlayerUpdate?.({
-            userId: row.user_id,
-            x: row.x,
-            y: row.y,
-            facing: row.facing,
-            displayName: row.display_name,
-            skin: row.character_id,
-            level: row.level,
-            experience: row.experience,
-            last_seen_at: row.last_seen_at,
-            sentAt: Date.now()
+            userId: payload.user_id,
+            x: payload.x,
+            y: payload.y,
+            facing: payload.facing,
+            displayName: payload.display_name,
+            skin: payload.character_id,
+            level: payload.level,
+            experience: payload.experience,
+            last_seen_at: payload.last_seen_at
           });
         }
       })
@@ -189,8 +183,8 @@ export function createRipOnline() {
     const now = performance.now();
     const lastSeenAt = new Date(Date.now()).toISOString();
 
-    // Cap durable position writes to 4 per second per player. This keeps
-    // Postgres Changes from flooding mobile clients while preserving RLS identity.
+    // Keep position writes frequent enough for responsive movement; peers receive
+    // compact Broadcast events from the database trigger, not Postgres Changes.
 
     // Presence is only a connection hint. It is not trusted for identity or position.
     if (now - lastPresenceTrack >= 10000) {
@@ -206,7 +200,7 @@ export function createRipOnline() {
     const moved = !lastWrittenPosition ||
       Math.hypot(payload.x - lastWrittenPosition.x, payload.y - lastWrittenPosition.y) >= 0.25;
     const heartbeat = now - lastMovementWrite >= 2000;
-    if (lastMovementWrite && now - lastMovementWrite < 250) return;
+    if (lastMovementWrite && now - lastMovementWrite < 100) return;
     if (!moved && !heartbeat) return;
 
     // RLS binds this update to auth.uid(); peers receive the committed database row.
@@ -247,26 +241,7 @@ export function createRipOnline() {
       .select("id,user_id,display_name,message,created_at")
       .single();
     if (error) throw error;
-    // Persist chat first, then broadcast it for instant delivery to connected players.
-    // Postgres Changes remains enabled as a second delivery path; the UI deduplicates by id.
-    if (channel) {
-      try {
-        const result = await channel.send({
-          type: "broadcast",
-          event: "chat",
-          payload: {
-            id: data.id,
-            userId: data.user_id,
-            displayName: data.display_name,
-            message: data.message,
-            createdAt: data.created_at
-          }
-        });
-        if (result !== "ok") console.warn("Chat broadcast was not accepted:", result);
-      } catch (broadcastError) {
-        console.warn("Chat was saved, but live broadcast failed:", broadcastError);
-      }
-    }
+    // Chat is delivered through the authenticated world_chat Postgres Changes feed.
     return data;
   }
 
