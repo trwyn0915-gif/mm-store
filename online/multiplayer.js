@@ -112,8 +112,7 @@ export function createRipOnline() {
       config: { private: true, broadcast: { self: false } }
     });
     playerChannels.set(userId, playerChannel);
-    if (own) window.__mmOwnPlayerChannel = playerChannel;
-    else {
+    if (!own) {
       playerChannel.on("broadcast", { event: "player_position" }, ({ payload }) => {
         if (payload?.user_id !== userId || payload?.room_id !== currentRoom) return;
         handlers.onPlayerUpdate?.({
@@ -134,7 +133,6 @@ export function createRipOnline() {
         if (state === "SUBSCRIBED") resolve(state);
         if (state === "CHANNEL_ERROR" || state === "TIMED_OUT") {
           playerChannels.delete(userId);
-          if (own) window.__mmOwnPlayerChannel = null;
           reject(new Error("اتصال کانال حرکت بازیکن برقرار نشد."));
         }
       });
@@ -318,7 +316,6 @@ export function createRipOnline() {
     }
     playerChannels.clear();
     playerChannel = null;
-    window.__mmOwnPlayerChannel = null;
   }
 
   return { connect, getClockStatus, getServerNowMs: () => Date.now() + serverClockOffsetMs, loadCharacter, loadRoomPlayers, saveCharacter, joinRoom, publishMove, sendChat, loadRecentChat, leave };
