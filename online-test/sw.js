@@ -1,4 +1,4 @@
-const CACHE="mm-world-shell-v182";
+const CACHE="mm-world-shell-v183";
 const SHELL=["./","./index.html","./manifest.webmanifest","./footsteps.mp3"];
 self.addEventListener("install",event=>event.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener("activate",event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
