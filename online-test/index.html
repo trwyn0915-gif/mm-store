@@ -312,7 +312,7 @@ body.desktop-blocked #desktopBlock{display:flex!important}
  <div id="rotatePrompt"><section class="home-menu" aria-label="منوی اصلی MM WORLD"><div class="home-brand"><div class="home-crown">♛</div><div class="home-logo">MM</div><div class="home-world">WORLD</div><div class="home-tagline">دنیای آزاد نقش‌آفرینی آنلاین</div><div class="home-divider"></div><div class="home-union">اتحادیه MM</div><a class="creator-panel-link" href="https://trwyn0915-gif.github.io/mm-clan-site-2026/" target="_blank" rel="noopener noreferrer">پنل خدمات سازنده</a></div><div class="home-actions"><button id="startLandscape" class="home-action home-enter"><span class="home-action-icon">▶</span><span><b>ورود به بازی</b><small>ورود به دنیای آنلاین MM</small></span><span class="home-arrow">‹</span></button><button id="homeShop" class="home-action"><span class="home-action-icon">▣</span><span><b>فروشگاه</b><small>انتخاب و خرید کاراکتر</small></span><span class="home-arrow">‹</span></button><button id="homeSettings" class="home-action"><span class="home-action-icon">⚙</span><span><b>تنظیمات</b><small>مدیریت نام بازیکن</small></span><span class="home-arrow">‹</span></button><button id="homeHelp" class="home-action"><span class="home-action-icon">?</span><span><b>راهنمای بازی</b><small>آشنایی با کنترل‌ها و مأموریت‌ها</small></span><span class="home-arrow">‹</span></button><div id="connectionError" role="alert" style="display:none;margin-top:4px;padding:10px;border:1px solid #ff7b88;border-radius:10px;color:#ffd2d9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۱۲ · نسخه آنلاین</div><a class="creator-panel-link-mobile" href="https://trwyn0915-gif.github.io/mm-clan-site-2026/" target="_blank" rel="noopener noreferrer">پنل خدمات سازنده</a></div></section></div><div id="homeSettingsModal" class="home-modal" aria-hidden="true"><section class="home-modal-card"><h2>تنظیمات بازیکن</h2><label for="homePlayerName">نام بازیکن</label><input id="homePlayerName" maxlength="20" minlength="2" value="بازیکن MM"><div class="home-modal-actions"><button id="saveHomeSettings" class="home-modal-primary">ذخیره</button><button class="home-modal-close" data-home-close="homeSettingsModal">بستن</button></div></section></div><div id="homeHelpModal" class="home-modal" aria-hidden="true"><section class="home-modal-card"><h2>راهنمای MM WORLD</h2><p>حرکت: جوی‌استیک پایین صفحه یا کلیدهای جهت‌دار و WASD</p><p>تعامل: دکمه تعامل یا کلید E</p><p>مأموریت: با نگهبان دهکده صحبت کن و گیاهان جنگل را جمع‌آوری کن</p><p>بازیکنان دیگر را به‌صورت زنده در دنیای مشترک می‌بینی</p><div class="home-modal-actions"><button class="home-modal-primary" data-home-close="homeHelpModal">متوجه شدم</button></div></section></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
-import { createRipOnline } from "../online/multiplayer.js?v=11";
+import { createRipOnline } from "../online/multiplayer.js?v=12";
 const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
 const { GLTFLoader } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
 const { clone: cloneSkinned } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js");
@@ -461,15 +461,15 @@ function blocked(x,y){
 }
 let smoothForward=0,smoothStrafe=0;
 function move(dt){
- if(lookPointer!==null){player.moving=false;return;}
+ if(lookPointer!==null){smoothForward=0;smoothStrafe=0;player.moving=false;return;}
  let targetForward=clamp((keys.up?1:0)-(keys.down?1:0)-joyAxisY,-1,1);
  let targetStrafe=clamp((keys.right?1:0)-(keys.left?1:0)+joyAxisX,-1,1);
  const inputLength=Math.hypot(targetForward,targetStrafe);
+ if(inputLength===0){smoothForward=0;smoothStrafe=0;player.moving=false;return;}
  if(inputLength>1){targetForward/=inputLength;targetStrafe/=inputLength;}
  const blend=1-Math.exp(-18*dt);
  smoothForward+=(targetForward-smoothForward)*blend;
  smoothStrafe+=(targetStrafe-smoothStrafe)*blend;
- if(Math.hypot(smoothForward,smoothStrafe)<.025&&inputLength===0){smoothForward=0;smoothStrafe=0;player.moving=false;return;}
  player.moving=Math.hypot(smoothForward,smoothStrafe)>.06;
  const speed=45.0585,worldSpeed=speed/8;
  const dx=(Math.sin(lookYaw)*smoothForward+Math.cos(lookYaw)*smoothStrafe)*worldSpeed*dt;
@@ -593,12 +593,15 @@ $("chatToggle").addEventListener("click",toggleChat);
 $("quickChat").addEventListener("click",toggleChat);
 $("quickInteract").addEventListener("click",interact);
 const joy=$("joystick"),knob=$("joyKnob");let joyPointer=null,joyAxisX=0,joyAxisY=0;
-function resetJoy(){joyPointer=null;joyAxisX=0;joyAxisY=0;knob.style.transform="translate3d(0,0,0)";}
+function resetJoy(){joyPointer=null;joyAxisX=0;joyAxisY=0;smoothForward=0;smoothStrafe=0;player.moving=false;knob.style.transform="translate3d(0,0,0)";}
 joy.addEventListener("pointerdown",e=>{e.preventDefault();if(joyPointer!==null)return;joyPointer=e.pointerId;try{joy.setPointerCapture(e.pointerId);}catch(_){}updateJoy(e);});
 joy.addEventListener("pointermove",e=>{if(e.pointerId===joyPointer){e.preventDefault();updateJoy(e);}});
 joy.addEventListener("pointerup",e=>{if(e.pointerId===joyPointer)resetJoy();});
 joy.addEventListener("pointercancel",e=>{if(e.pointerId===joyPointer)resetJoy();});
-joy.addEventListener("lostpointercapture",resetJoy);
+joy.addEventListener("lostpointercapture",e=>{if(joyPointer===null||e.pointerId===joyPointer)resetJoy();});
+const releaseJoyOnWindow=e=>{if(e.pointerId===joyPointer)resetJoy();};
+window.addEventListener("pointerup",releaseJoyOnWindow,true);
+window.addEventListener("pointercancel",releaseJoyOnWindow,true);
 function updateJoy(e){const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=Math.max(12,(r.width-knob.offsetWidth)/2),len=Math.hypot(dx,dy),scale=len>max?max/len:1,x=dx*scale,y=dy*scale;knob.style.transform=`translate3d(${x}px,${y}px,0)`;let nx=x/max,ny=y/max;const dead=.08,mag=Math.hypot(nx,ny);if(mag<dead){nx=0;ny=0;}else{const adjusted=Math.min(1,(mag-dead)/(1-dead))/mag;nx*=adjusted;ny*=adjusted;}joyAxisX=nx;joyAxisY=ny;}
 
 
@@ -620,6 +623,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=104",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=106",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
