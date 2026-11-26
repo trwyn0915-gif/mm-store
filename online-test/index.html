@@ -321,7 +321,7 @@ const mobileDevice=/Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.user
 const desktopDevice=!mobileDevice;
 if(desktopDevice)document.body.classList.add("desktop-blocked");
 const threeRoot=$("threeRoot");
-const scene3D=new THREE.Scene();scene3D.background=new THREE.Color(0x20b9d5);
+const scene3D=new THREE.Scene();
 scene3D.fog=null;
 const camera3D=new THREE.PerspectiveCamera(75,1,0.1,4000);
 camera3D.position.set(0,1.7,0);
@@ -332,10 +332,10 @@ const hemi3D=new THREE.HemisphereLight(0xffffff,0x557044,1.15);scene3D.add(hemi3
 const sun3D=new THREE.DirectionalLight(0xffffff,0.85);sun3D.position.set(-35,70,25);scene3D.add(sun3D);
 const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp?v=144");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(1,1);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const groundGeometry3D=new THREE.PlaneGeometry(875,875);const groundUV3D=groundGeometry3D.attributes.uv;for(let i=0;i<groundUV3D.count;i++)groundUV3D.setXY(i,groundUV3D.getX(i)*100,groundUV3D.getY(i)*100);groundUV3D.needsUpdate=true;const ground3D=new THREE.Mesh(groundGeometry3D,groundMaterial3D);
 ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
-scene3D.background=new THREE.Color(0x20b9d5);
+
 let skyDome3D=null;
 const skyPanoramaLoader3D=new THREE.TextureLoader();
-skyPanoramaLoader3D.load("./assets/mm-world-sky-panorama.webp?v=145",texture=>{
+skyPanoramaLoader3D.load("./assets/mm-world-sky-panorama.webp?v=146",texture=>{
  texture.colorSpace=THREE.SRGBColorSpace;
  texture.wrapS=THREE.RepeatWrapping;
  texture.wrapT=THREE.ClampToEdgeWrapping;
@@ -632,6 +632,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=145",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=146",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
