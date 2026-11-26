@@ -110,6 +110,7 @@ export function createRipOnline() {
             skin: row.character_id,
             level: row.level,
             experience: row.experience,
+            last_seen_at: row.last_seen_at,
             sentAt: Date.now()
           });
         }
@@ -148,7 +149,7 @@ export function createRipOnline() {
       .from("world_players")
       .select("user_id,display_name,character_id,room_id,x,y,facing,level,experience,last_seen_at")
       .eq("room_id", String(roomId).slice(0, 40))
-      .gte("last_seen_at", new Date(Date.now() - 45000).toISOString());
+      .gte("last_seen_at", new Date(Date.now() - 15000).toISOString());
     if (error) throw error;
     return data || [];
   }
