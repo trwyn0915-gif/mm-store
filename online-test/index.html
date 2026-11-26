@@ -330,7 +330,7 @@ renderer3D.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer3D.outputColor
 threeRoot.appendChild(renderer3D.domElement);
 const hemi3D=new THREE.HemisphereLight(0xffffff,0x557044,1.15);scene3D.add(hemi3D);
 const sun3D=new THREE.DirectionalLight(0xffffff,0.85);sun3D.position.set(-35,70,25);scene3D.add(sun3D);
-const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(120,90);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(3000,2250),groundMaterial3D);
+const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(700,700);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(875,875),groundMaterial3D);
 ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 scene3D.background=new THREE.Color(0x20b9d5);
 const skyPanoramaLoader3D=new THREE.TextureLoader();
@@ -398,20 +398,21 @@ threeRoot.addEventListener("pointermove",e=>{if(lookPointer!==e.pointerId)return
 function endLook(e){if(lookPointer===e.pointerId)lookPointer=null;}
 threeRoot.addEventListener("pointerup",endLook);threeRoot.addEventListener("pointercancel",endLook);threeRoot.addEventListener("lostpointercapture",()=>lookPointer=null);
 
-const W=24000,H=18000,ROOM="mm-world-main";
+const W=7000,H=7000,ROOM="mm-world-main";
+const MAP_SCALE=7/24,MAP_Y_OFFSET=875,mapX=v=>v*MAP_SCALE,mapY=v=>MAP_Y_OFFSET+v*MAP_SCALE;
 const skins={teal:"#35c4b2",gold:"#e7b84f",violet:"#a98bdf",red:"#df7770"};
 const stored=JSON.parse(localStorage.getItem("mmworld-profile")||"{}");
 const ownedCharacters=new Set(["robot","hero",...(Array.isArray(stored.ownedCharacters)?stored.ownedCharacters.filter(id=>CHARACTER_IDS.includes(id)):[])]);
 const savedSkin=stored.skin==="robot"?"hero":CHARACTER_IDS.includes(stored.skin)&&ownedCharacters.has(stored.skin)?stored.skin:"hero";
 $("playerName").value=stored.name||"بازیکن MM";$("skin").value=savedSkin;
-let player={x:11900,y:10600,face:"down",avatarYaw:Math.PI,name:$("playerName").value,skin:savedSkin,level:1,xp:0,moving:false};
+let player={x:mapX(11900),y:mapY(10600),face:"down",avatarYaw:Math.PI,name:$("playerName").value,skin:savedSkin,level:1,xp:0,moving:false};
 let coins=Number(stored.coins)||0,herbs=Number(stored.herbs)||0,questStarted=!!stored.questStarted,questDone=!!stored.questDone;const collected=new Set(Array.isArray(stored.collected)?stored.collected:[]);
 let online=null,userId="",connected=false,players={},lastSend=0,lastSave=0,lastChat=0,chatCooldown=0;const seenChatIds=new Set();
 let camera={x:0,y:0},keys={up:false,down:false,left:false,right:false},last=0,toastTimer=0,movementSending=false;
-const trees=[];for(let i=0;i<1000;i++){let x=1200+((i*3170)%21400),y=1000+((i*1970)%15800);if(Math.hypot(x-12000,y-9000)>2400)trees.push({x,y,r:(20+(i%4)*5)*10});}
-const herbsSpots=[{x:5200,y:4200},{x:6900,y:5200},{x:3900,y:6900},{x:17500,y:4200},{x:19400,y:6100},{x:16400,y:7600},{x:5700,y:13900},{x:8200,y:15100},{x:18300,y:13900},{x:20700,y:12000}].map((p,i)=>({...p,id:i,taken:collected.has(i)}));
-const npc={x:11900,y:8600,name:"نگهبان دهکده"};
-const buildings=[{x:10500,y:6500,w:2800,h:1500,label:"تالار دهکده",color:"#98734e"},{x:14400,y:9000,w:2100,h:1450,label:"بازارچه",color:"#846d52"},{x:9200,y:11600,w:1800,h:1250,label:"خانه مسافر",color:"#6b7760"}];
+const trees=[];for(let i=0;i<1000;i++){let x=mapX(1200+((i*3170)%21400)),y=mapY(1000+((i*1970)%15800));if(Math.hypot(x-W/2,y-H/2)>700)trees.push({x,y,r:(20+(i%4)*5)*10*MAP_SCALE});}
+const herbsSpots=[{x:mapX(5200),y:mapY(4200)},{x:mapX(6900),y:mapY(5200)},{x:mapX(3900),y:mapY(6900)},{x:mapX(17500),y:mapY(4200)},{x:mapX(19400),y:mapY(6100)},{x:mapX(16400),y:mapY(7600)},{x:mapX(5700),y:mapY(13900)},{x:mapX(8200),y:mapY(15100)},{x:mapX(18300),y:mapY(13900)},{x:mapX(20700),y:mapY(12000)}].map((p,i)=>({...p,id:i,taken:collected.has(i)}));
+const npc={x:mapX(11900),y:mapY(8600),name:"نگهبان دهکده"};
+const buildings=[{x:mapX(10500),y:mapY(6500),w:2800*MAP_SCALE,h:1500*MAP_SCALE,label:"تالار دهکده",color:"#98734e"},{x:mapX(14400),y:mapY(9000),w:2100*MAP_SCALE,h:1450*MAP_SCALE,label:"بازارچه",color:"#846d52"},{x:mapX(9200),y:mapY(11600),w:1800*MAP_SCALE,h:1250*MAP_SCALE,label:"خانه مسافر",color:"#6b7760"}];
 function persist(){localStorage.setItem("mmworld-profile",JSON.stringify({name:player.name,skin:player.skin,coins,herbs,questStarted,questDone,collected:[...collected],ownedCharacters:[...ownedCharacters]}));}
 function openCharacterShop(){renderCharacterShop();$("characterShop").classList.add("open");$("characterShop").setAttribute("aria-hidden","false");}
 function closeCharacterShop(){$("characterShop").classList.remove("open");$("characterShop").setAttribute("aria-hidden","true");}
@@ -442,7 +443,7 @@ function drawWorld(dt=0){
  for(const [id,p] of Object.entries(players)){
   const record=avatarRecords.get(id);
   if(record){
-   const legacyRemote=p.x<=2400&&p.y<=1800,remoteX=legacyRemote?p.x*10:p.x,remoteY=legacyRemote?p.y*10:p.y;const targetX=(remoteX-W/2)/8,targetZ=(remoteY-H/2)/8;
+   const remoteLegacy=p.x<=2400&&p.y<=1800,remoteX=remoteLegacy?mapX(p.x*10):p.x<=24000?mapX(p.x):p.x,remoteY=remoteLegacy?mapY(p.y*10):p.y<=18000?mapY(p.y):p.y;const targetX=(remoteX-W/2)/8,targetZ=(remoteY-H/2)/8;
    if(!record.remotePositionReady){record.group.position.set(targetX,record.characterId==="hero"?-.57250:record.characterId==="robot"?-.415:-.404,targetZ);record.remotePositionReady=true;}
    else{const blend=1-Math.exp(-18*Math.min(dt,.05));record.group.position.x+=(targetX-record.group.position.x)*blend;record.group.position.z+=(targetZ-record.group.position.z)*blend;record.group.position.y=record.characterId==="hero"?-.57250:record.characterId==="robot"?-.415:-.404;}
    const targetYaw=Number.isFinite(p.yaw)?p.yaw:Math.PI;
@@ -456,7 +457,7 @@ function drawWorld(dt=0){
 function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
 function blocked(x,y){
  for(const b of buildings){if(x>b.x-20&&x<b.x+b.w+20&&y>b.y-20&&y<b.y+b.h+20)return true;}
- const lakeX=(x-4800)/2350,lakeY=(y-11200)/1500;if(lakeX*lakeX+lakeY*lakeY<1)return true;
+ const lakeX=(x-mapX(4800))/(2350*MAP_SCALE),lakeY=(y-mapY(11200))/(1500*MAP_SCALE);if(lakeX*lakeX+lakeY*lakeY<1)return true;
  for(const t of trees){if(Math.hypot(x-t.x,y-t.y)<t.r+13)return true;}
  return false;
 }
@@ -497,7 +498,7 @@ async function connect(){
   const auth=await online.connect();userId=auth.userId;setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
   const saved=await online.loadCharacter();setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
   if(saved){
-   const savedX=Number(saved.x)||player.x,savedY=Number(saved.y)||player.y,legacySave=savedX<=2400&&savedY<=1800;player.x=clamp(legacySave?savedX*10:savedX,300,W-300);player.y=clamp(legacySave?savedY*10:savedY,300,H-300);
+   const savedX=Number(saved.x)||player.x,savedY=Number(saved.y)||player.y,legacySave=savedX<=2400&&savedY<=1800,oldExpandedSave=!legacySave&&savedX<=24000&&savedY<=18000,convertedX=legacySave?mapX(savedX*10):oldExpandedSave?mapX(savedX):savedX,convertedY=legacySave?mapY(savedY*10):oldExpandedSave?mapY(savedY):savedY;player.x=clamp(convertedX,30,W-30);player.y=clamp(convertedY,30,H-30);
    player.level=saved.level||1;player.xp=saved.experience||0;
    if(saved.character_id==="robot")player.skin="hero";
    else if(CHARACTER_ASSETS[saved.character_id]&&ownedCharacters.has(saved.character_id))player.skin=saved.character_id;
