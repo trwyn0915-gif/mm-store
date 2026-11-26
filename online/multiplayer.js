@@ -53,8 +53,6 @@ export function createRipOnline() {
       x: Number.isFinite(character.x) ? character.x : 480,
       y: Number.isFinite(character.y) ? character.y : 270,
       facing: ["up", "down", "left", "right"].includes(character.facing) ? character.facing : "down",
-      level: Number.isInteger(character.level) ? Math.max(1, character.level) : 1,
-      experience: Number.isInteger(character.experience) ? Math.max(0, character.experience) : 0,
       last_seen_at: now,
       updated_at: now
     };
