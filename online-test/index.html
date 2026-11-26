@@ -441,8 +441,10 @@ function applyRemotePlayer(row){
  const dx=Number.isFinite(Number(previous.x))?x-Number(previous.x):0;
  const dy=Number.isFinite(Number(previous.y))?y-Number(previous.y):0;
  const moved=Number.isFinite(Number(previous.x))&&Number.isFinite(Number(previous.y))&&Math.hypot(dx,dy)>.02;
+ const facing=(["up","down","left","right"].includes(row.facing)?row.facing:previous.facing)||"up";
+ const facingYaw={up:Math.PI,down:0,left:-Math.PI/2,right:Math.PI/2}[facing];
  const now=Date.now();
- players[row.user_id]={...previous,userId:row.user_id,displayName:row.display_name??previous.displayName,skin:row.character_id??previous.skin,level:row.level??previous.level,experience:row.experience??previous.experience,x,y,facing:row.facing??previous.facing,yaw:moved?Math.atan2(dx,dy):(previous.yaw??Math.PI),movingUntil:moved?now+450:(previous.movingUntil||0),lastActivityAt:stamp,lastSeenMs:stamp,missingSnapshots:0};
+ players[row.user_id]={...previous,userId:row.user_id,displayName:row.display_name??previous.displayName,skin:row.character_id??previous.skin,level:row.level??previous.level,experience:row.experience??previous.experience,x,y,facing,yaw:moved?Math.atan2(dx,dy):(facing!==previous.facing?facingYaw:(previous.yaw??facingYaw)),movingUntil:moved?now+450:(previous.movingUntil||0),lastActivityAt:stamp,lastSeenMs:stamp};
  ensureAvatar(row.user_id,row.character_id||previous.skin).catch(console.error);
  return true;
 }
@@ -535,8 +537,10 @@ function move(dt){
   const targetYaw=Math.atan2(dx,dz);
   player.avatarYaw+=Math.atan2(Math.sin(targetYaw-player.avatarYaw),Math.cos(targetYaw-player.avatarYaw))*Math.min(1,dt*12);
  }
- const forward=Math.abs(smoothForward),strafe=Math.abs(smoothStrafe);
- player.face=forward>strafe?(smoothForward>0?"forward":"back"):(smoothStrafe>0?"right":"left");
+ if(Math.hypot(dx,dz)>.0001){
+  if(Math.abs(dx)>Math.abs(dz))player.face=dx>0?"right":"left";
+  else player.face=dz<0?"up":"down";
+ }
 }
 
 function nearest(){const candidates=[{...npc,type:"npc"},...herbsSpots.filter(h=>!h.taken).map(h=>({...h,type:"herb"}))];let best=null,d=65;for(const o of candidates){let n=Math.hypot(player.x-o.x,player.y-o.y);if(n<d){d=n;best=o;}}return best;}
@@ -675,7 +679,7 @@ $("full").addEventListener("click",()=>{if(!document.fullscreenElement)enterImme
 window.addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault();if(k==="w"||k==="arrowup")keys.up=true;if(k==="s"||k==="arrowdown")keys.down=true;if(k==="a"||k==="arrowleft")keys.left=true;if(k==="d"||k==="arrowright")keys.right=true;if(k==="e"||k===" ")interact();});
 window.addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="w"||k==="arrowup")keys.up=false;if(k==="s"||k==="arrowdown")keys.down=false;if(k==="a"||k==="arrowleft")keys.left=false;if(k==="d"||k==="arrowright")keys.right=false;});
 window.addEventListener("blur",()=>{Object.keys(keys).forEach(k=>keys[k]=false);resetJoy();});window.addEventListener("pagehide",()=>{if(online)online.leave().catch(()=>{});});
-function frame(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(connected){const remoteNow=Date.now();if(remoteNow-lastRemoteRefresh>=3000&&!remoteRefreshInFlight){lastRemoteRefresh=remoteNow;remoteRefreshInFlight=true;online.loadRoomPlayers(ROOM).then(rows=>{const activeIds=new Set();for(const row of rows){if(!row.user_id||row.user_id===userId)continue;activeIds.add(row.user_id);applyRemotePlayer(row);}for(const [id,p] of Object.entries(players)){if(activeIds.has(id)){p.missingSnapshots=0;continue;}p.missingSnapshots=(p.missingSnapshots||0)+1;if(p.missingSnapshots>=2&&remoteNow-(p.lastActivityAt||0)>6000){const record=avatarRecords.get(id);if(record)scene3D.remove(record.group);avatarRecords.delete(id);avatarLoading.delete(id);delete players[id];}}stats();}).catch(error=>console.warn("Room player refresh failed:",error)).finally(()=>{remoteRefreshInFlight=false;});}if(remoteNow-lastRemoteCleanup>=3000){lastRemoteCleanup=remoteNow;for(const [id,p] of Object.entries(players)){if(!p.lastActivityAt||remoteNow-p.lastActivityAt>15000){const record=avatarRecords.get(id);if(record)scene3D.remove(record.group);avatarRecords.delete(id);avatarLoading.delete(id);delete players[id];}}}const yawDelta=Math.atan2(Math.sin(lookYawTarget-lookYaw),Math.cos(lookYawTarget-lookYaw));lookYaw+=yawDelta*(1-Math.exp(-7*dt));move(dt);camera.x=clamp(player.x-480,0,W-960);camera.y=clamp(player.y-270,0,H-540);if(t-lastSend>200&&!movementSending){lastSend=t;movementSending=true;online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw,moving:!!player.moving}).catch(console.error).finally(()=>{movementSending=false;});}if(t-lastSave>2000){lastSave=t;online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp}).catch(console.error);}drawWorld(dt);}else{ctx.clearRect(0,0,canvas.width,canvas.height);}requestAnimationFrame(frame);}
+function frame(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(connected){const remoteNow=Date.now();if(remoteNow-lastRemoteRefresh>=3000&&!remoteRefreshInFlight){lastRemoteRefresh=remoteNow;remoteRefreshInFlight=true;online.loadRoomPlayers(ROOM).then(rows=>{const activeIds=new Set();for(const row of rows){if(!row.user_id||row.user_id===userId)continue;activeIds.add(row.user_id);applyRemotePlayer(row);}stats();}).catch(error=>console.warn("Room player refresh failed:",error)).finally(()=>{remoteRefreshInFlight=false;});}if(remoteNow-lastRemoteCleanup>=3000){lastRemoteCleanup=remoteNow;for(const [id,p] of Object.entries(players)){if(!p.lastActivityAt||remoteNow-p.lastActivityAt>20000){const record=avatarRecords.get(id);if(record)scene3D.remove(record.group);avatarRecords.delete(id);avatarLoading.delete(id);delete players[id];}}}const yawDelta=Math.atan2(Math.sin(lookYawTarget-lookYaw),Math.cos(lookYawTarget-lookYaw));lookYaw+=yawDelta*(1-Math.exp(-7*dt));move(dt);camera.x=clamp(player.x-480,0,W-960);camera.y=clamp(player.y-270,0,H-540);if(t-lastSend>200&&!movementSending){lastSend=t;movementSending=true;online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw,moving:!!player.moving}).catch(console.error).finally(()=>{movementSending=false;});}if(t-lastSave>2000){lastSave=t;online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp}).catch(console.error);}drawWorld(dt);}else{ctx.clearRect(0,0,canvas.width,canvas.height);}requestAnimationFrame(frame);}
 function showFatalGameError(message){hideLoading();
  connected=false;
  document.body.classList.remove("playing");
@@ -687,6 +691,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=165",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=166",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
