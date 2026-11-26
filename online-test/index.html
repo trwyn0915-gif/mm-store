@@ -333,7 +333,6 @@ const sun3D=new THREE.DirectionalLight(0xffffff,0.85);sun3D.position.set(-35,70,
 const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(30,30);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(500,500),groundMaterial3D);
 ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 scene3D.background=new THREE.Color(0x20b9d5);
-let skyDome3D=null;
 const skyPanoramaLoader3D=new THREE.TextureLoader();
 skyPanoramaLoader3D.load("./assets/mm-world-sky-panorama.webp",texture=>{
  texture.colorSpace=THREE.SRGBColorSpace;
@@ -341,13 +340,8 @@ skyPanoramaLoader3D.load("./assets/mm-world-sky-panorama.webp",texture=>{
  texture.minFilter=THREE.LinearMipmapLinearFilter;
  texture.magFilter=THREE.LinearFilter;
  texture.anisotropy=renderer3D.capabilities.getMaxAnisotropy();
- texture.wrapS=THREE.RepeatWrapping;
- texture.wrapT=THREE.ClampToEdgeWrapping;
- const skyMaterial=new THREE.MeshBasicMaterial({map:texture,side:THREE.BackSide,depthWrite:false,depthTest:false,fog:false});
- skyDome3D=new THREE.Mesh(new THREE.SphereGeometry(450,128,96),skyMaterial);
- skyDome3D.renderOrder=-1;
- skyDome3D.frustumCulled=false;
- scene3D.add(skyDome3D);
+ texture.mapping=THREE.UVMapping;
+ scene3D.background=texture;
 });
 
 scene3D.add(camera3D);
@@ -455,7 +449,7 @@ function drawWorld(dt=0){
    setAvatarMoving(record,!!p.moving);record.mixer?.update(dt);
   }
  }
- if(skyDome3D)skyDome3D.position.copy(camera3D.position);renderer3D.render(scene3D,camera3D);
+ renderer3D.render(scene3D,camera3D);
 }
 
 function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
@@ -629,6 +623,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=109",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=110",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
