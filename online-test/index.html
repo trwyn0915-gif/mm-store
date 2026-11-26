@@ -540,7 +540,7 @@ async function connect(){
    onPlayerUpdate:p=>{if(p?.userId&&p.userId!==userId){players[p.userId]={...players[p.userId],...p};ensureAvatar(p.userId,p.skin).catch(console.error);}stats();},
    onChat:p=>{if(p?.userId!==userId)addChat(p.displayName||"بازیکن",p.message||"",p.id);}
   });
-  player.x=chooseSpawnPoint().x;player.y=chooseSpawnPoint().y;
+  const spawnPoint=chooseSpawnPoint();player.x=spawnPoint.x;player.y=spawnPoint.y;
   await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});
   connected=true;for(const p of Object.values(players))if(p?.userId)ensureAvatar(p.userId,p.skin).catch(console.error);setLoadingProgress(90,"دنیای بازی آماده شد...");
   document.body.classList.remove("exit-to-page");
