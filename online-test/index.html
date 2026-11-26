@@ -334,7 +334,7 @@ const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp
 ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 
 let skyDome3D=null;
-fetch("./assets/mm-world-clear-sky.webp.b64?v=150").then(response=>{if(!response.ok)throw new Error("Clear sky panorama file unavailable");return response.text();}).then(encoded=>{
+fetch("./assets/mm-world-clear-sky.webp.b64?v=151").then(response=>{if(!response.ok)throw new Error("Clear sky panorama file unavailable");return response.text();}).then(encoded=>{
  const skyImage3D=new Image();
  skyImage3D.onload=()=>{
   const texture=new THREE.Texture(skyImage3D);
@@ -449,8 +449,9 @@ function drawWorld(dt=0){
  const selfRecord=avatarRecords.get("self");
  if(selfRecord){selfRecord.group.position.set(px,selfRecord.characterId==="hero"?-.57250:selfRecord.characterId==="robot"?-.415:-.404,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
  const orbitPitch=clamp(.18+lookPitch*.7,.12,.8);
- const orbitHorizontal=10*Math.cos(orbitPitch);
- camera3D.position.set(px-Math.sin(lookYaw)*orbitHorizontal,1.4+10*Math.sin(orbitPitch),pz+Math.cos(lookYaw)*orbitHorizontal);
+ const cameraDistance=12;
+ const orbitHorizontal=cameraDistance*Math.cos(orbitPitch);
+ camera3D.position.set(px-Math.sin(lookYaw)*orbitHorizontal,1.4+cameraDistance*Math.sin(orbitPitch),pz+Math.cos(lookYaw)*orbitHorizontal);
  camera3D.lookAt(px,1.4,pz);
  for(const [id,p] of Object.entries(players)){
   const record=avatarRecords.get(id);
@@ -637,6 +638,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=150",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=151",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
