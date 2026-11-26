@@ -322,19 +322,19 @@ const desktopDevice=!mobileDevice;
 if(desktopDevice)document.body.classList.add("desktop-blocked");
 const threeRoot=$("threeRoot");
 const scene3D=new THREE.Scene();scene3D.background=new THREE.Color(0x20b9d5);
-scene3D.fog=new THREE.Fog(0x20b9d5,90,260);
-const camera3D=new THREE.PerspectiveCamera(75,1,0.1,900);
+scene3D.fog=null;
+const camera3D=new THREE.PerspectiveCamera(75,1,0.1,4000);
 camera3D.position.set(0,1.7,0);
 const renderer3D=new THREE.WebGLRenderer({antialias:true,alpha:false});
 renderer3D.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer3D.outputColorSpace=THREE.SRGBColorSpace;
 threeRoot.appendChild(renderer3D.domElement);
 const hemi3D=new THREE.HemisphereLight(0xffffff,0x557044,1.15);scene3D.add(hemi3D);
 const sun3D=new THREE.DirectionalLight(0xffffff,0.85);sun3D.position.set(-35,70,25);scene3D.add(sun3D);
-const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(30,30);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(500,500),groundMaterial3D);
+const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(30,30);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(10000,10000),groundMaterial3D);
 ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 scene3D.background=new THREE.Color(0x20b9d5);
 const skyPanoramaLoader3D=new THREE.TextureLoader();
-skyPanoramaLoader3D.load("https://d2ol7oe51mr4n9.cloudfront.net/user_3K50FCJs1msSTbBAWUvYyhaT9CO/bc943a8c-0310-4dc7-8b14-c0582f5b69f7.webp",texture=>{
+skyPanoramaLoader3D.load("https://d2ol7oe51mr4n9.cloudfront.net/user_3K50FCJs1msSTbBAWUvYyhaT9CO/1e7d82b6-a211-431a-b486-d49db352ba3a.webp",texture=>{
  texture.colorSpace=THREE.SRGBColorSpace;
  texture.mapping=THREE.EquirectangularReflectionMapping;
  texture.generateMipmaps=true;
@@ -624,6 +624,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=117",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=118",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
