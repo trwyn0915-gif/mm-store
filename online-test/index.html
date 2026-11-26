@@ -379,10 +379,27 @@ function loadCharacterModel(characterId){
  if(!gltfCache.has(id))gltfCache.set(id,gltfLoader.loadAsync(id));
  return gltfCache.get(id);
 }
+function updateAvatarNameTag(record,name){
+ if(!record?.group)return;
+ const label=String(name||"بازیکن").trim().slice(0,20)||"بازیکن";
+ if(record.nameTagText===label&&record.nameTag)return;
+ const canvas=document.createElement("canvas");canvas.width=512;canvas.height=128;
+ const c=canvas.getContext("2d");c.clearRect(0,0,512,128);
+ c.font="800 54px Vazirmatn, Tahoma, sans-serif";c.textAlign="center";c.textBaseline="middle";c.direction="rtl";
+ const width=Math.min(488,Math.max(190,c.measureText(label).width+76)),left=(512-width)/2;
+ c.fillStyle="rgba(8,20,25,.78)";c.beginPath();c.roundRect(left,12,width,104,28);c.fill();
+ c.strokeStyle="rgba(225,241,235,.9)";c.lineWidth=5;c.stroke();
+ c.fillStyle="#fff";c.shadowColor="#000";c.shadowBlur=5;c.fillText(label,256,66,Math.max(120,width-38));
+ const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearFilter;texture.magFilter=THREE.LinearFilter;
+ if(record.nameTag){record.group.remove(record.nameTag);record.nameTag.material.map?.dispose();record.nameTag.material.dispose();}
+ const material=new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false,depthWrite:false});
+ const sprite=new THREE.Sprite(material);sprite.position.set(0,2.05,0);sprite.scale.set(Math.max(1.05,width/220*.9),.27,1);sprite.renderOrder=20;
+ record.group.add(sprite);record.nameTag=sprite;record.nameTagText=label;
+}
 async function ensureAvatar(id,characterId){
  const chosen=CHARACTER_ASSETS[characterId]?characterId:"hero";
  const current=avatarRecords.get(id);
- if(current?.characterId===chosen)return current;
+ if(current?.characterId===chosen){updateAvatarNameTag(current,id==="self"?player.name:players[id]?.displayName);return current;}
  if(avatarLoading.get(id)===chosen)return null;
  const loadToken=Symbol(id);
  avatarLoading.set(id,loadToken);
@@ -402,6 +419,7 @@ async function ensureAvatar(id,characterId){
   const walkAction=walkClip&&mixer?mixer.clipAction(walkClip):null;
   if(idleAction)idleAction.play();
   const record={characterId:chosen,group,mixer,idleAction,walkAction,activeAction:idleAction,model};
+  updateAvatarNameTag(record,id==="self"?player.name:players[id]?.displayName);
   const old=avatarRecords.get(id);if(old)scene3D.remove(old.group);
   avatarRecords.set(id,record);scene3D.add(group);
   return record;
@@ -739,6 +757,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=174",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=175",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
