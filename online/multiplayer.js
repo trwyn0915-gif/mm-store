@@ -17,6 +17,8 @@ export function createRipOnline() {
   let channel = null;
   let currentUser = null;
   let lastPresenceTrack = 0;
+  const movementSession = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  let movementSequence = 0;
 
   async function connect() {
     const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
@@ -86,8 +88,6 @@ export function createRipOnline() {
         if (row?.user_id && row.user_id !== currentUser.id) {
           handlers.onPlayerUpdate?.({
             userId: row.user_id,
-            x: Number(row.x),
-            y: Number(row.y),
             facing: row.facing,
             displayName: row.display_name,
             skin: row.character_id,
@@ -129,6 +129,8 @@ export function createRipOnline() {
     if (!channel || !currentUser) return;
     const payload = {
       userId: currentUser.id,
+      movementSession,
+      sequence: ++movementSequence,
       x: Number.isFinite(position.x) ? position.x : 0,
       y: Number.isFinite(position.y) ? position.y : 0,
       facing: ["up", "down", "left", "right"].includes(position.facing) ? position.facing : "down",
