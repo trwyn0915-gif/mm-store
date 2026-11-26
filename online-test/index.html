@@ -335,11 +335,11 @@ ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 scene3D.background=new THREE.Color(0x20b9d5);
 let skyDome3D=null;
 const skyPanoramaLoader3D=new THREE.TextureLoader();
-skyPanoramaLoader3D.load("./assets/mm-world-sky-panorama.webp?v=144",texture=>{
+skyPanoramaLoader3D.load("./assets/mm-world-sky-panorama.webp?v=145",texture=>{
  texture.colorSpace=THREE.SRGBColorSpace;
  texture.wrapS=THREE.RepeatWrapping;
- texture.wrapT=THREE.RepeatWrapping;
- texture.repeat.set(3,3);
+ texture.wrapT=THREE.ClampToEdgeWrapping;
+ texture.repeat.set(1,1);
  texture.generateMipmaps=true;
  texture.minFilter=THREE.LinearMipmapLinearFilter;
  texture.magFilter=THREE.LinearFilter;
@@ -632,6 +632,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=144",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=145",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
