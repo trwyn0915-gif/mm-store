@@ -330,7 +330,7 @@ renderer3D.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer3D.outputColor
 threeRoot.appendChild(renderer3D.domElement);
 const hemi3D=new THREE.HemisphereLight(0xffffff,0x557044,1.15);scene3D.add(hemi3D);
 const sun3D=new THREE.DirectionalLight(0xffffff,0.85);sun3D.position.set(-35,70,25);scene3D.add(sun3D);
-const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(400,400);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(300,225),groundMaterial3D);
+const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp");groundTexture3D.colorSpace=THREE.SRGBColorSpace;groundTexture3D.wrapS=groundTexture3D.wrapT=THREE.RepeatWrapping;groundTexture3D.repeat.set(12,9);groundTexture3D.generateMipmaps=true;groundTexture3D.minFilter=THREE.LinearMipmapLinearFilter;groundTexture3D.magFilter=THREE.LinearFilter;groundTexture3D.anisotropy=renderer3D.capabilities.getMaxAnisotropy();const groundMaterial3D=new THREE.MeshStandardMaterial({map:groundTexture3D,roughness:1});const ground3D=new THREE.Mesh(new THREE.PlaneGeometry(300,225),groundMaterial3D);
 ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 scene3D.background=new THREE.Color(0x20b9d5);
 const skyPanoramaLoader3D=new THREE.TextureLoader();
