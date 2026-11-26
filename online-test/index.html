@@ -334,22 +334,28 @@ const groundTexture3D=new THREE.TextureLoader().load("./assets/grass-ground.webp
 ground3D.rotation.x=-Math.PI/2;ground3D.position.y=-0.04;scene3D.add(ground3D);
 
 let skyDome3D=null;
-const skyPanoramaLoader3D=new THREE.TextureLoader();
-skyPanoramaLoader3D.load("./assets/mm-world-sky-panorama.webp?v=149",texture=>{
- texture.colorSpace=THREE.SRGBColorSpace;
- texture.wrapS=THREE.RepeatWrapping;
- texture.wrapT=THREE.ClampToEdgeWrapping;
- texture.repeat.set(2,1);
- texture.generateMipmaps=true;
- texture.minFilter=THREE.LinearMipmapLinearFilter;
- texture.magFilter=THREE.LinearFilter;
- texture.anisotropy=renderer3D.capabilities.getMaxAnisotropy();
- const skyMaterial3D=new THREE.MeshBasicMaterial({map:texture,side:THREE.BackSide,depthWrite:false});
- skyDome3D=new THREE.Mesh(new THREE.SphereGeometry(1800,64,48),skyMaterial3D);
- skyDome3D.rotation.x=-0.32;
- skyDome3D.frustumCulled=false;
- scene3D.add(skyDome3D);
-},undefined,error=>console.error("MM WORLD sky panorama failed to load:",error));
+fetch("./assets/mm-world-clear-sky.webp.b64?v=150").then(response=>{if(!response.ok)throw new Error("Clear sky panorama file unavailable");return response.text();}).then(encoded=>{
+ const skyImage3D=new Image();
+ skyImage3D.onload=()=>{
+  const texture=new THREE.Texture(skyImage3D);
+  texture.colorSpace=THREE.SRGBColorSpace;
+  texture.wrapS=THREE.RepeatWrapping;
+  texture.wrapT=THREE.ClampToEdgeWrapping;
+  texture.repeat.set(1,1);
+  texture.generateMipmaps=true;
+  texture.minFilter=THREE.LinearMipmapLinearFilter;
+  texture.magFilter=THREE.LinearFilter;
+  texture.anisotropy=renderer3D.capabilities.getMaxAnisotropy();
+  texture.needsUpdate=true;
+  const skyMaterial3D=new THREE.MeshBasicMaterial({map:texture,side:THREE.BackSide,depthWrite:false});
+  skyDome3D=new THREE.Mesh(new THREE.SphereGeometry(1800,64,48),skyMaterial3D);
+  skyDome3D.rotation.x=-0.32;
+  skyDome3D.frustumCulled=false;
+  scene3D.add(skyDome3D);
+ };
+ skyImage3D.onerror=()=>console.error("MM WORLD clear sky image decode failed");
+ skyImage3D.src="data:image/webp;base64,"+encoded.trim();
+}).catch(error=>console.error("MM WORLD clear sky panorama failed to load:",error));
 
 scene3D.add(camera3D);
 const CHARACTER_ASSETS={hero:"blocky_01_hero.glb",knight:"blocky_03_knight.glb",wizard:"blocky_05_wizard.glb",pirate:"blocky_06_pirate.glb",astronaut:"blocky_07_astronaut.glb",robot:"blocky_08_robot.glb",zombie:"blocky_09_zombie.glb",princess:"blocky_19_princess.glb"};
@@ -631,6 +637,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=149",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=150",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
