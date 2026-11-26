@@ -68,7 +68,7 @@ export function createRipOnline() {
     if (channel) await supabase.removeChannel(channel);
     const room = String(roomId).slice(0, 40);
     channel = supabase.channel("rip-world:" + room, {
-      config: { presence: { key: currentUser.id }, broadcast: { self: false } }
+      config: { private: true, presence: { key: currentUser.id }, broadcast: { self: false } }
     });
     channel
       .on("presence", { event: "sync" }, () => handlers.onPlayers?.(channel.presenceState()))
