@@ -386,7 +386,7 @@ function updateAvatarNameTag(record,name){
  const canvas=document.createElement("canvas");canvas.width=768;canvas.height=192;
  const c=canvas.getContext("2d");c.clearRect(0,0,768,192);
  c.font="800 112px Vazirmatn, Tahoma, sans-serif";c.textAlign="center";c.textBaseline="middle";c.direction="rtl";
- c.lineJoin="round";c.lineWidth=23;c.strokeStyle="#080808";c.strokeText(label,384,96,720);
+ c.lineJoin="round";c.lineWidth=22;c.strokeStyle="#080808";c.strokeText(label,384,96,720);
  c.fillStyle="#fff";c.fillText(label,384,96,720);
  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearFilter;texture.magFilter=THREE.LinearFilter;
  if(record.nameTag){record.group.remove(record.nameTag);record.nameTag.material.map?.dispose();record.nameTag.material.dispose();}
@@ -755,6 +755,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=190",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=191",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
