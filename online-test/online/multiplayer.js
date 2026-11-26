@@ -98,6 +98,8 @@ export function createRipOnline() {
       facing: ["up", "down", "left", "right"].includes(position.facing) ? position.facing : "down",
       displayName: String(position.displayName || "بازیکن").trim().slice(0, 20),
       skin: String(position.skin || "teal").slice(0, 20),
+      yaw: Number.isFinite(position.yaw) ? position.yaw : Math.PI,
+      moving: Boolean(position.moving),
       sentAt: Date.now()
     };
     await channel.track(payload);
