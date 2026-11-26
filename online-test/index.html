@@ -459,7 +459,16 @@ let player={x:W/2,y:H/2,face:"down",avatarYaw:Math.PI,name:$("playerName").value
 let coins=Number(stored.coins)||0,herbs=Number(stored.herbs)||0,questStarted=!!stored.questStarted,questDone=!!stored.questDone;const collected=new Set(Array.isArray(stored.collected)?stored.collected:[]);
 let online=null,userId="",connected=false,players={},lastSend=0,lastSave=0,lastChat=0,chatCooldown=0,lastRemoteCleanup=0,lastRemoteRefresh=0,remoteRefreshInFlight=false;const seenChatIds=new Set();
 let remotePresenceIds=new Set();
+const footstepsPlayers=new Map();
+function setFootstepsMoving(id,moving){
+ let audio=footstepsPlayers.get(id);
+ if(!audio){audio=new Audio("./footsteps.mp3");audio.loop=true;audio.preload="auto";audio.volume=.42;footstepsPlayers.set(id,audio);}
+ if(moving){if(audio.paused)audio.play().catch(()=>{});}
+ else if(!audio.paused){audio.pause();audio.currentTime=0;}
+}
+function removeFootsteps(id){const audio=footstepsPlayers.get(id);if(audio){audio.pause();audio.currentTime=0;footstepsPlayers.delete(id);}}
 function removeRemotePlayer(id){
+ removeFootsteps(id);
  const record=avatarRecords.get(id);
  if(record)scene3D.remove(record.group);
  avatarRecords.delete(id);
@@ -524,7 +533,7 @@ function drawWorld(dt=0){
   const remoteFrameNow=performance.now();
  const px=(player.x-W/2)/8,pz=(player.y-H/2)/8;
  const selfRecord=avatarRecords.get("self");
- if(selfRecord){selfRecord.group.position.set(px,selfRecord.characterId==="hero"?-.57250:selfRecord.characterId==="robot"?-.415:-.404,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);selfRecord.mixer?.update(dt);}
+ if(selfRecord){selfRecord.group.position.set(px,selfRecord.characterId==="hero"?-.57250:selfRecord.characterId==="robot"?-.415:-.404,pz);selfRecord.group.rotation.y=player.avatarYaw;setAvatarMoving(selfRecord,!!player.moving);setFootstepsMoving("self",!!player.moving);selfRecord.mixer?.update(dt);}
  const orbitPitch=clamp(.18+lookPitch*.7,.12,.8);
  const cameraDistance=12;
  const orbitHorizontal=cameraDistance*Math.cos(orbitPitch);
@@ -553,7 +562,7 @@ function drawWorld(dt=0){
    else{record.group.position.x=targetX;record.group.position.z=targetZ;record.group.position.y=record.characterId==="hero"?-.57250:record.characterId==="robot"?-.415:-.404;}
    const targetYaw=Number.isFinite(p.yaw)?p.yaw:Math.PI;
    record.group.rotation.y+=Math.atan2(Math.sin(targetYaw-record.group.rotation.y),Math.cos(targetYaw-record.group.rotation.y))*(1-Math.exp(-12*Math.min(dt,.05)));
-   setAvatarMoving(record,!!p.samples&&p.samples.length>1&&Math.hypot(p.samples[p.samples.length-1].x-p.samples[p.samples.length-2].x,p.samples[p.samples.length-1].y-p.samples[p.samples.length-2].y)>.02&&remoteFrameNow-(p.receivedAtMono||0)<700);record.mixer?.update(dt);
+   const remoteMoving=!!p.samples&&p.samples.length>1&&Math.hypot(p.samples[p.samples.length-1].x-p.samples[p.samples.length-2].x,p.samples[p.samples.length-1].y-p.samples[p.samples.length-2].y)>.02&&remoteFrameNow-(p.receivedAtMono||0)<700;setAvatarMoving(record,remoteMoving);setFootstepsMoving(id,remoteMoving);record.mixer?.update(dt);
   }
  }
  renderer3D.render(scene3D,camera3D);
@@ -755,6 +764,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=181",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=182",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
