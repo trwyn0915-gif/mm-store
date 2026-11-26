@@ -20,6 +20,26 @@ export function createRipOnline() {
   let lastMovementWrite = 0;
   let lastWrittenPosition = null;
   let currentRoom = "mm-world-main";
+  let serverClockOffsetMs = 0;
+  let lastClockSyncMono = 0;
+
+  async function syncServerClock() {
+    const wallBefore = Date.now();
+    const monoBefore = performance.now();
+    const { data, error } = await supabase.rpc("mm_get_server_clock");
+    const monoAfter = performance.now();
+    const wallAfter = Date.now();
+    if (error) throw error;
+    const serverMs = Date.parse(data);
+    if (!Number.isFinite(serverMs)) throw new Error("زمان سرور دریافت نشد.");
+    serverClockOffsetMs = serverMs - ((wallBefore + wallAfter) / 2);
+    lastClockSyncMono = monoAfter;
+    return { offsetMs: serverClockOffsetMs, roundTripMs: monoAfter - monoBefore };
+  }
+
+  function getClockStatus() {
+    return { offsetMs: serverClockOffsetMs, serverNowMs: Date.now() + serverClockOffsetMs };
+  }
 
   async function connect() {
     const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
@@ -31,7 +51,8 @@ export function createRipOnline() {
       user = data.user;
     }
     currentUser = user;
-    return { userId: user.id };
+    await syncServerClock();
+    return { userId: user.id, ...getClockStatus() };
   }
 
   async function loadCharacter() {
@@ -144,11 +165,13 @@ export function createRipOnline() {
 
   async function loadRoomPlayers(roomId) {
     if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
-    const { data, error } = await supabase
-      .from("world_players")
-      .select("user_id,display_name,character_id,room_id,x,y,facing,level,experience,last_seen_at")
-      .eq("room_id", String(roomId).slice(0, 40))
-      .gte("last_seen_at", new Date(Date.now() - 15000).toISOString());
+    if (performance.now() - lastClockSyncMono > 30000) {
+      try { await syncServerClock(); }
+      catch (clockError) { console.warn("Server clock resync failed:", clockError); }
+    }
+    const { data, error } = await supabase.rpc("mm_get_active_world_players", {
+      p_room: String(roomId).slice(0, 40)
+    });
     if (error) throw error;
     return data || [];
   }
@@ -261,5 +284,5 @@ export function createRipOnline() {
     }
   }
 
-  return { connect, loadCharacter, loadRoomPlayers, saveCharacter, joinRoom, publishMove, sendChat, loadRecentChat, leave };
+  return { connect, getClockStatus, getServerNowMs: () => Date.now() + serverClockOffsetMs, loadCharacter, loadRoomPlayers, saveCharacter, joinRoom, publishMove, sendChat, loadRecentChat, leave };
 }
