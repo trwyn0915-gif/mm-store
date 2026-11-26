@@ -15,10 +15,12 @@ export function createRipOnline() {
   });
 
   let channel = null;
+  let playerChannel = null;
+  const playerChannels = new Map();
   let currentUser = null;
   let lastPresenceTrack = 0;
   let lastMovementWrite = 0;
-  let lastWrittenPosition = null;
+  let positionPersistInFlight = false;
   let currentRoom = "mm-world-main";
   let serverClockOffsetMs = 0;
   let lastClockSyncMono = 0;
@@ -100,34 +102,80 @@ export function createRipOnline() {
     return row;
   }
 
+  function playerTopic(userId) {
+    return "rip-world:" + currentRoom + ":player:" + userId;
+  }
+
+  async function subscribePlayerTopic(userId, handlers, own = false) {
+    if (playerChannels.has(userId)) return playerChannels.get(userId);
+    const playerChannel = supabase.channel(playerTopic(userId), {
+      config: { private: true, broadcast: { self: false } }
+    });
+    playerChannels.set(userId, playerChannel);
+    if (own) window.__mmOwnPlayerChannel = playerChannel;
+    else {
+      playerChannel.on("broadcast", { event: "player_position" }, ({ payload }) => {
+        if (payload?.user_id !== userId || payload?.room_id !== currentRoom) return;
+        handlers.onPlayerUpdate?.({
+          userId: payload.user_id,
+          x: payload.x,
+          y: payload.y,
+          facing: payload.facing,
+          displayName: payload.display_name,
+          skin: payload.character_id,
+          level: payload.level,
+          experience: payload.experience,
+          last_seen_at: payload.sent_at
+        });
+      });
+    }
+    await new Promise((resolve, reject) => {
+      playerChannel.subscribe(state => {
+        if (state === "SUBSCRIBED") resolve(state);
+        if (state === "CHANNEL_ERROR" || state === "TIMED_OUT") {
+          playerChannels.delete(userId);
+          if (own) window.__mmOwnPlayerChannel = null;
+          reject(new Error("اتصال کانال حرکت بازیکن برقرار نشد."));
+        }
+      });
+    });
+    return playerChannel;
+  }
+
+  function syncPlayerTopics(state, handlers) {
+    const activeIds = new Set(Object.keys(state || {}).filter(id => id !== currentUser.id));
+    for (const id of activeIds) {
+      if (!playerChannels.has(id)) {
+        subscribePlayerTopic(id, handlers).catch(error => console.warn("Player movement subscription failed:", error));
+      }
+    }
+    for (const [id, playerChannel] of playerChannels) {
+      if (id !== currentUser.id && !activeIds.has(id)) {
+        playerChannels.delete(id);
+        supabase.removeChannel(playerChannel).catch(error => console.warn("Player channel cleanup failed:", error));
+      }
+    }
+  }
+
   async function joinRoom(roomId, handlers = {}) {
     if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
     if (channel) await supabase.removeChannel(channel);
+    for (const oldChannel of playerChannels.values()) await supabase.removeChannel(oldChannel);
+    playerChannels.clear();
+    playerChannel = null;
     const room = String(roomId).slice(0, 40);
     currentRoom = room;
     channel = supabase.channel("rip-world:" + room, {
       config: { private: true, presence: { key: currentUser.id }, broadcast: { self: false } }
     });
     channel
-      .on("presence", { event: "sync" }, () => handlers.onPlayers?.(channel.presenceState()))
+      .on("presence", { event: "sync" }, () => {
+        const state = channel.presenceState();
+        syncPlayerTopics(state, handlers);
+        handlers.onPlayers?.(state);
+      })
       .on("broadcast", { event: "chat" }, ({ payload }) => {
         if (payload?.userId && payload.userId !== currentUser.id) handlers.onChat?.(payload);
-      })
-      // Positions are broadcast by a database trigger after the authenticated row update.
-      .on("broadcast", { event: "player_position" }, ({ payload }) => {
-        if (payload?.user_id && payload.user_id !== currentUser.id) {
-          handlers.onPlayerUpdate?.({
-            userId: payload.user_id,
-            x: payload.x,
-            y: payload.y,
-            facing: payload.facing,
-            displayName: payload.display_name,
-            skin: payload.character_id,
-            level: payload.level,
-            experience: payload.experience,
-            last_seen_at: payload.last_seen_at
-          });
-        }
       })
       .on("postgres_changes", {
         event: "INSERT",
@@ -154,6 +202,7 @@ export function createRipOnline() {
         }
       });
     });
+    playerChannel = await subscribePlayerTopic(currentUser.id, handlers, true);
     return "SUBSCRIBED";
   }
 
@@ -171,58 +220,61 @@ export function createRipOnline() {
   }
 
   async function publishMove(position) {
-    if (!channel || !currentUser) return;
+    if (!channel || !playerChannel || !currentUser) return;
+    const now = performance.now();
     const payload = {
-      userId: currentUser.id,
+      user_id: currentUser.id,
+      room_id: currentRoom,
       x: Number.isFinite(position.x) ? position.x : 0,
       y: Number.isFinite(position.y) ? position.y : 0,
       facing: ["up", "down", "left", "right"].includes(position.facing) ? position.facing : "down",
-      displayName: String(position.displayName || "بازیکن").trim().slice(0, 20),
-      skin: String(position.skin || "hero").slice(0, 20)
+      display_name: String(position.displayName || "بازیکن").trim().slice(0, 20),
+      character_id: String(position.skin || "hero").slice(0, 20),
+      sent_at: new Date(Date.now() + serverClockOffsetMs).toISOString()
     };
-    const now = performance.now();
-    const lastSeenAt = new Date(Date.now()).toISOString();
 
-    // Keep position writes frequent enough for responsive movement; peers receive
-    // compact Broadcast events from the database trigger, not Postgres Changes.
-
-    // Presence is only a connection hint. It is not trusted for identity or position.
     if (now - lastPresenceTrack >= 10000) {
       lastPresenceTrack = now;
       try {
-        const presenceResult = await channel.track(payload);
+        const presenceResult = await channel.track({ user_id: currentUser.id });
         if (presenceResult !== "ok") console.warn("Presence update was not accepted:", presenceResult);
       } catch (presenceError) {
         console.warn("Presence update failed:", presenceError);
       }
     }
 
-    const moved = !lastWrittenPosition ||
-      Math.hypot(payload.x - lastWrittenPosition.x, payload.y - lastWrittenPosition.y) >= 0.25;
-    const heartbeat = now - lastMovementWrite >= 2000;
-    if (lastMovementWrite && now - lastMovementWrite < 100) return;
-    if (!moved && !heartbeat) return;
+    // Fast path: send movement directly over this authenticated player's own private topic.
+    const result = await playerChannel.send({
+      type: "broadcast",
+      event: "player_position",
+      payload
+    });
+    if (result !== "ok") throw new Error("ارسال حرکت بازیکن تأیید نشد.");
 
-    // RLS binds this update to auth.uid(); peers receive the committed database row.
-    const { data, error } = await supabase
-      .from("world_players")
-      .update({
-        x: payload.x,
-        y: payload.y,
-        facing: payload.facing,
-        display_name: payload.displayName,
-        character_id: payload.skin,
-        room_id: currentRoom,
-        last_seen_at: lastSeenAt
-      })
-      .eq("user_id", currentUser.id)
-      .eq("room_id", currentRoom)
-      .select("user_id")
-      .maybeSingle();
-    if (error) throw error;
-    if (!data?.user_id) throw new Error("موقعیت بازیکن توسط سرور تأیید نشد.");
-    lastMovementWrite = now;
-    lastWrittenPosition = { x: payload.x, y: payload.y };
+    // Slow path: persist a snapshot periodically; never wait for the database to animate peers.
+    if (!positionPersistInFlight && now - lastMovementWrite >= 1500) {
+      lastMovementWrite = now;
+      positionPersistInFlight = true;
+      supabase.from("world_players")
+        .update({
+          x: payload.x,
+          y: payload.y,
+          facing: payload.facing,
+          display_name: payload.display_name,
+          character_id: payload.character_id,
+          room_id: currentRoom
+        })
+        .eq("user_id", currentUser.id)
+        .eq("room_id", currentRoom)
+        .select("user_id")
+        .maybeSingle()
+        .then(({ data, error }) => {
+          if (error) console.warn("Player snapshot save failed:", error);
+          else if (!data?.user_id) console.warn("Player snapshot was not accepted by server.");
+        })
+        .catch(error => console.warn("Player snapshot save failed:", error))
+        .finally(() => { positionPersistInFlight = false; });
+    }
   }
 
   async function sendChat(roomId, message, displayName) {
@@ -261,6 +313,12 @@ export function createRipOnline() {
       await supabase.removeChannel(channel);
       channel = null;
     }
+    for (const playerChannel of playerChannels.values()) {
+      await supabase.removeChannel(playerChannel);
+    }
+    playerChannels.clear();
+    playerChannel = null;
+    window.__mmOwnPlayerChannel = null;
   }
 
   return { connect, getClockStatus, getServerNowMs: () => Date.now() + serverClockOffsetMs, loadCharacter, loadRoomPlayers, saveCharacter, joinRoom, publishMove, sendChat, loadRecentChat, leave };
