@@ -17,8 +17,9 @@ export function createRipOnline() {
   let channel = null;
   let currentUser = null;
   let lastPresenceTrack = 0;
-  const movementSession = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  let movementSequence = 0;
+  let lastMovementWrite = 0;
+  let lastWrittenPosition = null;
+  let currentRoom = "mm-world-main";
 
   async function connect() {
     const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
@@ -82,14 +83,12 @@ export function createRipOnline() {
     if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
     if (channel) await supabase.removeChannel(channel);
     const room = String(roomId).slice(0, 40);
+    currentRoom = room;
     channel = supabase.channel("rip-world:" + room, {
       config: { private: true, presence: { key: currentUser.id }, broadcast: { self: false } }
     });
     channel
       .on("presence", { event: "sync" }, () => handlers.onPlayers?.(channel.presenceState()))
-      .on("broadcast", { event: "move" }, ({ payload }) => {
-        if (payload?.userId && payload.userId !== currentUser.id) handlers.onMove?.(payload);
-      })
       .on("broadcast", { event: "chat" }, ({ payload }) => {
         if (payload?.userId && payload.userId !== currentUser.id) handlers.onChat?.(payload);
       })
@@ -103,6 +102,8 @@ export function createRipOnline() {
         if (row?.user_id && row.user_id !== currentUser.id) {
           handlers.onPlayerUpdate?.({
             userId: row.user_id,
+            x: row.x,
+            y: row.y,
             facing: row.facing,
             displayName: row.display_name,
             skin: row.character_id,
@@ -140,36 +141,63 @@ export function createRipOnline() {
     return "SUBSCRIBED";
   }
 
+  async function loadRoomPlayers(roomId) {
+    if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
+    const { data, error } = await supabase
+      .from("world_players")
+      .select("user_id,display_name,character_id,room_id,x,y,facing,level,experience")
+      .eq("room_id", String(roomId).slice(0, 40));
+    if (error) throw error;
+    return data || [];
+  }
+
   async function publishMove(position) {
     if (!channel || !currentUser) return;
     const payload = {
       userId: currentUser.id,
-      movementSession,
-      sequence: ++movementSequence,
       x: Number.isFinite(position.x) ? position.x : 0,
       y: Number.isFinite(position.y) ? position.y : 0,
       facing: ["up", "down", "left", "right"].includes(position.facing) ? position.facing : "down",
       displayName: String(position.displayName || "بازیکن").trim().slice(0, 20),
-      skin: String(position.skin || "hero").slice(0, 20),
-      yaw: Number.isFinite(position.yaw) ? position.yaw : 0,
-      moving: Boolean(position.moving),
-      sentAt: Date.now()
+      skin: String(position.skin || "hero").slice(0, 20)
     };
     const now = Date.now();
-    // Presence is for the online-player roster, not continuous movement.
-    // Tracking every 900ms exceeds Supabase's presence rate limit.
+
+    // Presence is only a connection hint. It is not trusted for identity or position.
     if (now - lastPresenceTrack >= 10000) {
       lastPresenceTrack = now;
       try {
         const presenceResult = await channel.track(payload);
         if (presenceResult !== "ok") console.warn("Presence update was not accepted:", presenceResult);
       } catch (presenceError) {
-        // A presence limit/error must not prevent movement broadcasts.
-        console.warn("Presence update failed; movement broadcast will continue:", presenceError);
+        console.warn("Presence update failed:", presenceError);
       }
     }
-    const result = await channel.send({ type: "broadcast", event: "move", payload });
-    if (result !== "ok") throw new Error("ارسال موقعیت بازیکن در Realtime ناموفق بود.");
+
+    const moved = !lastWrittenPosition ||
+      Math.hypot(payload.x - lastWrittenPosition.x, payload.y - lastWrittenPosition.y) >= 0.25;
+    const heartbeat = now - lastMovementWrite >= 2000;
+    if (!moved && !heartbeat) return;
+
+    // RLS binds this update to auth.uid(); peers receive the committed database row.
+    const { data, error } = await supabase
+      .from("world_players")
+      .update({
+        x: payload.x,
+        y: payload.y,
+        facing: payload.facing,
+        display_name: payload.displayName,
+        character_id: payload.skin,
+        room_id: currentRoom
+      })
+      .eq("user_id", currentUser.id)
+      .eq("room_id", currentRoom)
+      .select("user_id")
+      .maybeSingle();
+    if (error) throw error;
+    if (!data?.user_id) throw new Error("موقعیت بازیکن توسط سرور تأیید نشد.");
+    lastMovementWrite = now;
+    lastWrittenPosition = { x: payload.x, y: payload.y };
   }
 
   async function sendChat(roomId, message, displayName) {
@@ -229,5 +257,5 @@ export function createRipOnline() {
     }
   }
 
-  return { connect, loadCharacter, saveCharacter, joinRoom, publishMove, sendChat, loadRecentChat, leave };
+  return { connect, loadCharacter, loadRoomPlayers, saveCharacter, joinRoom, publishMove, sendChat, loadRecentChat, leave };
 }
