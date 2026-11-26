@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" width="1536" height="864">
+<defs>
+ <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#07105f"/><stop offset=".48" stop-color="#064bd7"/><stop offset=".82" stop-color="#087cff"/><stop offset="1" stop-color="#061d91"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#00eaff" stop-opacity=".95"/><stop offset=".38" stop-color="#008cff" stop-opacity=".55"/><stop offset="1" stop-color="#0052ff" stop-opacity="0"/></radialGradient>
+ <linearGradient id="beam"><stop stop-color="#1264ff" stop-opacity="0"/><stop offset=".5" stop-color="#1264ff" stop-opacity=".55"/><stop offset="1" stop-color="#00baff" stop-opacity=".08"/></linearGradient>
+ <linearGradient id="logo" x2="0" y2="1"><stop stop-color="#167bff" stop-opacity=".25"/><stop offset="1" stop-color="#071c91" stop-opacity=".12"/></linearGradient>
+</defs>
+<rect width="1536" height="864" fill="url(#bg)"/>
+<ellipse cx="770" cy="720" rx="700" ry="210" fill="url(#glow)"/>
+<path d="M-90 270 170 -20h95L-35 300zM100 420 420 -20h90L190 450zM1150 890l300-420h100l-310 450zM1290 820l320-450h85l-310 450z" fill="url(#beam)"/>
+<path d="M0 0h220L0 300zM1536 0h-150L1536 210z" fill="#06116b" opacity=".35"/>
+<path d="M0 690h1536v174H0z" fill="#061a83" opacity=".25"/>
+<path d="M0 704 Q380 680 770 704T1536 694" fill="none" stroke="#00cfff" stroke-opacity=".28" stroke-width="8"/>
+<g opacity=".13" fill="#59b8ff" stroke="#59b8ff" stroke-width="7" stroke-linejoin="round">
+ <path d="M635 211 650 155 697 190 729 112 768 174 808 112 839 190 887 155 901 211 871 286 665 286z"/>
+ <path d="M675 304 542 512 693 490 768 360 843 490 994 512 861 304z"/>
+ <path d="M687 322h162v164H687z" opacity=".08"/>
+</g>
+<g fill="#1474ff" opacity=".12" font-family="Georgia,serif" font-weight="900" text-anchor="middle">
+ <text x="768" y="484" font-size="218" letter-spacing="-18">MM</text>
+</g>
+<path d="M0 694h1536" stroke="#08c8ff" stroke-opacity=".22" stroke-width="3"/>
+</svg>
