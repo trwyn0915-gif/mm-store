@@ -58,8 +58,23 @@ export function createRipOnline() {
       last_seen_at: now,
       updated_at: now
     };
-    const { error } = await supabase.from("world_players").upsert(row);
-    if (error) throw error;
+    const { data: updated, error: updateError } = await supabase
+      .from("world_players")
+      .update({
+        display_name: row.display_name,
+        character_id: row.character_id,
+        room_id: row.room_id,
+        facing: row.facing
+      })
+      .eq("user_id", currentUser.id)
+      .eq("room_id", row.room_id)
+      .select("user_id")
+      .maybeSingle();
+    if (updateError) throw updateError;
+    if (updated?.user_id) return row;
+
+    const { error: insertError } = await supabase.from("world_players").insert(row);
+    if (insertError) throw insertError;
     return row;
   }
 
