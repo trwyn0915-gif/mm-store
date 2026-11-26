@@ -548,11 +548,29 @@ async function connect(){
   if(!avatarRecords.has("self"))throw new Error("مدل کاراکتر بارگذاری نشد؛ اتصال اینترنت را بررسی کن.");
   setLoadingProgress(68,"در حال ورود به دنیای MM...");
   await online.joinRoom(ROOM,{
-   onPlayers:state=>{const present=new Set();for(const metas of Object.values(state||{})){const p=Array.isArray(metas)?metas[metas.length-1]:metas;if(p?.userId&&p.userId!==userId){present.add(p.userId);if(!players[p.userId])players[p.userId]=p;ensureAvatar(p.userId,p.skin).catch(console.error);}}for(const id of Object.keys(players)){if(!present.has(id)){delete players[id];const record=avatarRecords.get(id);if(record)scene3D.remove(record.group);avatarRecords.delete(id);avatarLoading.delete(id);}}stats();},
-   onMove:p=>{if(p?.userId&&p.userId!==userId){const previous=players[p.userId];if(previous?.movementSession===p.movementSession&&Number.isFinite(p.sequence)&&Number.isFinite(previous.sequence)&&p.sequence<=previous.sequence)return;const hasPosition=previous&&Number.isFinite(Number(previous.x))&&Number.isFinite(Number(previous.y))&&Number.isFinite(Number(p.x))&&Number.isFinite(Number(p.y));const moved=hasPosition&&Math.hypot(Number(p.x)-Number(previous.x),Number(p.y)-Number(previous.y))>.02;players[p.userId]={...previous,...p,moving:Boolean(p.moving)||moved};ensureAvatar(p.userId,p.skin).catch(console.error);}stats();},
-   onPlayerUpdate:p=>{if(p?.userId&&p.userId!==userId){const previous=players[p.userId]||{};players[p.userId]={...previous,displayName:p.displayName||previous.displayName,skin:p.skin||previous.skin,level:p.level??previous.level,experience:p.experience??previous.experience};ensureAvatar(p.userId,p.skin).catch(console.error);}stats();},
+   // Presence is deliberately not trusted to create or identify player avatars.
+   onPlayers:()=>stats(),
+   onPlayerUpdate:p=>{
+    if(p?.userId&&p.userId!==userId){
+     const previous=players[p.userId]||{};
+     const hasPosition=Number.isFinite(Number(p.x))&&Number.isFinite(Number(p.y));
+     const moved=hasPosition&&Number.isFinite(Number(previous.x))&&Number.isFinite(Number(previous.y))&&Math.hypot(Number(p.x)-Number(previous.x),Number(p.y)-Number(previous.y))>.02;
+     const dx=hasPosition&&Number.isFinite(Number(previous.x))?Number(p.x)-Number(previous.x):0;
+     const dy=hasPosition&&Number.isFinite(Number(previous.y))?Number(p.y)-Number(previous.y):0;
+     players[p.userId]={...previous,...p,yaw:moved?Math.atan2(dx,dy):(previous.yaw??Math.PI),moving:moved};
+     ensureAvatar(p.userId,p.skin).catch(console.error);
+    }
+    stats();
+   },
    onChat:p=>{if(p?.userId!==userId)addChat(p.displayName||"بازیکن",p.message||"",p.id);}
   });
+  const roomPlayers=await online.loadRoomPlayers(ROOM);
+  for(const row of roomPlayers){
+   if(row.user_id&&row.user_id!==userId){
+    players[row.user_id]={userId:row.user_id,displayName:row.display_name,skin:row.character_id,level:row.level,experience:row.experience,x:row.x,y:row.y,facing:row.facing};
+    ensureAvatar(row.user_id,row.character_id).catch(console.error);
+   }
+  }
   const spawnPoint=chooseSpawnPoint();player.x=spawnPoint.x;player.y=spawnPoint.y;
   await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});
   connected=true;for(const p of Object.values(players))if(p?.userId)ensureAvatar(p.userId,p.skin).catch(console.error);setLoadingProgress(90,"دنیای بازی آماده شد...");
@@ -653,7 +671,7 @@ $("full").addEventListener("click",()=>{if(!document.fullscreenElement)enterImme
 window.addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault();if(k==="w"||k==="arrowup")keys.up=true;if(k==="s"||k==="arrowdown")keys.down=true;if(k==="a"||k==="arrowleft")keys.left=true;if(k==="d"||k==="arrowright")keys.right=true;if(k==="e"||k===" ")interact();});
 window.addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="w"||k==="arrowup")keys.up=false;if(k==="s"||k==="arrowdown")keys.down=false;if(k==="a"||k==="arrowleft")keys.left=false;if(k==="d"||k==="arrowright")keys.right=false;});
 window.addEventListener("blur",()=>{Object.keys(keys).forEach(k=>keys[k]=false);resetJoy();});window.addEventListener("pagehide",()=>{if(online)online.leave().catch(()=>{});});
-function frame(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(connected){const yawDelta=Math.atan2(Math.sin(lookYawTarget-lookYaw),Math.cos(lookYawTarget-lookYaw));lookYaw+=yawDelta*(1-Math.exp(-7*dt));move(dt);camera.x=clamp(player.x-480,0,W-960);camera.y=clamp(player.y-270,0,H-540);if(t-lastSend>120&&!movementSending){lastSend=t;movementSending=true;online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw,moving:!!player.moving}).catch(console.error).finally(()=>{movementSending=false;});}if(t-lastSave>2000){lastSave=t;online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp}).catch(console.error);}drawWorld(dt);}else{ctx.clearRect(0,0,canvas.width,canvas.height);}requestAnimationFrame(frame);}
+function frame(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(connected){const yawDelta=Math.atan2(Math.sin(lookYawTarget-lookYaw),Math.cos(lookYawTarget-lookYaw));lookYaw+=yawDelta*(1-Math.exp(-7*dt));move(dt);camera.x=clamp(player.x-480,0,W-960);camera.y=clamp(player.y-270,0,H-540);if(t-lastSend>200&&!movementSending){lastSend=t;movementSending=true;online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw,moving:!!player.moving}).catch(console.error).finally(()=>{movementSending=false;});}if(t-lastSave>2000){lastSave=t;online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp}).catch(console.error);}drawWorld(dt);}else{ctx.clearRect(0,0,canvas.width,canvas.height);}requestAnimationFrame(frame);}
 function showFatalGameError(message){hideLoading();
  connected=false;
  document.body.classList.remove("playing");
