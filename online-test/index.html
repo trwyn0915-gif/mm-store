@@ -229,6 +229,30 @@ body.desktop-blocked #desktopBlock{display:flex!important}
 .desktop-block-card p{margin:0;color:#e3e8e5;font-size:clamp(15px,2vw,19px);font-weight:700;line-height:2}
 .desktop-block-card small{display:block;margin-top:16px;color:#a8b7b5;line-height:1.9}
 
+
+/* Portrait-held phones: rotate home dialogs into the same landscape layout as the game. */
+@media (orientation:portrait){
+ .home-modal{overflow:hidden;padding:0}
+ .home-modal-card,.shop-dialog{
+  position:absolute;
+  left:50%;top:50%;
+  width:min(88dvh,760px);
+  height: min(88vw, 520px);
+  max-width:none;
+  max-height:none;
+  transform:translate(-50%,-50%) rotate(90deg);
+  transform-origin:center center;
+  overflow:auto;
+ }
+ .home-modal-card{display:flex;flex-direction:column;justify-content:center}
+ .home-modal-card p{margin:8px 0;line-height:1.55}
+ .home-modal-card h2{margin-bottom:10px}
+ .home-modal-card input{flex:0 0 auto}
+ .home-modal-actions{flex:0 0 auto}
+ .shop-dialog{height:min(88vw,520px);padding:12px}
+ .shop-grid{grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px}
+}
+
 </style>
 </head>
 <body>
@@ -578,6 +602,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=98",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=99",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
