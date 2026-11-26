@@ -233,12 +233,11 @@ export function createRipOnline() {
 
     if (now - lastPresenceTrack >= 10000) {
       lastPresenceTrack = now;
-      try {
-        const presenceResult = await channel.track({ user_id: currentUser.id });
-        if (presenceResult !== "ok") console.warn("Presence update was not accepted:", presenceResult);
-      } catch (presenceError) {
-        console.warn("Presence update failed:", presenceError);
-      }
+      channel.track({ user_id: currentUser.id })
+        .then(presenceResult => {
+          if (presenceResult !== "ok") console.warn("Presence update was not accepted:", presenceResult);
+        })
+        .catch(presenceError => console.warn("Presence update failed:", presenceError));
     }
 
     // Fast path: send movement directly over this authenticated player's own private topic.
