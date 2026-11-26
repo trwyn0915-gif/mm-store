@@ -319,7 +319,7 @@ body.desktop-blocked #desktopBlock{display:flex!important}
  <div id="rotatePrompt"><section class="home-menu" aria-label="منوی اصلی MM WORLD"><div class="home-brand"><div class="home-crown">♛</div><div class="home-logo">MM</div><div class="home-world">WORLD</div><div class="home-tagline">دنیای آزاد نقش‌آفرینی آنلاین</div><div class="home-divider"></div><div class="home-union">اتحادیه MM</div><a class="creator-panel-link" href="https://trwyn0915-gif.github.io/mm-clan-site-2026/" target="_blank" rel="noopener noreferrer">پنل خدمات سازنده</a></div><div class="home-actions"><button id="startLandscape" class="home-action home-enter"><span class="home-action-icon">▶</span><span><b>ورود به بازی</b><small>ورود به دنیای آنلاین MM</small></span><span class="home-arrow">‹</span></button><button id="homeShop" class="home-action"><span class="home-action-icon">▣</span><span><b>فروشگاه</b><small>انتخاب و خرید کاراکتر</small></span><span class="home-arrow">‹</span></button><button id="homeSettings" class="home-action"><span class="home-action-icon">⚙</span><span><b>تنظیمات</b><small>مدیریت نام بازیکن</small></span><span class="home-arrow">‹</span></button><button id="homeHelp" class="home-action"><span class="home-action-icon">?</span><span><b>راهنمای بازی</b><small>آشنایی با کنترل‌ها و مأموریت‌ها</small></span><span class="home-arrow">‹</span></button><div id="connectionError" role="alert" style="display:none;margin-top:4px;padding:10px;border:1px solid #ff7b88;border-radius:10px;color:#ffd2d9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۱۲ · نسخه آنلاین</div><a class="creator-panel-link-mobile" href="https://trwyn0915-gif.github.io/mm-clan-site-2026/" target="_blank" rel="noopener noreferrer">پنل خدمات سازنده</a></div></section></div><div id="homeSettingsModal" class="home-modal" aria-hidden="true"><section class="home-modal-card"><h2>تنظیمات بازیکن</h2><label for="homePlayerName">نام بازیکن</label><input id="homePlayerName" maxlength="20" minlength="2" value="بازیکن MM"><div class="home-modal-actions"><button id="saveHomeSettings" class="home-modal-primary">ذخیره</button><button class="home-modal-close" data-home-close="homeSettingsModal">بستن</button></div></section></div><div id="homeHelpModal" class="home-modal" aria-hidden="true"><section class="home-modal-card"><h2>راهنمای MM WORLD</h2><p>حرکت: جوی‌استیک پایین صفحه یا کلیدهای جهت‌دار و WASD</p><p>تعامل: دکمه تعامل یا کلید E</p><p>مأموریت: با نگهبان دهکده صحبت کن و گیاهان جنگل را جمع‌آوری کن</p><p>بازیکنان دیگر را به‌صورت زنده در دنیای مشترک می‌بینی</p><div class="home-modal-actions"><button class="home-modal-primary" data-home-close="homeHelpModal">متوجه شدم</button></div></section></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
-import { createRipOnline } from "../online/multiplayer.js?v=23";
+import { createRipOnline } from "../online/multiplayer.js?v=24";
 const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
 const { GLTFLoader } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
 const { clone: cloneSkinned } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js");
@@ -464,20 +464,20 @@ function applyRemotePlayer(row){
  if(!Number.isFinite(x)||!Number.isFinite(y)||!Number.isFinite(stamp))return false;
  const previous=players[row.user_id]||{};
  if(Number.isFinite(previous.lastSeenMs)&&stamp<=previous.lastSeenMs)return false;
- const dx=Number.isFinite(Number(previous.x))?x-Number(previous.x):0;
- const dy=Number.isFinite(Number(previous.y))?y-Number(previous.y):0;
- const moved=Number.isFinite(Number(previous.x))&&Number.isFinite(Number(previous.y))&&Math.hypot(dx,dy)>.02;
  const facing=(["up","down","left","right"].includes(row.facing)?row.facing:previous.facing)||"up";
  const facingYaw={up:Math.PI,down:0,left:-Math.PI/2,right:Math.PI/2}[facing];
  const monoNow=performance.now();
  const serverNow=online?.getServerNowMs?.()??Date.now();
- const ageMs=Math.max(0,Math.min(60000,serverNow-stamp));
- const startX=Number.isFinite(previous.renderX)?previous.renderX:(Number.isFinite(previous.x)?previous.x:x);
- const startY=Number.isFinite(previous.renderY)?previous.renderY:(Number.isFinite(previous.y)?previous.y:y);
- const sampleGap=Number.isFinite(previous.receivedAtMono)?monoNow-previous.receivedAtMono:200;
- const motionDurationMs=moved?Math.max(250,Math.min(1100,sampleGap*1.02)):0;
- players[row.user_id]={...previous,userId:row.user_id,displayName:row.display_name??previous.displayName,skin:row.character_id??previous.skin,level:row.level??previous.level,experience:row.experience??previous.experience,x,y,renderX:startX,renderY:startY,motionStartX:startX,motionStartY:startY,motionStartMono:monoNow,motionDurationMs,facing,yaw:moved?Math.atan2(dx,dy):(facing!==previous.facing?facingYaw:(previous.yaw??facingYaw)),movingUntilMono:moved?monoNow+Math.max(450,Math.min(1100,sampleGap*1.35)):(previous.movingUntilMono||0),lastActivityAtMono:monoNow-ageMs,lastSeenMs:stamp,receivedAtMono:monoNow};
- ensureAvatar(row.user_id,row.character_id||previous.skin).catch(console.error);
+ const ageMs=Math.max(0,Math.min(5000,serverNow-stamp));
+ const sampleTime=serverNow-ageMs;
+ const samples=Array.isArray(previous.samples)?previous.samples.slice(-5):[];
+ const last=samples[samples.length-1];
+ if(!last||sampleTime>last.t)samples.push({x,y,t:sampleTime});
+ else if(sampleTime===last.t)samples[samples.length-1]={x,y,t:sampleTime};
+ const dx=last?x-last.x:0,dy=last?y-last.y:0;
+ const moved=!!last&&Math.hypot(dx,dy)>.02;
+ players[row.user_id]={...previous,userId:row.user_id,displayName:row.displayName??row.display_name??previous.displayName,skin:row.skin??row.character_id??previous.skin,level:row.level??previous.level,experience:row.experience??previous.experience,x,y,samples,facing,yaw:moved?Math.atan2(dx,dy):(facing!==previous.facing?facingYaw:(previous.yaw??facingYaw)),lastActivityAtMono:monoNow-ageMs,lastSeenMs:stamp,receivedAtMono:monoNow};
+ ensureAvatar(row.user_id,row.character_id||row.skin||previous.skin).catch(console.error);
  return true;
 }
 let camera={x:0,y:0},keys={up:false,down:false,left:false,right:false},last=0,toastTimer=0,movementSending=false;
@@ -518,13 +518,26 @@ function drawWorld(dt=0){
   const record=avatarRecords.get(id);
   if(record){
    const remoteX=Number(p.x),remoteY=Number(p.y);if(!Number.isFinite(remoteX)||!Number.isFinite(remoteY))continue;
-   if(p.motionDurationMs>0){const progress=clamp((remoteFrameNow-p.motionStartMono)/p.motionDurationMs,0,1),eased=progress*progress*(3-2*progress);p.renderX=p.motionStartX+(p.x-p.motionStartX)*eased;p.renderY=p.motionStartY+(p.y-p.motionStartY)*eased;if(progress>=1)p.motionDurationMs=0;}else{p.renderX=remoteX;p.renderY=remoteY;}
-   const targetX=(p.renderX-W/2)/8,targetZ=(p.renderY-H/2)/8;
+   const samples=p.samples||[];
+   const renderAt=(online?.getServerNowMs?.()??Date.now())-300;
+   let renderX=remoteX,renderY=remoteY;
+   if(samples.length>=2){
+    let left=samples[0],right=samples[samples.length-1];
+    for(let si=1;si<samples.length;si++){if(samples[si].t>=renderAt){left=samples[si-1];right=samples[si];break;}}
+    if(renderAt<=samples[0].t){renderX=samples[0].x;renderY=samples[0].y;}
+    else if(renderAt<=right.t&&right.t>left.t){const f=clamp((renderAt-left.t)/(right.t-left.t),0,1);renderX=left.x+(right.x-left.x)*f;renderY=left.y+(right.y-left.y)*f;}
+    else{
+     const prev=samples[samples.length-2],latest=samples[samples.length-1],span=Math.max(1,latest.t-prev.t),ahead=Math.min(180,Math.max(0,renderAt-latest.t)),f=ahead/span;
+     renderX=latest.x+(latest.x-prev.x)*f;renderY=latest.y+(latest.y-prev.y)*f;
+    }
+   }else if(samples.length===1){renderX=samples[0].x;renderY=samples[0].y;}
+   p.renderX=renderX;p.renderY=renderY;
+   const targetX=(renderX-W/2)/8,targetZ=(renderY-H/2)/8;
    if(!record.remotePositionReady){record.group.position.set(targetX,record.characterId==="hero"?-.57250:record.characterId==="robot"?-.415:-.404,targetZ);record.remotePositionReady=true;}
    else{record.group.position.x=targetX;record.group.position.z=targetZ;record.group.position.y=record.characterId==="hero"?-.57250:record.characterId==="robot"?-.415:-.404;}
    const targetYaw=Number.isFinite(p.yaw)?p.yaw:Math.PI;
    record.group.rotation.y+=Math.atan2(Math.sin(targetYaw-record.group.rotation.y),Math.cos(targetYaw-record.group.rotation.y))*(1-Math.exp(-12*Math.min(dt,.05)));
-   setAvatarMoving(record,remoteFrameNow<(p.movingUntilMono||0));record.mixer?.update(dt);
+   setAvatarMoving(record,!!p.samples&&p.samples.length>1&&Math.hypot(p.samples[p.samples.length-1].x-p.samples[p.samples.length-2].x,p.samples[p.samples.length-1].y-p.samples[p.samples.length-2].y)>.02&&remoteFrameNow-(p.receivedAtMono||0)<700);record.mixer?.update(dt);
   }
  }
  renderer3D.render(scene3D,camera3D);
@@ -726,6 +739,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=170",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=171",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
