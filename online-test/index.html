@@ -500,14 +500,14 @@ function move(dt){
  const speed=40.55265,worldSpeed=speed/8;
  const dx=(Math.sin(lookYaw)*smoothForward+Math.cos(lookYaw)*smoothStrafe)*worldSpeed*dt*8;
  const dz=(-Math.cos(lookYaw)*smoothForward+Math.sin(lookYaw)*smoothStrafe)*worldSpeed*dt*8;
- const playerCollisionRadius=15;
+ const playerCollisionRadius=10;
  const canMoveTo=(x,y)=>{
   for(const other of Object.values(players)){
    const ox=Number(other.x),oy=Number(other.y);
    if(!Number.isFinite(ox)||!Number.isFinite(oy))continue;
    const currentDistance=Math.hypot(player.x-ox,player.y-oy);
    const nextDistance=Math.hypot(x-ox,y-oy);
-   const minimumDistance=playerCollisionRadius*2;
+   const minimumDistance=15;
    // Permit separating movement if players already overlap (e.g. simultaneous spawn).
    if(nextDistance<minimumDistance&&nextDistance<currentDistance)return false;
   }
@@ -665,6 +665,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=159",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=160",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
