@@ -76,7 +76,8 @@ export function createRipOnline() {
     const user = data.session?.user;
     if (!user) return null;
     currentUser = user;
-    return loadEconomy();
+    const [economy, character] = await Promise.all([loadEconomy(), loadCharacter()]);
+    return { economy, character };
   }
 
   async function buyCharacter(characterId) {
