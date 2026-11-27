@@ -733,14 +733,26 @@ async function renderHomeCharacter(characterId=player.skin){
  try{
   const gltf=await loadCharacterModel(chosen);
   const model=cloneSkinned(gltf.scene);
-  const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3());
-  model.scale.setScalar(1.72/(size.y||1));model.updateMatrixWorld(true);
+  // Character GLBs may use a different up-axis. Detect the longest model axis
+  // and align it to world-up before fitting it to the unchanged display platform.
+  model.rotation.set(0,0,0);model.updateMatrixWorld(true);
+  const rawBox=new THREE.Box3().setFromObject(model),rawSize=rawBox.getSize(new THREE.Vector3());
+  if(rawSize.x>rawSize.y*1.2&&rawSize.x>=rawSize.z)model.rotation.z=Math.PI/2;
+  else if(rawSize.z>rawSize.y*1.2&&rawSize.z>rawSize.x)model.rotation.x=-Math.PI/2;
+  model.updateMatrixWorld(true);
+  const orientedBox=new THREE.Box3().setFromObject(model),orientedSize=orientedBox.getSize(new THREE.Vector3());
+  const modelHeight=Math.max(orientedSize.x,orientedSize.y,orientedSize.z,0.001);
+  model.scale.setScalar(1.55/modelHeight);model.updateMatrixWorld(true);
   const fitted=new THREE.Box3().setFromObject(model),center=fitted.getCenter(new THREE.Vector3());
-  model.position.x-=center.x;model.position.y-=fitted.min.y-.05;model.position.z-=center.z;model.rotation.y=0;model.rotation.z=0;
+  const platformTopY=.05;
+  model.position.x-=center.x;
+  model.position.y+=platformTopY-fitted.min.y;
+  model.position.z-=center.z;
+  model.updateMatrixWorld(true);
   if(!homePreviewRenderer){
    homePreviewRenderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
    homePreviewRenderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));homePreviewRenderer.outputColorSpace=THREE.SRGBColorSpace;
-   homePreviewScene=new THREE.Scene();homePreviewCamera=new THREE.PerspectiveCamera(34,1,.1,30);homePreviewCamera.position.set(0,2.5,7.8);homePreviewCamera.lookAt(0,.85,0);
+   homePreviewScene=new THREE.Scene();homePreviewCamera=new THREE.PerspectiveCamera(34,1,.1,40);
    homePreviewScene.add(new THREE.HemisphereLight(0xffffff,0x6a8aa8,1.8));
    const key=new THREE.DirectionalLight(0xffffff,2.1);key.position.set(-3,5,4);homePreviewScene.add(key);
    const platform=new THREE.Mesh(new THREE.CylinderGeometry(.92,1.02,.22,40),new THREE.MeshStandardMaterial({color:0x27343e,metalness:.68,roughness:.32}));platform.position.y=-.12;homePreviewScene.add(platform);
@@ -754,7 +766,17 @@ async function renderHomeCharacter(characterId=player.skin){
   const idle=gltf.animations.find(a=>/idle|stand/i.test(a.name))||gltf.animations[0];
   if(idle&&homePreviewMixer){homePreviewMixer.clipAction(idle).play();homePreviewMixer.update(.15);}
   const w=Math.max(1,canvas.clientWidth),h=Math.max(1,canvas.clientHeight);
-  homePreviewRenderer.setSize(w,h,false);homePreviewCamera.aspect=w/h;homePreviewCamera.updateProjectionMatrix();homePreviewRenderer.render(homePreviewScene,homePreviewCamera);if(!homePreviewResizeObserver){homePreviewResizeObserver=new ResizeObserver(()=>{if(!homePreviewRenderer||!homePreviewCamera||!homePreviewScene)return;const rw=Math.max(1,canvas.clientWidth),rh=Math.max(1,canvas.clientHeight);homePreviewRenderer.setSize(rw,rh,false);homePreviewCamera.aspect=rw/rh;homePreviewCamera.updateProjectionMatrix();homePreviewRenderer.render(homePreviewScene,homePreviewCamera);});homePreviewResizeObserver.observe(canvas);}
+  const targetY=.82,verticalFov=THREE.MathUtils.degToRad(homePreviewCamera.fov);
+  const sphere=new THREE.Sphere();new THREE.Box3().setFromObject(model).getBoundingSphere(sphere);
+  const fitRadius=Math.max(1.12,sphere.radius+.12);
+  const verticalDistance=fitRadius/Math.sin(verticalFov/2)*1.12;
+  const horizontalFov=2*Math.atan(Math.tan(verticalFov/2)*(w/h));
+  const horizontalDistance=fitRadius/Math.sin(Math.max(.12,horizontalFov/2))*1.12;
+  const distance=Math.max(verticalDistance,horizontalDistance);
+  homePreviewCamera.position.set(0,targetY+distance*.16,distance);
+  homePreviewCamera.lookAt(0,targetY,0);
+  homePreviewRenderer.setSize(w,h,false);homePreviewCamera.aspect=w/h;homePreviewCamera.updateProjectionMatrix();homePreviewRenderer.render(homePreviewScene,homePreviewCamera);
+  if(!homePreviewResizeObserver){homePreviewResizeObserver=new ResizeObserver(()=>{if(!homePreviewRenderer||!homePreviewCamera||!homePreviewScene)return;const rw=Math.max(1,canvas.clientWidth),rh=Math.max(1,canvas.clientHeight);homePreviewRenderer.setSize(rw,rh,false);homePreviewCamera.aspect=rw/rh;homePreviewCamera.updateProjectionMatrix();homePreviewRenderer.render(homePreviewScene,homePreviewCamera);});homePreviewResizeObserver.observe(canvas);}
  }catch(error){console.warn("Home character preview failed:",error);}
 }
 function setAvatarMoving(record,moving){
@@ -1278,7 +1300,7 @@ window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای
 stats();
 try{online=createRipOnline();online.loadHomeEconomy().then(data=>{if(data){applyEconomy(data.economy);const equipped=data.character?.character_id;if(CHARACTER_ASSETS[equipped]&&ownedCharacters.has(equipped)){player.skin=equipped;persist();}renderHomeCharacter(player.skin);}}).catch(error=>console.warn("Home wallet/character refresh failed:",error));renderHomeCharacter(player.skin);}catch(error){console.warn("Home wallet initialization failed:",error);}
 requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=252",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=253",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
