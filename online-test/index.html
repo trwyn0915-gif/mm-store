@@ -516,9 +516,12 @@ $("shopItems").addEventListener("click",async e=>{const btn=e.target.closest("bu
 $("openShop").addEventListener("click",openCharacterShop);$("closeShop").addEventListener("click",closeCharacterShop);$("characterShop").addEventListener("click",e=>{if(e.target===$("characterShop"))closeCharacterShop();});
 function sayToast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2100);}
 function status(t){$("status").textContent=t;}
-function setLoadingProgress(value,message){const n=Math.max(0,Math.min(100,Math.round(value)));$("loadingFill").style.width=n+"%";$("loadingPercent").textContent=new Intl.NumberFormat("fa-IR").format(n)+"٪";}
-function showLoading(){ $("loadingScreen").classList.add("visible");setLoadingProgress(3,"در حال آماده‌سازی بازی..."); }
-function hideLoading(){ $("loadingScreen").classList.remove("visible"); }
+let loadingProgressCurrent=0,loadingProgressTarget=0,loadingProgressTimer=null;
+function paintLoadingProgress(){ $("loadingFill").style.width=loadingProgressCurrent+"%";$("loadingPercent").textContent=new Intl.NumberFormat("fa-IR").format(loadingProgressCurrent)+"٪"; }
+function advanceLoadingProgress(){loadingProgressTimer=null;if(loadingProgressCurrent<loadingProgressTarget){loadingProgressCurrent=Math.min(loadingProgressTarget,loadingProgressCurrent+1);paintLoadingProgress();}if(loadingProgressCurrent<loadingProgressTarget)loadingProgressTimer=setTimeout(advanceLoadingProgress,22);}
+function setLoadingProgress(value,message){loadingProgressTarget=Math.max(0,Math.min(100,Math.round(value)));if(loadingProgressTimer===null&&loadingProgressCurrent!==loadingProgressTarget)loadingProgressTimer=setTimeout(advanceLoadingProgress,0);}
+function showLoading(){clearTimeout(loadingProgressTimer);loadingProgressTimer=null;loadingProgressCurrent=0;loadingProgressTarget=0;paintLoadingProgress();$("loadingScreen").classList.add("visible");}
+function hideLoading(){ $("loadingScreen").classList.remove("visible");clearTimeout(loadingProgressTimer);loadingProgressTimer=null; }
 
 function stats(){ $("onlineCount").textContent=String(Object.keys(players).length+ (connected?1:0));$("level").textContent=player.level;$("xp").textContent=player.xp+" / "+(player.level*100);$("coins").textContent=coins;$("quest").textContent=questDone?"ماموریت تکمیل شد":questStarted?("گیاه جمع کن: "+herbs+" / ۳"):"با نگهبان دهکده صحبت کن"; }
 function addXP(n){player.xp+=n;while(player.xp>=player.level*100){player.xp-=player.level*100;player.level++;coins+=25;sayToast("سطح جدید! پاداش ۲۵ سکه گرفتی");}stats();persist();}
@@ -769,6 +772,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=192",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=193",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
