@@ -56,7 +56,7 @@ export function createRipOnline() {
     if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
     const { data, error } = await supabase
       .from("world_players")
-      .select("display_name,character_id,room_id,x,y,facing,level,experience")
+      .select("display_name,character_id,room_id,x,y,facing,level,experience,name_setup_completed")
       .eq("user_id", currentUser.id)
       .maybeSingle();
     if (error) throw error;
@@ -103,6 +103,15 @@ export function createRipOnline() {
       p_x: Number.isFinite(character.x) ? character.x : 2500,
       p_y: Number.isFinite(character.y) ? character.y : 2500,
       p_facing: ["up", "down", "left", "right"].includes(character.facing) ? character.facing : "down"
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async function confirmPlayerName(displayName) {
+    if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
+    const { data, error } = await supabase.rpc("mm_confirm_player_name", {
+      p_display_name: String(displayName || "").trim().slice(0, 20)
     });
     if (error) throw error;
     return data;
@@ -295,5 +304,5 @@ export function createRipOnline() {
     positionPersistInFlight = false;
   }
 
-  return { connect, getClockStatus, getServerNowMs: () => Date.now() + serverClockOffsetMs, loadCharacter, loadEconomy, loadHomeEconomy, buyCharacter, equipCharacter, loadRoomPlayers, saveCharacter, updatePosition, startQuest, collectHerb, completeQuest, joinRoom, publishMove, sendChat, loadRecentChat, leave };
+  return { connect, getClockStatus, getServerNowMs: () => Date.now() + serverClockOffsetMs, loadCharacter, loadEconomy, loadHomeEconomy, buyCharacter, confirmPlayerName, equipCharacter, loadRoomPlayers, saveCharacter, updatePosition, startQuest, collectHerb, completeQuest, joinRoom, publishMove, sendChat, loadRecentChat, leave };
 }
