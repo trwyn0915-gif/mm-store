@@ -1089,7 +1089,7 @@ function sayToast(t){$("toast").textContent=t;$("toast").classList.add("show");c
 function status(t){$("status").textContent=t;}
 let loadingProgressCurrent=0,loadingProgressTimer=null,loadingProgressComplete=false;
 function paintLoadingProgress(){ $("loadingFill").style.width=loadingProgressCurrent+"%";$("loadingPercent").textContent=new Intl.NumberFormat("fa-IR").format(loadingProgressCurrent)+"٪"; }
-function advanceLoadingProgress(){loadingProgressTimer=null;loadingProgressCurrent=Math.min(loadingProgressComplete?100:99,loadingProgressCurrent+1);paintLoadingProgress();if(loadingProgressCurrent<100)loadingProgressTimer=setTimeout(advanceLoadingProgress,85);}
+function advanceLoadingProgress(){loadingProgressTimer=null;loadingProgressCurrent=Math.min(loadingProgressComplete?100:99,loadingProgressCurrent+1);paintLoadingProgress();if(loadingProgressCurrent<100)loadingProgressTimer=setTimeout(advanceLoadingProgress,110);}
 function setLoadingProgress(value,message){if(Number(value)>=100&&!loadingProgressComplete){loadingProgressComplete=true;if(loadingProgressTimer===null)loadingProgressTimer=setTimeout(advanceLoadingProgress,0);}}
 function showLoading(){clearTimeout(loadingProgressTimer);loadingProgressTimer=null;loadingProgressCurrent=0;loadingProgressComplete=false;paintLoadingProgress();$("loadingScreen").classList.add("visible");loadingProgressTimer=setTimeout(advanceLoadingProgress,85);}
 function hideLoading(){ $("loadingScreen").classList.remove("visible");clearTimeout(loadingProgressTimer);loadingProgressTimer=null;}
@@ -1407,16 +1407,22 @@ async function connect(){
   document.body.classList.add("playing");
   installExitGuard();status("متصل · دنیای آنلاین فعال");
   btn.textContent="متصل شدی";btn.disabled=true;
-  try{
-   const history=await online.loadRecentChat(ROOM,30);
+  // Non-essential startup requests run in the background so a slow chat/history
+  // response cannot keep the loading screen at 99% after the world is ready.
+  const connection=online;
+  connection.loadRecentChat(ROOM,30).then(history=>{
+   if(!connected||online!==connection)return;
    const log=$("chatlog");
    if(log.children.length===1&&log.firstChild.textContent.includes("برای گفت‌وگو"))log.innerHTML="";
    history.slice().sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0)).forEach(m=>addChat(m.display_name,m.message,m.id));scrollChatToLatest();
-  }catch(chatError){console.warn("Chat history could not be loaded; continuing game connection:",chatError);}
-  try{
-   await online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw,moving:!!player.moving});
-  }catch(moveError){console.warn("Initial position broadcast failed; live movement will retry:",moveError);}
-  setLoadingProgress(100,"ورود به دنیای MM موفق بود");await waitForLoadingProgress(100);await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));hideLoading();
+  }).catch(chatError=>console.warn("Chat history could not be loaded; continuing game connection:",chatError));
+  connection.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw,moving:!!player.moving})
+   .catch(moveError=>console.warn("Initial position broadcast failed; live movement will retry:",moveError));
+  // The bar reaches 100 only after the required world connection and room setup succeeded.
+  setLoadingProgress(100,"ورود به دنیای MM موفق بود");
+  await waitForLoadingProgress(100);
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  hideLoading();
   stats();persist();
   if(!saved?.name_setup_completed)showPlayerNameSetup();else sayToast("با موفقیت وارد دنیای آنلاین شدی");
  }catch(e){
