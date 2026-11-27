@@ -470,6 +470,10 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  box-shadow:none!important;font-size:30px!important;font-weight:900!important;line-height:1!important;
 }
 .chat-panel.chat-floating #closeChat:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px!important}
+/* v211: enlarge close glyph and always land chat history on newest messages. */
+.chat-panel.chat-floating #closeChat{font-size:38px!important;line-height:1!important;font-family:Arial,sans-serif!important;font-weight:900!important;}
+.chat-panel #chatlog{overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;scroll-behavior:auto!important;}
+.chat-panel #chatlog .chatline{flex:0 0 auto!important;}
 </style>
 </head>
 <body>
@@ -730,7 +734,8 @@ function waitForLoadingProgress(target=100){return new Promise(resolve=>{const c
 
 function stats(){ $("onlineCount").textContent=String(Object.keys(players).length+ (connected?1:0));$("level").textContent=player.level;$("xp").textContent=player.xp+" / "+(player.level*100);$("coins").textContent=coins;$("quest").textContent=questDone?"ماموریت تکمیل شد":questStarted?("گیاه جمع کن: "+herbs+" / ۳"):"با نگهبان دهکده صحبت کن"; }
 function addXP(n){player.xp+=n;while(player.xp>=player.level*100){player.xp-=player.level*100;player.level++;coins+=25;sayToast("سطح جدید! پاداش ۲۵ سکه گرفتی");}stats();persist();}
-function addChat(name,message,id=null){if(id!==null&&id!==undefined){const key=String(id);if(seenChatIds.has(key))return;seenChatIds.add(key);}const row=document.createElement("div");row.className="chatline";const b=document.createElement("b");b.textContent=name+": ";row.append(b,document.createTextNode(message));$("chatlog").append(row);while($("chatlog").children.length>60)$("chatlog").firstChild.remove();$("chatlog").scrollTop=$("chatlog").scrollHeight;}
+function scrollChatToLatest(){const log=$("chatlog");if(!log)return;const scroll=()=>{log.scrollTop=log.scrollHeight;};scroll();requestAnimationFrame(scroll);setTimeout(scroll,80);}
+function addChat(name,message,id=null){if(id!==null&&id!==undefined){const key=String(id);if(seenChatIds.has(key))return;seenChatIds.add(key);}const log=$("chatlog");const row=document.createElement("div");row.className="chatline";const b=document.createElement("b");b.textContent=name+": ";row.append(b,document.createTextNode(message));log.append(row);while(log.children.length>60)log.firstElementChild.remove();scrollChatToLatest();}
 function setAvatarChatBubble(record,message,expiresAt){if(!record?.group)return;const text=String(message||"").trim().slice(0,300);if(!text)return;if(record.chatBubble){record.group.remove(record.chatBubble);record.chatBubble.material.map?.dispose();record.chatBubble.material.dispose();}const canvas=document.createElement("canvas");canvas.width=768;canvas.height=300;const c=canvas.getContext("2d");c.clearRect(0,0,768,300);c.fillStyle="#fffdf7";c.strokeStyle="#18242a";c.lineWidth=12;c.beginPath();c.moveTo(52,22);c.lineTo(716,22);c.quadraticCurveTo(746,22,746,52);c.lineTo(746,218);c.quadraticCurveTo(746,248,716,248);c.lineTo(420,248);c.lineTo(384,286);c.lineTo(354,248);c.lineTo(52,248);c.quadraticCurveTo(22,248,22,218);c.lineTo(22,52);c.quadraticCurveTo(22,22,52,22);c.closePath();c.fill();c.stroke();c.fillStyle="#172127";c.font="bold 54px Vazirmatn, Tahoma, sans-serif";c.textAlign="center";c.textBaseline="middle";c.direction="rtl";const words=text.split(/\s+/);const lines=[];let line="";for(const word of words){const candidate=line?line+" "+word:word;if(c.measureText(candidate).width>650&&line){lines.push(line);line=word;}else line=candidate;}if(line)lines.push(line);const shown=lines.slice(-2);shown.forEach((value,index)=>c.fillText(value,384,116+(index-(shown.length-1)/2)*66,650));const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearFilter;texture.magFilter=THREE.LinearFilter;const material=new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false,depthWrite:false});const sprite=new THREE.Sprite(material);sprite.position.set(0,5.35,0);sprite.scale.set(4.8,1.88,1);sprite.renderOrder=30;record.group.add(sprite);record.chatBubble=sprite;record.chatBubbleExpiresAt=Number(expiresAt)||0;}
 function showPlayerChatBubble(playerId,message,createdAt){const expiresAt=(Date.parse(createdAt)||Date.now())+10000;const now=online?.getServerNowMs?.()??Date.now();if(expiresAt<=now)return;if(playerId===userId){const record=avatarRecords.get("self");if(record)setAvatarChatBubble(record,message,expiresAt);else pendingSelfChatBubble={message,expiresAt};return;}const p=players[playerId];if(!p)return;p.chatBubble={message:String(message||"").slice(0,300),expiresAt};const record=avatarRecords.get(playerId);if(record)setAvatarChatBubble(record,message,expiresAt);}
 let pendingSelfChatBubble=null;
@@ -872,7 +877,7 @@ async function connect(){
   const history=await online.loadRecentChat(ROOM,30);
   const log=$("chatlog");
   if(log.children.length===1&&log.firstChild.textContent.includes("برای گفت‌وگو"))log.innerHTML="";
-  history.forEach(m=>addChat(m.display_name,m.message,m.id));
+  history.slice().sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0)).forEach(m=>addChat(m.display_name,m.message,m.id));scrollChatToLatest();
   await online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw,moving:!!player.moving});
   setLoadingProgress(100,"ورود به دنیای MM موفق بود");await waitForLoadingProgress(100);await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));hideLoading();
   stats();sayToast("با موفقیت وارد دنیای آنلاین شدی");persist();
@@ -1012,7 +1017,7 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=210",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=211",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
