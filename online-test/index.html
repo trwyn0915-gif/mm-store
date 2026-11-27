@@ -853,6 +853,11 @@ async function connect(){
   await ensureAvatar("self",player.skin);
   if(!avatarRecords.has("self"))throw new Error("مدل کاراکتر بارگذاری نشد؛ اتصال اینترنت را بررسی کن.");
   setLoadingProgress(68,"در حال ورود به دنیای MM...");
+  // Create the authenticated player's room row before subscribing to their
+  // private player topic; the Realtime SELECT policy checks this row.
+  const roomPlayers=await online.loadRoomPlayers(ROOM);
+  const spawnPoint=chooseSpawnPoint();player.x=spawnPoint.x;player.y=spawnPoint.y;
+  await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});
   await online.joinRoom(ROOM,{
    // Presence is deliberately not trusted to create or identify player avatars.
    onPlayers:state=>reconcileRemotePresence(state),
@@ -860,14 +865,11 @@ async function connect(){
     if(p?.userId&&p.userId!==userId&&remotePresenceIds.has(p.userId))applyRemotePlayer({user_id:p.userId,x:p.x,y:p.y,facing:p.facing,display_name:p.displayName,character_id:p.skin,level:p.level,experience:p.experience,last_seen_at:p.last_seen_at});
     stats();
    },
-   onChat:p=>{if(p?.userId!==userId){addChat(p.displayName||"بازیکن",p.message||"",p.id);showPlayerChatBubble(p.userId,p.message,p.createdAt);}}
+   onChat:p=>{if(p?.userId!==userId){addChat(p.displayName||"بازیکن",p.message||"",p.id);showPlayerChatBubble(p.userId,p.message||"",p.createdAt);}}
   });
-  const roomPlayers=await online.loadRoomPlayers(ROOM);
   for(const row of roomPlayers){
    if(row.user_id&&row.user_id!==userId&&remotePresenceIds.has(row.user_id))applyRemotePlayer(row);
   }
-  const spawnPoint=chooseSpawnPoint();player.x=spawnPoint.x;player.y=spawnPoint.y;
-  await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});
   connected=true;for(const p of Object.values(players))if(p?.userId)ensureAvatar(p.userId,p.skin).catch(console.error);setLoadingProgress(90,"دنیای بازی آماده شد...");
   document.body.classList.remove("exit-to-page");
   const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
@@ -1021,7 +1023,7 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=212",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=213",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
