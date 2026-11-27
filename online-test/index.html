@@ -766,7 +766,32 @@ function setAvatarChatBubble(record,message,expiresAt){
  sprite.scale.set(width/160,height/160,1);sprite.renderOrder=30;record.group.add(sprite);
  record.chatBubble=sprite;record.chatBubbleExpiresAt=Number(expiresAt)||0;
 }
-function showPlayerChatBubble(playerId,message,createdAt){const expiresAt=(Date.parse(createdAt)||Date.now())+10000;const now=online?.getServerNowMs?.()??Date.now();if(expiresAt<=now)return;if(playerId===userId){const record=avatarRecords.get("self");if(record)setAvatarChatBubble(record,message,expiresAt);else pendingSelfChatBubble={message,expiresAt};return;}const p=players[playerId];if(!p)return;p.chatBubble={message:String(message||"").slice(0,300),expiresAt};const record=avatarRecords.get(playerId);if(record)setAvatarChatBubble(record,message,expiresAt);}
+function getChatBubbleLineCount(message){
+ const text=String(message||"").trim().slice(0,300);if(!text)return 1;
+ const measureCanvas=document.createElement("canvas"),measure=measureCanvas.getContext("2d");
+ measure.font="bold 66px Vazirmatn, Tahoma, sans-serif";
+ const words=text.split(/\\s+/),lines=[];let line="";
+ for(const word of words){const candidate=line?line+" "+word:word;if(measure.measureText(candidate).width>900&&line){lines.push(line);line=word;}else line=candidate;}
+ if(line)lines.push(line);
+ return Math.max(1,lines.length);
+}
+function getChatBubbleDurationMs(message){
+ const lines=getChatBubbleLineCount(message);
+ if(lines<=1)return 5000;
+ if(lines===2)return 8000;
+ if(lines===3)return 15000;
+ if(lines===4)return 22000;
+ return 30000;
+}
+function showPlayerChatBubble(playerId,message,createdAt){
+ const duration=getChatBubbleDurationMs(message);
+ const created=Date.parse(createdAt)|| (online?.getServerNowMs?.()??Date.now());
+ const expiresAt=created+Math.min(30000,duration);
+ const now=online?.getServerNowMs?.()??Date.now();if(expiresAt<=now)return;
+ if(playerId===userId){const record=avatarRecords.get("self");if(record)setAvatarChatBubble(record,message,expiresAt);else pendingSelfChatBubble={message,expiresAt};return;}
+ const p=players[playerId];if(!p)return;p.chatBubble={message:String(message||"").slice(0,300),expiresAt};
+ const record=avatarRecords.get(playerId);if(record)setAvatarChatBubble(record,message,expiresAt);
+}
 let pendingSelfChatBubble=null;
 function worldToScreen(x,y){return{x:x-camera.x,y:y-camera.y};}
 function drawTree(x,y,r){const p=worldToScreen(x,y);ctx.fillStyle="#4b392b";ctx.fillRect(p.x-5,p.y+5,10,22);ctx.fillStyle="#1d4e3d";ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fill();ctx.fillStyle="#28654a";ctx.beginPath();ctx.arc(p.x-r*.25,p.y-r*.25,r*.65,0,Math.PI*2);ctx.fill();}
@@ -1054,7 +1079,7 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=215",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=216",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
