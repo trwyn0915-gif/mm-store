@@ -522,6 +522,7 @@ function advanceLoadingProgress(){loadingProgressTimer=null;loadingProgressCurre
 function setLoadingProgress(value,message){if(Number(value)>=100&&!loadingProgressComplete){loadingProgressComplete=true;if(loadingProgressTimer===null)loadingProgressTimer=setTimeout(advanceLoadingProgress,0);}}
 function showLoading(){clearTimeout(loadingProgressTimer);loadingProgressTimer=null;loadingProgressCurrent=0;loadingProgressComplete=false;paintLoadingProgress();$("loadingScreen").classList.add("visible");loadingProgressTimer=setTimeout(advanceLoadingProgress,85);}
 function hideLoading(){ $("loadingScreen").classList.remove("visible");clearTimeout(loadingProgressTimer);loadingProgressTimer=null;}
+function waitForLoadingProgress(target=100){return new Promise(resolve=>{const check=()=>{if(loadingProgressCurrent>=target){resolve();return;}requestAnimationFrame(check);};check();});}
 
 function stats(){ $("onlineCount").textContent=String(Object.keys(players).length+ (connected?1:0));$("level").textContent=player.level;$("xp").textContent=player.xp+" / "+(player.level*100);$("coins").textContent=coins;$("quest").textContent=questDone?"ماموریت تکمیل شد":questStarted?("گیاه جمع کن: "+herbs+" / ۳"):"با نگهبان دهکده صحبت کن"; }
 function addXP(n){player.xp+=n;while(player.xp>=player.level*100){player.xp-=player.level*100;player.level++;coins+=25;sayToast("سطح جدید! پاداش ۲۵ سکه گرفتی");}stats();persist();}
@@ -772,6 +773,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=194",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=195",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
