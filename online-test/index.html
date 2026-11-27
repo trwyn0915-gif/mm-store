@@ -212,12 +212,12 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 @media(orientation:portrait){#loadingScreen{width:100dvh;height:100vw;inset:auto;left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%) rotate(90deg);padding:0 5vw 24px;background-size:cover;background-position:center}.loading-ui{width:86vw;margin-bottom:5vh}}
 @media(prefers-reduced-motion:reduce){.loading-fill{transition:none}}
 
-/* Loading bar redesigned to match the reference: wide track, centered percentage, no extra copy. */
-.loading-ui{width:94vw;max-width:none;margin-bottom:clamp(16px,5vh,52px);}
-.loading-track{position:relative;width:100%;height:clamp(26px,4.2vh,36px);padding:3px;overflow:hidden;}
-.loading-fill{min-width:0;}
-.loading-percent{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:clamp(13px,2.1vw,17px);font-weight:900;line-height:1;text-shadow:0 1px 3px #00101e,0 0 5px #00101e;pointer-events:none;z-index:1;}
-@media(orientation:portrait){.loading-ui{width:94vw;margin-bottom:5vh}.loading-track{height:clamp(26px,4.2vh,36px)}}
+/* Loading bar: slightly wider, left-to-right fill, centered percentage. */
+.loading-ui{width:97vw;max-width:none;margin-bottom:clamp(16px,5vh,52px);}
+.loading-track{position:relative;direction:ltr;width:100%;height:clamp(26px,4.2vh,36px);padding:3px;overflow:hidden;}
+.loading-fill{min-width:0;margin-left:0;margin-right:auto;}
+.loading-percent{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;direction:ltr;text-align:center;width:100%;color:#fff;font-size:clamp(13px,2.1vw,17px);font-weight:900;line-height:1;text-shadow:0 1px 3px #00101e,0 0 5px #00101e;pointer-events:none;z-index:1;}
+@media(orientation:portrait){.loading-ui{width:97vw;margin-bottom:5vh}.loading-track{height:clamp(26px,4.2vh,36px)}}
 
 /* Desktop access gate: MM WORLD is designed for touch-screen phones. */
 body.desktop-blocked{overflow:hidden!important;background:#091116!important}
