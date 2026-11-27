@@ -571,6 +571,25 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
   text-decoration:none!important;white-space:nowrap!important;box-shadow:0 5px 18px #00154d99!important
  }
 }
+
+/* v261: center the preview in the actual portrait-held landscape stage and move creator link clear of controls. */
+@media (max-width:760px) and (orientation:portrait){
+ .home-character-card{
+  left:20%!important;top:50%!important;
+  transform:translate(-50%,-50%)!important;
+ }
+ .creator-panel-link-mobile{
+  position:absolute!important;right:14px!important;top:50%!important;left:auto!important;bottom:auto!important;
+  transform:translateY(-50%)!important;z-index:30!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:clamp(128px,20%,205px)!important;max-width:none!important;height:54px!important;min-height:54px!important;
+  margin:0!important;padding:8px 10px!important;white-space:nowrap!important;
+  border:1px solid #49c9ff!important;border-radius:14px!important;
+  background:linear-gradient(135deg,#0879df,#4524b8)!important;
+  color:#fff!important;font-size:clamp(12px,2.1vh,16px)!important;font-weight:900!important;
+  box-shadow:0 6px 20px #00154d99!important;pointer-events:auto!important
+ }
+}
 </style>
 </head>
 <body>
@@ -1313,7 +1332,7 @@ window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای
 stats();
 try{online=createRipOnline();online.loadHomeEconomy().then(data=>{if(data){applyEconomy(data.economy);const equipped=data.character?.character_id;if(CHARACTER_ASSETS[equipped]&&ownedCharacters.has(equipped)){player.skin=equipped;persist();}renderHomeCharacter(player.skin);}}).catch(error=>console.warn("Home wallet/character refresh failed:",error));renderHomeCharacter(player.skin);}catch(error){console.warn("Home wallet initialization failed:",error);}
 requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=260",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=261",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
