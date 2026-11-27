@@ -740,7 +740,7 @@ function setAvatarChatBubble(record,message,expiresAt){
  if(!record?.group)return;
  const text=String(message||"").trim().slice(0,300);if(!text)return;
  if(record.chatBubble){record.group.remove(record.chatBubble);record.chatBubble.material.map?.dispose();record.chatBubble.material.dispose();}
- const fontSize=72,padX=62,lineHeight=90,maxTextWidth=950;
+ const fontSize=78,padX=68,lineHeight=96,maxTextWidth=1020;
  const measureCanvas=document.createElement("canvas"),measure=measureCanvas.getContext("2d");
  measure.font=`bold ${fontSize}px Vazirmatn, Tahoma, sans-serif`;
  const words=text.split(/\s+/),lines=[];let line="";
@@ -766,7 +766,7 @@ function setAvatarChatBubble(record,message,expiresAt){
  // Keep the bubble tail above the player name tag; taller messages rise by their own height.
  sprite.scale.set(width/160,height/160,1);
  const bubbleHeightWorld=sprite.scale.y;
- const bubbleTailClearance=4.95;
+ const bubbleTailClearance=4.55;
  sprite.position.set(0,bubbleTailClearance+bubbleHeightWorld/2,0);
  sprite.renderOrder=30;record.group.add(sprite);
  record.chatBubble=sprite;record.chatBubbleExpiresAt=Number(expiresAt)||0;
@@ -1084,7 +1084,7 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=220",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=221",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
