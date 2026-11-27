@@ -788,26 +788,61 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  <div id="rotatePrompt" class="hidden" hidden><section class="connection-retry-card" role="alert"><strong>ورود به بازی انجام نشد</strong><p id="connectionError"></p><button type="button" id="startLandscape">تلاش دوباره برای ورود آنلاین</button></section></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script>
-/* Soft click sound for every button, including buttons with their own click handlers. */
+/* Layered tactile UI click: a muted body, crisp transient and tiny glass overtone. */
 (()=>{
  let clickAudioContext=null;
+ let noiseBuffer=null;
  function playButtonClickSound(){
   try{
    const AudioContextClass=window.AudioContext||window.webkitAudioContext;
    if(!AudioContextClass)return;
    if(!clickAudioContext)clickAudioContext=new AudioContextClass();
-   if(clickAudioContext.state==="suspended")clickAudioContext.resume().catch(()=>{});
-   const now=clickAudioContext.currentTime;
-   const oscillator=clickAudioContext.createOscillator();
-   const gain=clickAudioContext.createGain();
-   oscillator.type="sine";
-   oscillator.frequency.setValueAtTime(620,now);
-   oscillator.frequency.exponentialRampToValueAtTime(440,now+0.055);
-   gain.gain.setValueAtTime(0.0001,now);
-   gain.gain.exponentialRampToValueAtTime(0.075,now+0.008);
-   gain.gain.exponentialRampToValueAtTime(0.0001,now+0.075);
-   oscillator.connect(gain);gain.connect(clickAudioContext.destination);
-   oscillator.start(now);oscillator.stop(now+0.08);
+   const ctx=clickAudioContext;
+   if(ctx.state==="suspended")ctx.resume().catch(()=>{});
+   const now=ctx.currentTime;
+   if(!noiseBuffer){
+    noiseBuffer=ctx.createBuffer(1,Math.floor(ctx.sampleRate*.035),ctx.sampleRate);
+    const data=noiseBuffer.getChannelData(0);
+    for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,2.2);
+   }
+   const master=ctx.createGain();
+   master.gain.setValueAtTime(.72,now);
+   master.connect(ctx.destination);
+
+   const body=ctx.createOscillator();
+   const bodyGain=ctx.createGain();
+   body.type="triangle";
+   body.frequency.setValueAtTime(235+Math.random()*18,now);
+   body.frequency.exponentialRampToValueAtTime(118,now+.095);
+   bodyGain.gain.setValueAtTime(.0001,now);
+   bodyGain.gain.exponentialRampToValueAtTime(.105,now+.004);
+   bodyGain.gain.exponentialRampToValueAtTime(.0001,now+.105);
+   body.connect(bodyGain);bodyGain.connect(master);
+   body.start(now);body.stop(now+.11);
+
+   const tick=ctx.createOscillator();
+   const tickGain=ctx.createGain();
+   tick.type="sine";
+   tick.frequency.setValueAtTime(1450+Math.random()*180,now);
+   tick.frequency.exponentialRampToValueAtTime(720,now+.028);
+   tickGain.gain.setValueAtTime(.0001,now);
+   tickGain.gain.exponentialRampToValueAtTime(.038,now+.002);
+   tickGain.gain.exponentialRampToValueAtTime(.0001,now+.042);
+   tick.connect(tickGain);tickGain.connect(master);
+   tick.start(now);tick.stop(now+.045);
+
+   const noise=ctx.createBufferSource();
+   const filter=ctx.createBiquadFilter();
+   const noiseGain=ctx.createGain();
+   noise.buffer=noiseBuffer;
+   filter.type=" bandpass".trim();
+   filter.frequency.setValueAtTime(2350,now);
+   filter.Q.setValueAtTime(.8,now);
+   noiseGain.gain.setValueAtTime(.0001,now);
+   noiseGain.gain.exponentialRampToValueAtTime(.022,now+.002);
+   noiseGain.gain.exponentialRampToValueAtTime(.0001,now+.032);
+   noise.connect(filter);filter.connect(noiseGain);noiseGain.connect(master);
+   noise.start(now);noise.stop(now+.035);
   }catch(error){console.debug("Button click sound unavailable:",error);}
  }
  document.addEventListener("click",event=>{
