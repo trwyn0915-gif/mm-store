@@ -217,10 +217,14 @@ export function createRipOnline() {
     return data || [];
   }
 
+  let pendingMovementPayload = null;
+  let movementBroadcastInFlight = false;
+
   async function publishMove(position) {
     if (!channel || !playerChannel || !currentUser) return;
-    const now = performance.now();
-    const payload = {
+    // Keep only the newest position while a network send is pending. This prevents
+    // a slow phone/network from building a queue of obsolete coordinates.
+    pendingMovementPayload = {
       user_id: currentUser.id,
       room_id: currentRoom,
       x: Number.isFinite(position.x) ? position.x : 0,
@@ -230,47 +234,62 @@ export function createRipOnline() {
       character_id: String(position.skin || "hero").slice(0, 20),
       sent_at: new Date(Date.now() + serverClockOffsetMs).toISOString()
     };
+    if (movementBroadcastInFlight) return;
+    movementBroadcastInFlight = true;
+    try {
+      while (pendingMovementPayload && playerChannel && currentUser) {
+        const payload = pendingMovementPayload;
+        pendingMovementPayload = null;
+        const now = performance.now();
 
-    if (now - lastPresenceTrack >= 10000) {
-      lastPresenceTrack = now;
-      channel.track({ user_id: currentUser.id })
-        .then(presenceResult => {
-          if (presenceResult !== "ok") console.warn("Presence update was not accepted:", presenceResult);
-        })
-        .catch(presenceError => console.warn("Presence update failed:", presenceError));
-    }
+        if (now - lastPresenceTrack >= 10000) {
+          lastPresenceTrack = now;
+          channel?.track({ user_id: currentUser.id })
+            .then(presenceResult => {
+              if (presenceResult !== "ok") console.warn("Presence update was not accepted:", presenceResult);
+            })
+            .catch(presenceError => console.warn("Presence update failed:", presenceError));
+        }
 
-    // Fast path: send movement directly over this authenticated player's own private topic.
-    const result = await playerChannel.send({
-      type: "broadcast",
-      event: "player_position",
-      payload
-    });
-    if (result !== "ok") throw new Error("ارسال حرکت بازیکن تأیید نشد.");
+        // Send one fresh position at a time; intermediate stale positions are coalesced.
+        const result = await playerChannel.send({
+          type: "broadcast",
+          event: "player_position",
+          payload
+        });
+        if (result !== "ok") throw new Error("ارسال حرکت بازیکن تأیید نشد.");
 
-    // Slow path: persist a snapshot periodically; never wait for the database to animate peers.
-    if (!positionPersistInFlight && now - lastMovementWrite >= 1500) {
-      lastMovementWrite = now;
-      positionPersistInFlight = true;
-      supabase.from("world_players")
-        .update({
-          x: payload.x,
-          y: payload.y,
-          facing: payload.facing,
-          display_name: payload.display_name,
-          character_id: payload.character_id,
-          room_id: currentRoom
-        })
-        .eq("user_id", currentUser.id)
-        .eq("room_id", currentRoom)
-        .select("user_id")
-        .maybeSingle()
-        .then(({ data, error }) => {
-          if (error) console.warn("Player snapshot save failed:", error);
-          else if (!data?.user_id) console.warn("Player snapshot was not accepted by server.");
-        })
-        .catch(error => console.warn("Player snapshot save failed:", error))
-        .finally(() => { positionPersistInFlight = false; });
+        // Persist an occasional snapshot without blocking realtime movement.
+        if (!positionPersistInFlight && now - lastMovementWrite >= 1500) {
+          lastMovementWrite = now;
+          positionPersistInFlight = true;
+          supabase.from("world_players")
+            .update({
+              x: payload.x,
+              y: payload.y,
+              facing: payload.facing,
+              display_name: payload.display_name,
+              character_id: payload.character_id,
+              room_id: payload.room_id
+            })
+            .eq("user_id", currentUser.id)
+            .eq("room_id", payload.room_id)
+            .select("user_id")
+            .maybeSingle()
+            .then(({ data, error }) => {
+              if (error) console.warn("Player snapshot save failed:", error);
+              else if (!data?.user_id) console.warn("Player snapshot was not accepted by server.");
+            })
+            .catch(error => console.warn("Player snapshot save failed:", error))
+            .finally(() => { positionPersistInFlight = false; });
+        }
+      }
+    } finally {
+      movementBroadcastInFlight = false;
+      // A new position may have arrived just as the send loop was finishing.
+      if (pendingMovementPayload && playerChannel && currentUser) {
+        publishMove({ ...pendingMovementPayload, displayName: pendingMovementPayload.display_name, skin: pendingMovementPayload.character_id });
+      }
     }
   }
 
