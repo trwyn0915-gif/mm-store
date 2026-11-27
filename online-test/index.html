@@ -642,6 +642,25 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
   margin:0!important;z-index:40!important;
  }
 }
+
+/* v271: first-entry orientation gate, then loading, then the landscape home screen. */
+#orientationGate{
+ position:fixed;inset:0;z-index:30000;display:flex;align-items:center;justify-content:center;
+ padding:22px;background:radial-gradient(ellipse at 50% 20%,#1265d9,#061a83 72%);
+ color:#f4f8ff;text-align:center
+}
+.orientation-gate-card{
+ width:min(440px,92vw);padding:30px 22px;border:1px solid #58cfff88;border-radius:24px;
+ background:linear-gradient(145deg,#082d78ee,#07194fee);box-shadow:0 18px 60px #00104499
+}
+.orientation-gate-mark{font-size:clamp(54px,14vw,76px);font-weight:1000;letter-spacing:-.08em;color:#dff7ff;text-shadow:0 0 24px #31bfff;margin-bottom:12px}
+.orientation-gate-card strong{display:block;font-size:clamp(20px,5vw,26px);font-weight:1000}
+.orientation-gate-card p{margin:12px 0 22px;font-size:15px;line-height:1.9;color:#d7eaff}
+#orientationGateStart{width:100%;min-height:58px;border:1px solid #ffe66c;border-radius:15px;background:linear-gradient(135deg,#ffe45a,#ffad12);color:#15234a;font:inherit;font-size:18px;font-weight:1000;box-shadow:0 8px 24px #00104466;cursor:pointer}
+#orientationGateStart:disabled{opacity:.7;cursor:wait}
+#rotatePrompt.hidden{display:none!important}
+#loadingScreen.visible{display:flex!important}
+@media(min-width:761px){.orientation-gate-card{width:min(500px,80vw)}}
 </style>
 </head>
 <body>
@@ -697,6 +716,14 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
   <button type="button" id="dismissClockWarning">متوجه شدم</button>
  </div>
  <div id="loadingScreen" role="status" aria-live="polite" aria-label="در حال بارگذاری بازی"><div class="loading-ui"><div class="loading-track"><div id="loadingFill" class="loading-fill"></div><span id="loadingPercent" class="loading-percent">۳٪</span></div></div></div>
+ <div id="orientationGate" role="dialog" aria-modal="true" aria-label="آماده‌سازی حالت افقی">
+  <div class="orientation-gate-card">
+   <div class="orientation-gate-mark" aria-hidden="true">MM</div>
+   <strong>آماده ورود به دنیای MM هستی؟</strong>
+   <p>برای نمایش درست بازی، ابتدا صفحه را افقی می‌کنیم.</p>
+   <button type="button" id="orientationGateStart">ورود و چرخش صفحه</button>
+  </div>
+ </div>
  <div id="rotatePrompt"><section class="home-menu" aria-label="منوی اصلی MM WORLD"><div class="home-brand"><div class="home-crown">♛</div><div class="home-logo">MM</div><div class="home-world">WORLD</div><div class="home-tagline">دنیای آزاد نقش‌آفرینی آنلاین</div><div class="home-divider"></div><div class="home-union">اتحادیه MM</div><div class="home-character-card" aria-label="کاراکتر انتخاب‌شده"><canvas id="homeCharacterPreview" width="240" height="240" aria-label="نمایش سه‌بعدی کاراکتر فعلی"></canvas><strong id="homeCharacterName">قهرمان</strong><small>کاراکتر انتخاب‌شده</small></div><a class="creator-panel-link" href="https://trwyn0915-gif.github.io/mm-clan-site-2026/" target="_blank" rel="noopener noreferrer">پنل خدمات سازنده</a></div><div class="home-actions"><div class="home-wallet" aria-label="موجودی سکه"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#ffcf22" stroke="#e99b00" stroke-width="3"/><circle cx="32" cy="32" r="22" fill="#f5a900" stroke="#ffe36b" stroke-width="3"/><path d="M32 13l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.6L32 41.8l-11.3 5.9 2.2-12.6-9.1-8.9 12.6-1.8Z" fill="#fff08a" stroke="#d98500" stroke-width="1.5" stroke-linejoin="round"/></svg><strong id="homeCoinBalance">۰</strong><button type="button" class="coin-plus" id="homeCoinPlus" aria-label="باز کردن فروشگاه">+</button></div><button id="startLandscape" class="home-action home-enter"><span class="home-action-icon">▶</span><span><b>ورود به بازی</b><small>ورود به دنیای آنلاین MM</small></span><span class="home-arrow">‹</span></button><button id="homeShop" class="home-action"><span class="home-action-icon">▣</span><span><b>فروشگاه</b><small>انتخاب و خرید کاراکتر</small></span><span class="home-arrow">‹</span></button><button id="homeSettings" class="home-action"><span class="home-action-icon">⚙</span><span><b>تنظیمات</b><small>مدیریت نام بازیکن</small></span><span class="home-arrow">‹</span></button><button id="homeHelp" class="home-action"><span class="home-action-icon">?</span><span><b>راهنمای بازی</b><small>آشنایی با کنترل‌ها و مأموریت‌ها</small></span><span class="home-arrow">‹</span></button><div id="connectionError" role="alert" style="display:none;margin-top:4px;padding:10px;border:1px solid #ff7b88;border-radius:10px;color:#ffd2d9;font-size:12px;line-height:1.8;overflow-wrap:anywhere"></div><div class="build-version" aria-label="شماره نسخه">آپدیت ۱۲ · نسخه آنلاین</div><a class="creator-panel-link-mobile" href="https://trwyn0915-gif.github.io/mm-clan-site-2026/" target="_blank" rel="noopener noreferrer">پنل خدمات سازنده</a></div></section></div><div id="homeSettingsModal" class="home-modal" aria-hidden="true"><section class="home-modal-card"><h2>تنظیمات بازیکن</h2><label for="homePlayerName">نام بازیکن</label><input id="homePlayerName" maxlength="20" minlength="2" value="بازیکن MM"><div class="home-modal-actions"><button id="saveHomeSettings" class="home-modal-primary">ذخیره</button><button class="home-modal-close" data-home-close="homeSettingsModal">بستن</button></div></section></div><div id="homeHelpModal" class="home-modal" aria-hidden="true"><section class="home-modal-card"><h2>راهنمای MM WORLD</h2><p>حرکت: جوی‌استیک پایین صفحه یا کلیدهای جهت‌دار و WASD</p><p>تعامل: دکمه تعامل یا کلید E</p><p>مأموریت: با نگهبان دهکده صحبت کن و گیاهان جنگل را جمع‌آوری کن</p><p>بازیکنان دیگر را به‌صورت زنده در دنیای مشترک می‌بینی</p><div class="home-modal-actions"><button class="home-modal-primary" data-home-close="homeHelpModal">متوجه شدم</button></div></section></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
@@ -1282,6 +1309,29 @@ function startBackgroundMusic(){
  backgroundMusic.play().catch(error=>console.info("Background music could not start:",error));
 }
 document.addEventListener("visibilitychange",()=>{if(document.hidden)backgroundMusic.pause();else if(connected)startBackgroundMusic();});
+async function enterOrientationGate(){
+ if(desktopDevice){document.body.classList.add("desktop-blocked");return;}
+ const gate=$("orientationGate"),gateBtn=$("orientationGateStart");
+ gateBtn.disabled=true;gateBtn.textContent="در حال چرخاندن صفحه...";
+ try{
+  const root=document.documentElement;
+  if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();
+ }catch(e){console.info("Fullscreen unavailable:",e);}
+ try{
+  if(screen.orientation?.lock)await screen.orientation.lock("landscape");
+ }catch(e){console.info("Landscape lock unavailable; keeping the portrait fallback:",e);}
+ await waitForStableViewport();
+ gate.hidden=true;gate.style.display="none";
+ const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
+ showLoading();setLoadingProgress(100,"در حال آماده‌سازی صفحه اصلی...");
+ await waitForLoadingProgress(100);
+ await new Promise(resolve=>setTimeout(resolve,350));
+ hideLoading();
+ document.body.classList.remove("exit-to-page");
+ prompt.hidden=false;prompt.classList.remove("hidden");
+ gateBtn.disabled=false;gateBtn.textContent="ورود و چرخش صفحه";
+}
+$("orientationGateStart").addEventListener("click",enterOrientationGate);
 async function startFromPage(){if(desktopDevice){document.body.classList.add("desktop-blocked");return;}exitFlowActive=true;exitApproved=false;installExitGuard();startBackgroundMusic();const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");showLoading();const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال فعال‌سازی حالت افقی و تمام‌صفحه...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{if(screen.orientation?.lock)await screen.orientation.lock("landscape");}catch(e){console.info("Landscape lock unavailable; using the rotated landscape game stage",e);}await waitForStableViewport();setLoadingProgress(8,"در حال آماده‌سازی محیط سه‌بعدی...");document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
 $("connect").addEventListener("click",startFromPage);
 $("startLandscape").addEventListener("click",startFromPage);
@@ -1384,7 +1434,7 @@ window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای
 stats();
 try{online=createRipOnline();online.loadHomeEconomy().then(data=>{if(data){applyEconomy(data.economy);const equipped=data.character?.character_id;if(CHARACTER_ASSETS[equipped]&&ownedCharacters.has(equipped)){player.skin=equipped;persist();}renderHomeCharacter(player.skin);}}).catch(error=>console.warn("Home wallet/character refresh failed:",error));renderHomeCharacter(player.skin);}catch(error){console.warn("Home wallet initialization failed:",error);}
 requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=270",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=271",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
