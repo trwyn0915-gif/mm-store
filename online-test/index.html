@@ -788,65 +788,26 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  <div id="rotatePrompt" class="hidden" hidden><section class="connection-retry-card" role="alert"><strong>ورود به بازی انجام نشد</strong><p id="connectionError"></p><button type="button" id="startLandscape">تلاش دوباره برای ورود آنلاین</button></section></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script>
-/* Layered tactile UI click: a muted body, crisp transient and tiny glass overtone. */
+/* Use a real CC0 recorded plastic click instead of a synthesized oscillator sound.
+   Source: Takes click sound, derived from a public-domain Freesound recording. */
 (()=>{
- let clickAudioContext=null;
- let noiseBuffer=null;
- function playButtonClickSound(){
-  try{
-   const AudioContextClass=window.AudioContext||window.webkitAudioContext;
-   if(!AudioContextClass)return;
-   if(!clickAudioContext)clickAudioContext=new AudioContextClass();
-   const ctx=clickAudioContext;
-   if(ctx.state==="suspended")ctx.resume().catch(()=>{});
-   const now=ctx.currentTime;
-   if(!noiseBuffer){
-    noiseBuffer=ctx.createBuffer(1,Math.floor(ctx.sampleRate*.035),ctx.sampleRate);
-    const data=noiseBuffer.getChannelData(0);
-    for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,2.2);
-   }
-   const master=ctx.createGain();
-   master.gain.setValueAtTime(.72,now);
-   master.connect(ctx.destination);
-
-   const body=ctx.createOscillator();
-   const bodyGain=ctx.createGain();
-   body.type="triangle";
-   body.frequency.setValueAtTime(235+Math.random()*18,now);
-   body.frequency.exponentialRampToValueAtTime(118,now+.095);
-   bodyGain.gain.setValueAtTime(.0001,now);
-   bodyGain.gain.exponentialRampToValueAtTime(.105,now+.004);
-   bodyGain.gain.exponentialRampToValueAtTime(.0001,now+.105);
-   body.connect(bodyGain);bodyGain.connect(master);
-   body.start(now);body.stop(now+.11);
-
-   const tick=ctx.createOscillator();
-   const tickGain=ctx.createGain();
-   tick.type="sine";
-   tick.frequency.setValueAtTime(1450+Math.random()*180,now);
-   tick.frequency.exponentialRampToValueAtTime(720,now+.028);
-   tickGain.gain.setValueAtTime(.0001,now);
-   tickGain.gain.exponentialRampToValueAtTime(.038,now+.002);
-   tickGain.gain.exponentialRampToValueAtTime(.0001,now+.042);
-   tick.connect(tickGain);tickGain.connect(master);
-   tick.start(now);tick.stop(now+.045);
-
-   const noise=ctx.createBufferSource();
-   const filter=ctx.createBiquadFilter();
-   const noiseGain=ctx.createGain();
-   noise.buffer=noiseBuffer;
-   filter.type=" bandpass".trim();
-   filter.frequency.setValueAtTime(2350,now);
-   filter.Q.setValueAtTime(.8,now);
-   noiseGain.gain.setValueAtTime(.0001,now);
-   noiseGain.gain.exponentialRampToValueAtTime(.022,now+.002);
-   noiseGain.gain.exponentialRampToValueAtTime(.0001,now+.032);
-   noise.connect(filter);filter.connect(noiseGain);noiseGain.connect(master);
-   noise.start(now);noise.stop(now+.035);
-  }catch(error){console.debug("Button click sound unavailable:",error);}
- }
+ const clickSoundUrl="https://gettakes.app/sounds/click.wav";
+ const clickPlayers=Array.from({length:4},()=>{
+  const audio=new Audio(clickSoundUrl);
+  audio.preload="auto";
+  audio.volume=.42;
+  return audio;
+ });
+ let clickPlayerIndex=0;
  document.addEventListener("click",event=>{
-  if(event.target instanceof Element&&event.target.closest("button"))playButtonClickSound();
+  if(!(event.target instanceof Element)||!event.target.closest("button"))return;
+  const audio=clickPlayers[clickPlayerIndex++%clickPlayers.length];
+  try{
+   audio.pause();
+   audio.currentTime=0;
+   const playback=audio.play();
+   if(playback&&typeof playback.catch==="function")playback.catch(()=>{});
+  }catch(error){console.debug("Button click sound unavailable:",error);}
  },true);
 })();
 (()=>{const btn=document.getElementById("orientationGateStart");if(!btn)return;btn.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();if(btn.dataset.started==="1")return;btn.dataset.started="1";btn.disabled=true;btn.textContent="در حال آماده‌سازی بازی...";const root=document.documentElement;try{if(!document.fullscreenElement&&root.requestFullscreen){const p=root.requestFullscreen();p?.catch(()=>{});}}catch(_){}try{const p=screen.orientation?.lock?.("landscape");p?.catch(()=>{});}catch(_){}window.__mmStartRequested=true;const gate=document.getElementById("orientationGate");if(gate){gate.hidden=true;gate.style.display="none";}document.body.classList.remove("exit-to-page");const loading=document.getElementById("loadingScreen");if(loading)loading.classList.add("visible");if(typeof window.__mmStartGame==="function"){window.__mmStartGame();return;}clearTimeout(window.__mmStartWaitTimer);window.__mmStartWaitTimer=setTimeout(()=>{if(window.__mmStartRequested){window.__mmStartRequested=false;const p=document.getElementById("connectionError");if(p)p.textContent="بازی آماده نشد. صفحه را تازه‌سازی کن و دوباره تلاش کن.";const prompt=document.getElementById("rotatePrompt");if(prompt){prompt.hidden=false;prompt.classList.remove("hidden");}if(loading)loading.classList.remove("visible");if(gate){gate.hidden=false;gate.style.display="";}btn.dataset.started="";btn.disabled=false;btn.textContent="شروع بازی";}},20000);},{passive:false});})();
