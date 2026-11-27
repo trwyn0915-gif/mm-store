@@ -230,6 +230,8 @@ export function createRipOnline() {
       lastPublishedPosition = { x, y };
       return { accepted: true };
     } catch (error) {
+      const detail = String(error?.message || "");
+      if (/too frequent/i.test(detail)) return { accepted: true, skipped: true };
       console.warn("Server rejected player movement:", error);
       try {
         const authoritative = await loadCharacter();
