@@ -267,7 +267,7 @@ body.desktop-blocked #desktopBlock{display:flex!important}
 @media(max-width:760px){.bottom.chat-open{width:min(520px,calc(100vw - 16px))!important;right:8px!important;left:8px!important}.bottom.chat-open .chat-panel{max-height:calc(var(--chat-vv-height,100dvh) - 16px);padding:10px}.bottom.chat-open .chatlog{height:auto;min-height:65px;max-height:34dvh}.quick-chat button{padding:7px 11px}}
 @media(min-width:761px){.bottom.chat-open{left:auto!important;width:min(440px,48vw)!important;right:14px!important}}
 /* Chat viewport fix v197: render the chat outside the rotated game wrapper. */
-.chat-panel.chat-floating{position:fixed!important;z-index:5000!important;display:flex!important;flex-direction:column!important;right:max(12px,env(safe-area-inset-right))!important;left:auto!important;top:auto!important;bottom:calc(var(--chat-keyboard-inset,0px) + max(12px,env(safe-area-inset-bottom)))!important;width:min(560px,calc(100vw - 24px))!important;max-height:calc(var(--chat-vv-height,100dvh) - 24px)!important;height:auto!important;min-height:0!important;margin:0!important;padding:12px!important;overflow:hidden!important;box-sizing:border-box!important;transform:none!important}
+.chat-panel.chat-floating{position:fixed!important;z-index:5000!important;display:flex!important;flex-direction:column!important;right:max(12px,env(safe-area-inset-right))!important;left:auto!important;top:auto!important;bottom:calc(var(--chat-keyboard-inset,0px) + max(12px,env(safe-area-inset-bottom)))!important;width:min(600px,calc(100vw - 24px))!important;max-height:calc(var(--chat-vv-height,100dvh) - 24px)!important;height:auto!important;min-height:0!important;margin:0!important;padding:12px!important;overflow:hidden!important;box-sizing:border-box!important;transform:none!important}
 .chat-panel.chat-floating .chat-heading,.chat-panel.chat-floating .quick-chat,.chat-panel.chat-floating .chatrow{flex:0 0 auto!important}
 .chat-panel.chat-floating .chatlog{flex:1 1 auto!important;height:auto!important;min-height:64px!important;max-height:min(30dvh,220px)!important;overflow-y:auto!important;overscroll-behavior:contain}
 .chat-panel.chat-floating .chatrow input{font-size:16px!important;min-height:46px!important}
@@ -416,7 +416,7 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 .chat-panel.chat-floating .chat-heading h2{display:none!important}
 .chat-panel.chat-floating>.quick-chat{display:none!important}
 .chat-panel.chat-floating>.chat-heading{flex:0 0 30px!important;min-height:30px!important;height:30px!important;justify-content:flex-start!important;padding:0!important;margin:0!important}
-.chat-panel.chat-floating{width:min(320px,74vw)!important;height:min(260px,calc(var(--chat-vv-height,100dvh) - 24px))!important;max-height:calc(var(--chat-vv-height,100dvh) - 24px)!important;min-height:150px!important;padding:9px!important;gap:6px!important}
+.chat-panel.chat-floating{width:min(360px,82vw)!important;height:min(260px,calc(var(--chat-vv-height,100dvh) - 24px))!important;max-height:calc(var(--chat-vv-height,100dvh) - 24px)!important;min-height:150px!important;padding:9px!important;gap:6px!important}
 .chat-panel.chat-floating>#chatlog{flex:1 1 auto!important;min-height:48px!important;max-height:none!important}
 .chat-panel.chat-floating>#chatform{flex:0 0 48px!important;height:48px!important;min-height:48px!important}
 @media(max-width:760px){
@@ -952,7 +952,7 @@ async function stayInGame(){if(!document.fullscreenElement){const root=document.
 $("stayInGame").addEventListener("click",stayInGame);
 async function confirmExitSite(){backgroundMusic.pause();backgroundMusic.currentTime=0;exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";const startBtn=$("startLandscape");startBtn.disabled=false;startBtn.textContent="ورود به سایت";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
 $("confirmExit").addEventListener("click",confirmExitSite);
-function toggleChat(){if(chatPanel.classList.contains("chat-floating")){closeChatPanel();return;}openChatPanel(true);}
+function toggleChat(){if(chatPanel.classList.contains("chat-floating")){closeChatPanel();return;}openChatPanel(false);}
 $("chatToggle").addEventListener("click",toggleChat);
 $("quickChat").addEventListener("click",toggleChat);
 $("quickInteract").addEventListener("click",interact);
@@ -987,6 +987,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=206",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=207",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
