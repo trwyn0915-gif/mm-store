@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
 <meta name="theme-color" content="#101a20">
 <meta name="description" content="MM World؛ دنیای نقش‌آفرینی آنلاین اتحادیه MM">
 <link rel="manifest" href="./manifest.webmanifest">
@@ -695,6 +695,19 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  text-align:center;
 }
 
+
+/* Keep the player-name form inside Android's visible area when the soft keyboard opens. */
+#playerNameSetup{top:var(--name-vv-top,0px);height:var(--name-vv-height,100dvh);min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#playerNameSetup.open{align-items:center}
+.player-name-card{max-height:100%;overflow-y:auto}
+#playerNameSetup.keyboard-open{align-items:flex-start;padding:8px 14px}
+#playerNameSetup.keyboard-open .player-name-card{width:min(440px,94vw);padding:42px 18px 12px;gap:0}
+#playerNameSetup.keyboard-open #playerNameExit{top:7px;right:8px;width:36px;height:36px}
+#playerNameSetup.keyboard-open .player-name-card h2{font-size:clamp(23px,5vw,29px);line-height:1.25}
+#playerNameSetup.keyboard-open .player-name-card p{margin:3px 0 8px;font-size:13px;line-height:1.5}
+#playerNameSetup.keyboard-open #playerNameSetupInput{height:44px;margin:0 0 8px;padding:8px}
+#playerNameSetup.keyboard-open #playerNameConfirm{min-height:44px}
+
 </style>
 </head>
 <body>
@@ -1087,12 +1100,26 @@ function makeDefaultPlayerName(id){
  const number=Number.isFinite(parsed)?(parsed%90000)+10000:93711;
  return "Player #"+number;
 }
+function syncPlayerNameViewport(){
+ const vv=window.visualViewport;
+ const height=vv?.height||window.innerHeight;
+ const top=vv?.offsetTop||0;
+ const keyboardOpen=window.innerHeight-(height+top)>100;
+ const modal=$("playerNameSetup");
+ document.documentElement.style.setProperty("--name-vv-height",height+"px");
+ document.documentElement.style.setProperty("--name-vv-top",top+"px");
+ modal.classList.toggle("keyboard-open",keyboardOpen);
+}
+window.visualViewport?.addEventListener("resize",syncPlayerNameViewport);
+window.visualViewport?.addEventListener("scroll",syncPlayerNameViewport);
+window.addEventListener("resize",syncPlayerNameViewport);
 function showPlayerNameSetup(){
  nameSetupRequired=true;nameSetupOpen=true;
  const modal=$("playerNameSetup"),field=$("playerNameSetupInput");
  field.value=player.name||makeDefaultPlayerName(userId);
+ syncPlayerNameViewport();
  modal.classList.add("open");modal.setAttribute("aria-hidden","false");
- requestAnimationFrame(()=>{field.focus();field.select();});
+ requestAnimationFrame(()=>{field.focus();field.select();setTimeout(()=>{syncPlayerNameViewport();field.scrollIntoView({block:"nearest",behavior:"smooth"});},180);});
 }
 function hidePlayerNameSetup(){
  nameSetupOpen=false;
