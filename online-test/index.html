@@ -655,8 +655,8 @@ const W=5000,H=5000,ROOM="mm-world-main";
 const MAP_SCALE=7/24,MAP_Y_OFFSET=875,mapX=v=>v*MAP_SCALE,mapY=v=>MAP_Y_OFFSET+v*MAP_SCALE;
 const skins={teal:"#35c4b2",gold:"#e7b84f",violet:"#a98bdf",red:"#df7770"};
 const stored=JSON.parse(localStorage.getItem("mmworld-profile")||"{}");
-const ownedCharacters=new Set(["robot","hero",...(Array.isArray(stored.ownedCharacters)?stored.ownedCharacters.filter(id=>CHARACTER_IDS.includes(id)):[])]);
-const savedSkin=stored.skin==="robot"?"hero":CHARACTER_IDS.includes(stored.skin)&&ownedCharacters.has(stored.skin)?stored.skin:"hero";
+const ownedCharacters=new Set(["robot","hero"]);
+const savedSkin=CHARACTER_IDS.includes(stored.skin)&&ownedCharacters.has(stored.skin)?stored.skin:"hero";
 $("playerName").value=stored.name||"بازیکن MM";$("skin").value=savedSkin;
 const spawnOffsets=[[-76,-20],[-38,-20],[0,-20],[38,-20],[76,-20],[-76,20],[-38,20],[0,20],[38,20],[76,20]];
 const spawnPoints=spawnOffsets.map(([dx,dy])=>({x:W/2+dx,y:H/2+dy}));
@@ -670,7 +670,7 @@ function chooseSpawnPoint(occupiedRows=[]){
  return leastCrowded[Math.floor(Math.random()*leastCrowded.length)].point;
 }
 let player={x:W/2,y:H/2,face:"down",avatarYaw:Math.PI,name:$("playerName").value,skin:savedSkin,level:1,xp:0,moving:false};
-let coins=Number(stored.coins)||0,herbs=Number(stored.herbs)||0,questStarted=!!stored.questStarted,questDone=!!stored.questDone;const collected=new Set(Array.isArray(stored.collected)?stored.collected:[]);
+let coins=0,herbs=0,questStarted=false,questDone=false;const collected=new Set();
 let online=null,userId="",connected=false,players={},lastSend=0,lastSave=0,lastChat=0,chatCooldown=0,lastRemoteCleanup=0,lastRemoteRefresh=0,remoteRefreshInFlight=false;const seenChatIds=new Set();
 let remotePresenceIds=new Set();
 function removeRemotePlayer(id){
@@ -715,12 +715,50 @@ const trees=[];for(let i=0;i<1000;i++){let x=mapX(1200+((i*3170)%21400)),y=mapY(
 const herbsSpots=[{x:mapX(5200),y:mapY(4200)},{x:mapX(6900),y:mapY(5200)},{x:mapX(3900),y:mapY(6900)},{x:mapX(17500),y:mapY(4200)},{x:mapX(19400),y:mapY(6100)},{x:mapX(16400),y:mapY(7600)},{x:mapX(5700),y:mapY(13900)},{x:mapX(8200),y:mapY(15100)},{x:mapX(18300),y:mapY(13900)},{x:mapX(20700),y:mapY(12000)}].map((p,i)=>({...p,id:i,taken:collected.has(i)}));
 const npc={x:mapX(11900),y:mapY(8600),name:"نگهبان دهکده"};
 const buildings=[{x:mapX(10500),y:mapY(6500),w:2800*MAP_SCALE,h:1500*MAP_SCALE,label:"تالار دهکده",color:"#98734e"},{x:mapX(14400),y:mapY(9000),w:2100*MAP_SCALE,h:1450*MAP_SCALE,label:"بازارچه",color:"#846d52"},{x:mapX(9200),y:mapY(11600),w:1800*MAP_SCALE,h:1250*MAP_SCALE,label:"خانه مسافر",color:"#6b7760"}];
-function persist(){localStorage.setItem("mmworld-profile",JSON.stringify({name:player.name,skin:player.skin,coins,herbs,questStarted,questDone,collected:[...collected],ownedCharacters:[...ownedCharacters]}));}
+function persist(){localStorage.setItem("mmworld-profile",JSON.stringify({name:player.name}));}
+function applyEconomy(data){
+ if(!data||typeof data!=="object")throw new Error("اطلاعات اقتصاد بازی از سرور معتبر نیست.");
+ coins=Math.max(0,Number(data.balance)||0);
+ ownedCharacters.clear();
+ for(const id of Array.isArray(data.owned_characters)?data.owned_characters:[])if(CHARACTER_IDS.includes(id))ownedCharacters.add(id);
+ collected.clear();
+ for(const id of Array.isArray(data.collected_ids)?data.collected_ids:[])if(Number.isInteger(Number(id)))collected.add(Number(id));
+ herbs=Math.max(0,Number(data.herbs)||collected.size);
+ questStarted=!!data.quest_started;
+ questDone=!!data.quest_done;
+ if(typeof herbsSpots!=="undefined")herbsSpots.forEach(spot=>spot.taken=collected.has(spot.id));
+ stats();
+}
 function openCharacterShop(){renderCharacterShop();$("characterShop").classList.add("open");$("characterShop").setAttribute("aria-hidden","false");}
 function closeCharacterShop(){$("characterShop").classList.remove("open");$("characterShop").setAttribute("aria-hidden","true");}
 function renderCharacterShop(){const list=$("shopItems");$("shopCoins").textContent=new Intl.NumberFormat("fa-IR").format(coins);list.replaceChildren();for(const id of ["robot","hero","knight","wizard","pirate","astronaut","zombie","princess"]){const owned=ownedCharacters.has(id),price=CHARACTER_PRICES[id]||0,card=document.createElement("article");card.className="shop-item";const name=document.createElement("strong");name.textContent=CHARACTER_NAMES[id];const detail=document.createElement("small");detail.textContent=id==="hero"?"رایگان · کاراکتر پیش‌فرض":id==="robot"?"رایگان":owned?"خریداری‌شده":new Intl.NumberFormat("fa-IR").format(price)+" سکه";const action=document.createElement("button");action.type="button";action.dataset.character=id;action.dataset.action=owned?"equip":"buy";action.className=owned?"":"primary";action.textContent=owned?(player.skin===id?"انتخاب شده":"انتخاب کاراکتر"):"خرید و انتخاب";card.append(name,detail,action);list.append(card);}}
-async function chooseCharacter(id){if(!ownedCharacters.has(id))return;player.skin=id;persist();renderCharacterShop();if(connected){await ensureAvatar("self",id);await online.saveCharacter({displayName:player.name,characterId:id,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});}sayToast("کاراکتر "+CHARACTER_NAMES[id]+" انتخاب شد");}
-$("shopItems").addEventListener("click",async e=>{const btn=e.target.closest("button[data-character]");if(!btn)return;const id=btn.dataset.character;if(btn.dataset.action==="equip"){await chooseCharacter(id);return;}const price=CHARACTER_PRICES[id];if(!price||ownedCharacters.has(id))return;if(coins<price){sayToast("سکه کافی برای خرید این کاراکتر نداری");return;}coins-=price;ownedCharacters.add(id);persist();stats();await chooseCharacter(id);renderCharacterShop();});
+async function chooseCharacter(id){
+ if(!connected||!ownedCharacters.has(id))return;
+ try{
+  await online.equipCharacter(id);
+  player.skin=id;persist();
+  await ensureAvatar("self",id);
+  renderCharacterShop();
+  sayToast("کاراکتر "+CHARACTER_NAMES[id]+" انتخاب شد");
+ }catch(error){console.error("Character equip rejected:",error);sayToast("سرور اجازه انتخاب این کاراکتر را نداد");}
+}
+$("shopItems").addEventListener("click",async e=>{
+ const btn=e.target.closest("button[data-character]");if(!btn)return;
+ if(!connected||!online){sayToast("برای خرید و انتخاب باید وارد بازی شوی");return;}
+ const id=btn.dataset.character;
+ if(btn.disabled)return;
+ btn.disabled=true;
+ try{
+  if(btn.dataset.action==="equip"){await chooseCharacter(id);return;}
+  const data=await online.buyCharacter(id);
+  applyEconomy(data);
+  await chooseCharacter(id);
+  renderCharacterShop();
+ }catch(error){
+  console.error("Server-side character purchase rejected:",error);
+  sayToast(/Not enough coins/i.test(String(error?.message||error))?"سکه کافی برای خرید این کاراکتر نداری":"خرید توسط سرور تأیید نشد");
+ }finally{btn.disabled=false;renderCharacterShop();}
+});
 $("openShop").addEventListener("click",openCharacterShop);$("closeShop").addEventListener("click",closeCharacterShop);$("characterShop").addEventListener("click",e=>{if(e.target===$("characterShop"))closeCharacterShop();});
 function sayToast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2100);}
 function status(t){$("status").textContent=t;}
@@ -733,7 +771,7 @@ function hideLoading(){ $("loadingScreen").classList.remove("visible");clearTime
 function waitForLoadingProgress(target=100){return new Promise(resolve=>{const check=()=>{if(loadingProgressCurrent>=target){resolve();return;}requestAnimationFrame(check);};check();});}
 
 function stats(){ $("onlineCount").textContent=String(Object.keys(players).length+ (connected?1:0));$("level").textContent=player.level;$("xp").textContent=player.xp+" / "+(player.level*100);$("coins").textContent=coins;$("quest").textContent=questDone?"ماموریت تکمیل شد":questStarted?("گیاه جمع کن: "+herbs+" / ۳"):"با نگهبان دهکده صحبت کن"; }
-function addXP(n){player.xp+=n;while(player.xp>=player.level*100){player.xp-=player.level*100;player.level++;coins+=25;sayToast("سطح جدید! پاداش ۲۵ سکه گرفتی");}stats();persist();}
+function addXP(n){player.xp+=n;while(player.xp>=player.level*100){player.xp-=player.level*100;player.level++;sayToast("سطح جدید!");}stats();persist();}
 function scrollChatToLatest(){const log=$("chatlog");if(!log)return;const scroll=()=>{if(!log.isConnected||!log.getClientRects().length)return;const bottom=Math.max(0,log.scrollHeight-log.clientHeight);log.scrollTop=bottom;if(typeof log.scrollTo==="function"){try{log.scrollTo({top:bottom,behavior:"instant"});}catch(_){log.scrollTop=bottom;}}};scroll();requestAnimationFrame(()=>{scroll();requestAnimationFrame(scroll);});setTimeout(scroll,120);setTimeout(scroll,260);}
 function addChat(name,message,id=null){if(id!==null&&id!==undefined){const key=String(id);if(seenChatIds.has(key))return;seenChatIds.add(key);}const log=$("chatlog");const row=document.createElement("div");row.className="chatline";const b=document.createElement("b");b.textContent=name+": ";row.append(b,document.createTextNode(message));log.append(row);while(log.children.length>60)log.firstElementChild.remove();scrollChatToLatest();}
 function setAvatarChatBubble(record,message,expiresAt){
@@ -889,7 +927,30 @@ function move(dt){
 }
 
 function nearest(){const candidates=[{...npc,type:"npc"},...herbsSpots.filter(h=>!h.taken).map(h=>({...h,type:"herb"}))];let best=null,d=65;for(const o of candidates){let n=Math.hypot(player.x-o.x,player.y-o.y);if(n<d){d=n;best=o;}}return best;}
-function interact(){const o=nearest();if(!o){sayToast("چیزی در نزدیکی تو نیست");return;}if(o.type==="npc"){if(!questStarted){questStarted=true;sayToast("ماموریت: سه گیاه درخشان جمع کن");}else if(!questDone&&herbs>=3){questDone=true;coins+=100;addXP(80);sayToast("ماموریت کامل شد؛ ۱۰۰ سکه پاداش گرفتی");}else if(questDone){sayToast("ممنون که به دهکده کمک کردی");}else{sayToast("هنوز "+Math.max(0,3-herbs)+" گیاه دیگر لازم داری");}}else{const spot=herbsSpots.find(h=>h.id===o.id);if(spot&&!spot.taken){spot.taken=true;collected.add(spot.id);herbs++;coins+=3;addXP(12);sayToast("گیاه جمع شد؛ +۳ سکه");}}persist();stats();}
+async function interact(){
+ const o=nearest();if(!o){sayToast("چیزی در نزدیکی تو نیست");return;}
+ if(!connected||!online){sayToast("ابتدا وارد دنیای آنلاین شو");return;}
+ try{
+  await online.updatePosition({x:player.x,y:player.y,facing:player.face});
+  if(o.type==="npc"){
+   if(!questStarted){applyEconomy(await online.startQuest());sayToast("ماموریت: سه گیاه درخشان جمع کن");}
+   else if(questDone){sayToast("ممنون که به دهکده کمک کردی");}
+   else if(herbs>=3){applyEconomy(await online.completeQuest());addXP(80);sayToast("ماموریت کامل شد؛ ۱۰۰ سکه پاداش گرفتی");}
+   else sayToast("هنوز "+Math.max(0,3-herbs)+" گیاه دیگر لازم داری");
+  }else{
+   const spot=herbsSpots.find(h=>h.id===o.id);
+   if(spot&&!spot.taken){applyEconomy(await online.collectHerb(spot.id));addXP(12);sayToast("گیاه جمع شد؛ ۳ سکه دریافت کردی");}
+  }
+  persist();stats();renderCharacterShop();
+ }catch(error){
+  console.warn("Server rejected game interaction:",error);
+  const detail=String(error?.message||"");
+  if(/Move closer|Movement rejected/i.test(detail))sayToast("برای ثبت این کار کمی نزدیک‌تر شو یا لحظه‌ای صبر کن");
+  else if(/already been collected/i.test(detail))sayToast("این گیاه قبلاً جمع شده است");
+  else if(/Talk to the village guard/i.test(detail))sayToast("اول با نگهبان دهکده صحبت کن");
+  else sayToast("سرور نتوانست این فعالیت را تأیید کند");
+ }
+}
 async function connect(){
  if(connected)return;
  const name=$("playerName").value.trim().slice(0,20);
@@ -899,12 +960,13 @@ async function connect(){
  try{
   online=createRipOnline();
   const auth=await online.connect();userId=auth.userId;if(Math.abs(auth.offsetMs)>120000)showClockWarning();setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
+  const economy=await online.loadEconomy();applyEconomy(economy);
   const saved=await online.loadCharacter();setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
   if(saved){
    player.level=saved.level||1;player.xp=saved.experience||0;
-   if(saved.character_id==="robot")player.skin="hero";
-   else if(CHARACTER_ASSETS[saved.character_id]&&ownedCharacters.has(saved.character_id))player.skin=saved.character_id;
-   else player.skin="hero";
+   player.x=Number.isFinite(Number(saved.x))?Number(saved.x):W/2;
+   player.y=Number.isFinite(Number(saved.y))?Number(saved.y):H/2;
+   player.skin=CHARACTER_ASSETS[saved.character_id]&&ownedCharacters.has(saved.character_id)?saved.character_id:"hero";
   }else{player.skin="hero";}
   persist();
   setLoadingProgress(60,"در حال بارگذاری کاراکتر سه‌بعدی...");
@@ -914,7 +976,7 @@ async function connect(){
   // Create the authenticated player's room row before subscribing to their
   // private player topic; the Realtime SELECT policy checks this row.
   const roomPlayers=await online.loadRoomPlayers(ROOM);
-  const spawnPoint=chooseSpawnPoint(roomPlayers);player.x=spawnPoint.x;player.y=spawnPoint.y;
+  if(!saved){const spawnPoint=chooseSpawnPoint(roomPlayers);player.x=spawnPoint.x;player.y=spawnPoint.y;}
   await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});
   await online.joinRoom(ROOM,{
    // Presence is deliberately not trusted to create or identify player avatars.
@@ -1084,7 +1146,7 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=229",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=230",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
