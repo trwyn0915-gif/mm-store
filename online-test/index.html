@@ -274,6 +274,15 @@ body.desktop-blocked #desktopBlock{display:flex!important}
 .chat-panel.chat-floating .chatrow button{min-height:46px!important}
 @media(max-width:760px){.chat-panel.chat-floating{right:8px!important;width:min(560px,calc(100vw - 16px))!important;padding:9px!important;gap:7px!important}.chat-panel.chat-floating .chatlog{max-height:min(27dvh,190px)!important}}
 @media(orientation:portrait){.chat-panel.chat-floating{right:8px!important;left:8px!important;width:auto!important;max-height:calc(var(--chat-vv-height,100dvh) - 16px)!important}}
+/* v198: reserve a permanent, visible message composer in every chat state. */
+.chat-panel.chat-floating{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto minmax(56px,1fr) auto!important;align-content:stretch!important;row-gap:8px!important}
+.chat-panel.chat-floating #chatform{display:flex!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:2!important;flex:0 0 52px!important;min-height:52px!important;height:52px!important;width:100%!important;margin:0!important;grid-row:4!important;grid-column:1!important;overflow:visible!important}
+.chat-panel.chat-floating #chatinput{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 0!important;width:0!important;min-width:0!important;height:50px!important;min-height:50px!important;box-sizing:border-box!important}
+.chat-panel.chat-floating #chatform button{display:block!important;visibility:visible!important;opacity:1!important;flex:0 0 72px!important;min-width:72px!important;height:50px!important;min-height:50px!important}
+.chat-panel.chat-floating #chatlog{grid-row:3!important;min-height:56px!important;max-height:none!important;height:auto!important;overflow-y:auto!important}
+.chat-panel.chat-floating .chat-heading{grid-row:1!important}
+.chat-panel.chat-floating .quick-chat{grid-row:2!important}
+@media(max-width:760px){.chat-panel.chat-floating{grid-template-rows:auto auto minmax(48px,1fr) auto!important;row-gap:6px!important;padding:9px!important}.chat-panel.chat-floating #chatform{height:50px!important;min-height:50px!important;flex-basis:50px!important}.chat-panel.chat-floating #chatinput,.chat-panel.chat-floating #chatform button{height:48px!important;min-height:48px!important}}
 /* Keep the visual fill synchronized with one-percent counter steps. */\n.loading-fill{transition:width .02s linear!important}\n</style>
 </head>
 <body>
@@ -809,6 +818,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=197",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=198",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
