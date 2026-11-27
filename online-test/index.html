@@ -306,6 +306,51 @@ body.desktop-blocked #desktopBlock{display:flex!important}
  .chat-panel.chat-floating #chatform{height:50px!important;min-height:50px!important}
  .chat-panel.chat-floating #chatinput,.chat-panel.chat-floating #chatform button{height:46px!important;min-height:46px!important}
 }
+/* v200: robust flex layout; reserve a real minimum area for history and composer. */
+.chat-panel.chat-floating{
+ display:flex!important;
+ flex-direction:column!important;
+ justify-content:flex-start!important;
+ align-items:stretch!important;
+ gap:8px!important;
+ box-sizing:border-box!important;
+ height:min(440px,calc(var(--chat-vv-height,100dvh) - 24px))!important;
+ min-height:240px!important;
+ max-height:calc(var(--chat-vv-height,100dvh) - 24px)!important;
+ overflow:hidden!important;
+}
+.chat-panel.chat-floating>.chat-heading{display:flex!important;flex:0 0 36px!important;min-height:36px!important}
+.chat-panel.chat-floating>.quick-chat{display:flex!important;flex:0 0 46px!important;min-height:46px!important;max-height:46px!important;overflow-x:auto!important;overflow-y:hidden!important}
+.chat-panel.chat-floating>#chatlog{
+ display:flex!important;
+ flex:1 1 100px!important;
+ min-height:80px!important;
+ height:auto!important;
+ max-height:none!important;
+ overflow-y:auto!important;
+ box-sizing:border-box!important;
+}
+.chat-panel.chat-floating>#chatform{
+ display:flex!important;
+ flex:0 0 52px!important;
+ min-height:52px!important;
+ height:52px!important;
+ width:100%!important;
+ margin:0!important;
+ position:relative!important;
+ z-index:5!important;
+ overflow:visible!important;
+}
+.chat-panel.chat-floating>#chatform #chatinput{display:block!important;flex:1 1 0!important;width:0!important;min-width:0!important;height:48px!important;min-height:48px!important;box-sizing:border-box!important;font-size:16px!important}
+.chat-panel.chat-floating>#chatform button{display:block!important;flex:0 0 72px!important;width:72px!important;min-width:72px!important;height:48px!important;min-height:48px!important}
+@media(max-width:760px){
+ .chat-panel.chat-floating{height:min(440px,calc(var(--chat-vv-height,100dvh) - 16px))!important;max-height:calc(var(--chat-vv-height,100dvh) - 16px)!important;min-height:220px!important;padding:9px!important;gap:6px!important}
+ .chat-panel.chat-floating>.chat-heading{flex-basis:32px!important;min-height:32px!important}
+ .chat-panel.chat-floating>.quick-chat{flex-basis:42px!important;min-height:42px!important;max-height:42px!important}
+ .chat-panel.chat-floating>#chatlog{flex:1 1 80px!important;min-height:64px!important}
+ .chat-panel.chat-floating>#chatform{flex-basis:50px!important;height:50px!important;min-height:50px!important}
+ .chat-panel.chat-floating>#chatform #chatinput,.chat-panel.chat-floating>#chatform button{height:46px!important;min-height:46px!important}
+}
 /* Keep the visual fill synchronized with one-percent counter steps. */\n.loading-fill{transition:width .02s linear!important}\n</style>
 </head>
 <body>
@@ -841,6 +886,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=199",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=200",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
