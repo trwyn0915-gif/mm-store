@@ -572,12 +572,12 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  }
 }
 
-/* v264: enlarge the character and move it slightly lower toward the game-help button. */
+/* v265: preserve the character/platform proportions, scale uniformly, and nudge upward. */
 @media (max-width:760px) and (orientation:portrait){
  .home-character-card{
-  left:17%!important;top:50%!important;
-  width:min(86%,680px)!important;height:min(90%,660px)!important;
-  transform:translate(-50%,-50%)!important;
+  left:17%!important;top:47%!important;
+  width:min(205px,94%)!important;height:auto!important;
+  transform:translate(-50%,-50%) scale(1.2)!important;
  }
  .creator-panel-link-mobile{
   position:absolute!important;right:14px!important;top:50%!important;left:auto!important;bottom:auto!important;
@@ -1333,7 +1333,7 @@ window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای
 stats();
 try{online=createRipOnline();online.loadHomeEconomy().then(data=>{if(data){applyEconomy(data.economy);const equipped=data.character?.character_id;if(CHARACTER_ASSETS[equipped]&&ownedCharacters.has(equipped)){player.skin=equipped;persist();}renderHomeCharacter(player.skin);}}).catch(error=>console.warn("Home wallet/character refresh failed:",error));renderHomeCharacter(player.skin);}catch(error){console.warn("Home wallet initialization failed:",error);}
 requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=264",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=265",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
