@@ -476,22 +476,29 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 .chat-panel #chatlog .chatline{flex:0 0 auto!important;}
 .home-wallet,.hud-wallet{display:flex;align-items:center;justify-content:space-between;gap:clamp(9px,2vw,18px);direction:ltr;min-height:58px;padding:7px 13px;border:2px solid #55c9e7;border-radius:999px;background:linear-gradient(105deg,#07566aee 0%,#174b5bea 55%,#666b70e8 100%);box-shadow:inset 0 0 0 2px #ffffff18,0 5px 18px #001c28aa,0 0 8px #7bdfff55;color:#fff;font-size:clamp(19px,3vw,30px);font-weight:950;backdrop-filter:blur(8px)}.home-wallet{grid-column:1/-1;justify-self:end;width:clamp(240px,23vw,340px);min-height:56px;padding:6px 10px;gap:8px}.home-wallet svg{width:34px;height:34px}.home-wallet strong{font-size:clamp(21px,2.4vw,28px)}.home-wallet .coin-plus{width:30px;height:30px;font-size:31px}.home-wallet svg,.hud-wallet svg{width:clamp(34px,5vw,48px);height:clamp(34px,5vw,48px);flex:0 0 auto;filter:drop-shadow(0 2px 2px #51340088)}.home-wallet strong,.hud-wallet strong{flex:1;text-align:center;font-size:clamp(25px,4vw,38px);font-weight:1000;font-variant-numeric:tabular-nums;color:#fff;text-shadow:0 2px 4px #123}.coin-plus{width:clamp(38px,5vw,52px);height:clamp(38px,5vw,52px);flex:0 0 auto;display:grid;place-items:center;border:0;border-radius:50%;padding:0;background:transparent;color:#dce5e8;font:900 clamp(35px,5vw,52px)/1 Arial,sans-serif;cursor:pointer;text-shadow:0 2px 4px #26383d}.coin-plus:focus-visible{outline:2px solid white;outline-offset:2px}.hud-wallet{position:absolute;top:max(8px,env(safe-area-inset-top));right:max(48px,calc(env(safe-area-inset-right) + 48px));z-index:1050;width:clamp(92px,10vw,132px);min-height:34px;padding:3px 6px;gap:4px;border-width:1px;box-shadow:inset 0 0 0 1px #ffffff12,0 2px 8px #001c2877,0 0 4px #7bdfff33;font-size:12px;pointer-events:auto}.hud-wallet svg{width:21px;height:21px}.hud-wallet strong{font-size:15px;text-shadow:0 1px 2px #123}.hud-wallet .coin-plus{width:20px;height:20px;font-size:21px;text-shadow:0 1px 2px #26383d}.hud-wallet .coin-plus{width:38px;height:38px;font-size:38px}@media(max-width:520px){.home-wallet{width:220px;min-height:50px;padding:5px 9px}.home-wallet svg{width:29px;height:29px}.home-wallet strong{font-size:21px}.home-wallet .coin-plus{width:27px;height:27px;font-size:29px}.hud-wallet{top:max(6px,env(safe-area-inset-top));right:max(42px,calc(env(safe-area-inset-right) + 42px));width:96px;min-height:30px;padding:2px 5px;gap:3px}.hud-wallet svg{width:19px;height:19px}.hud-wallet strong{font-size:14px}.hud-wallet .coin-plus{width:18px;height:18px;font-size:19px}}
 
-/* v248: portrait home screen with landscape-shaped horizontal controls.
-   Keep the existing background and 3D platform unchanged. */
-@media (orientation:portrait){
+/* v249: mobile home menu remains upright in portrait viewport.
+   Match the landscape reference composition without rotating the phone, page, or controls. */
+@media (max-width:760px){
  #rotatePrompt{
-  position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;
+  position:fixed!important;inset:0!important;left:0!important;top:0!important;right:0!important;bottom:0!important;
+  width:100vw!important;height:100dvh!important;min-height:100dvh!important;
   display:block!important;overflow:hidden!important;padding:0!important;margin:0!important;
-  transform:none!important;background:#061a83 url("./assets/mm-world-bg.svg") center center / cover no-repeat!important;
+  transform:none!important;transform-origin:center center!important;
+  background:#061a83 url("./assets/mm-world-bg.svg") center center / cover no-repeat!important;
   color:#f4f8ff!important
  }
  #rotatePrompt::before{display:none!important;content:none!important}
+ #rotatePrompt,.home-menu,.home-brand,.home-actions,
+ #homeShop,#homeHelp,#startLandscape,#homeSettings,.home-wallet{
+  writing-mode:horizontal-tb!important;text-orientation:mixed!important;
+ }
  .home-menu{
   position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
   min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;
-  margin:0!important;padding:0!important;display:block!important;transform:none!important;overflow:hidden!important
+  margin:0!important;padding:0!important;display:block!important;transform:none!important;
+  transform-origin:center center!important;overflow:hidden!important;direction:rtl!important
  }
- .home-brand{position:absolute!important;inset:0!important;display:block!important;pointer-events:none!important}
+ .home-brand{position:absolute!important;inset:0!important;display:block!important;pointer-events:none!important;transform:none!important}
  .home-brand>.home-crown,.home-brand>.home-logo,.home-brand>.home-world,.home-brand>.home-tagline,
  .home-brand>.home-divider,.home-brand>.home-union,.home-brand>.creator-panel-link{display:none!important}
  .home-character-card{
@@ -500,39 +507,40 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
   border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
   overflow:visible!important;pointer-events:none!important
  }
- .home-character-card canvas{display:block!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:contain!important}
+ .home-character-card canvas{display:block!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:contain!important;transform:none!important}
  .home-character-card strong,.home-character-card small{display:none!important}
- .home-actions{position:absolute!important;inset:0!important;display:block!important;pointer-events:none!important}
- .home-actions>.home-action,.home-actions>.home-wallet{position:absolute!important;margin:0!important;pointer-events:auto!important}
+ .home-actions{position:absolute!important;inset:0!important;display:block!important;pointer-events:none!important;transform:none!important}
+ .home-actions>.home-action,.home-actions>.home-wallet{position:absolute!important;margin:0!important;pointer-events:auto!important;transform:none!important;transform-origin:center center!important;writing-mode:horizontal-tb!important}
  .home-wallet{
   top:max(12px,env(safe-area-inset-top))!important;right:68px!important;left:auto!important;bottom:auto!important;
   width:clamp(104px,23vw,145px)!important;height:40px!important;min-height:40px!important;
-  padding:3px 6px!important;gap:5px!important;border-width:1px!important
+  padding:3px 6px!important;gap:5px!important;border-width:1px!important;
+  display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important
  }
- .home-wallet svg{width:24px!important;height:24px!important}
- .home-wallet strong{font-size:15px!important}
- .home-wallet .coin-plus{width:20px!important;height:20px!important;font-size:20px!important}
+ .home-wallet svg{width:24px!important;height:24px!important;flex:0 0 24px!important}
+ .home-wallet strong{font-size:15px!important;writing-mode:horizontal-tb!important}
+ .home-wallet .coin-plus{width:20px!important;height:20px!important;font-size:20px!important;flex:0 0 20px!important}
  #homeSettings{
   top:max(8px,env(safe-area-inset-top))!important;right:12px!important;left:auto!important;bottom:auto!important;
   width:48px!important;height:48px!important;min-height:48px!important;padding:0!important;
-  display:flex!important;flex-direction:row!important;justify-content:center!important;border-radius:50%!important
+  display:flex!important;flex-direction:row!important;justify-content:center!important;align-items:center!important;border-radius:50%!important
  }
  #homeSettings>span:not(.home-action-icon){display:none!important}
  #homeSettings .home-action-icon{width:28px!important;height:28px!important;flex:0 0 28px!important;margin:0!important}
- /* All three buttons stay upright and horizontal; no rotate() transforms. */
  #homeShop,#homeHelp,#startLandscape{
   top:auto!important;bottom:max(18px,env(safe-area-inset-bottom))!important;
-  left:auto!important;right:auto!important;transform:none!important;transform-origin:center center!important;
-  width:29vw!important;max-width:205px!important;min-width:0!important;
+  left:auto!important;right:auto!important;
+  width:30.5vw!important;max-width:205px!important;min-width:0!important;
   height:58px!important;min-height:58px!important;padding:5px 7px!important;
   display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;
-  gap:5px!important;border-radius:13px!important;white-space:nowrap!important
+  gap:5px!important;border-radius:13px!important;white-space:nowrap!important;
+  direction:rtl!important;text-align:center!important
  }
  #homeShop{left:2.5vw!important;right:auto!important}
- #homeHelp{left:35.5vw!important;right:auto!important}
+ #homeHelp{left:35vw!important;right:auto!important}
  #startLandscape{right:2.5vw!important;left:auto!important;background:linear-gradient(110deg,#ffe34f,#ffb900 65%,#e99700)!important;color:#392600!important}
  #homeShop>span:not(.home-action-icon),#homeHelp>span:not(.home-action-icon),#startLandscape>span:not(.home-action-icon){display:inline!important}
- #homeShop b,#homeHelp b,#startLandscape b{font-size:clamp(11px,2.7vw,15px)!important;white-space:nowrap!important}
+ #homeShop b,#homeHelp b,#startLandscape b{display:inline!important;font-size:clamp(11px,2.7vw,15px)!important;white-space:nowrap!important;writing-mode:horizontal-tb!important}
  #homeShop small,#homeHelp small,#startLandscape small,#homeShop .home-arrow,#homeHelp .home-arrow,#startLandscape .home-arrow{display:none!important}
  #homeShop .home-action-icon,#homeHelp .home-action-icon,#startLandscape .home-action-icon{
   width:clamp(22px,5vw,32px)!important;height:clamp(22px,5vw,32px)!important;
@@ -1257,7 +1265,7 @@ window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای
 stats();
 try{online=createRipOnline();online.loadHomeEconomy().then(data=>{if(data){applyEconomy(data.economy);const equipped=data.character?.character_id;if(CHARACTER_ASSETS[equipped]&&ownedCharacters.has(equipped)){player.skin=equipped;persist();}renderHomeCharacter(player.skin);}}).catch(error=>console.warn("Home wallet/character refresh failed:",error));renderHomeCharacter(player.skin);}catch(error){console.warn("Home wallet initialization failed:",error);}
 requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=248",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=249",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
