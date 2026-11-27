@@ -501,7 +501,7 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  .home-brand>.home-crown,.home-brand>.home-logo,.home-brand>.home-world,.home-brand>.home-tagline,
  .home-brand>.home-divider,.home-brand>.home-union,.home-brand>.creator-panel-link{display:none!important}
  .home-character-card{
-  position:absolute!important;left:50%!important;top:50%!important;
+  position:absolute!important;left:35%!important;top:50%!important;
   transform:translate(-50%,-50%)!important;width:min(62%,500px)!important;
   height:min(86%,560px)!important;margin:0!important;padding:0!important;
   border:0!important;border-radius:0!important;background:transparent!important;
@@ -773,11 +773,11 @@ async function renderHomeCharacter(characterId=player.skin){
   const verticalFov=THREE.MathUtils.degToRad(homePreviewCamera.fov);
   const sphere=new THREE.Sphere();modelBounds.getBoundingSphere(sphere);
   const fitRadius=Math.max(1.0,sphere.radius+.10);
-  const verticalDistance=fitRadius/Math.sin(verticalFov/2)*.78;
+  const verticalDistance=fitRadius/Math.sin(verticalFov/2)*.94;
   const horizontalFov=2*Math.atan(Math.tan(verticalFov/2)*(w/h));
-  const horizontalDistance=fitRadius/Math.sin(Math.max(.12,horizontalFov/2))*.78;
+  const horizontalDistance=fitRadius/Math.sin(Math.max(.12,horizontalFov/2))*.94;
   const distance=Math.max(verticalDistance,horizontalDistance);
-  homePreviewCamera.position.set(0,targetY+distance*.62,distance);
+  homePreviewCamera.position.set(0,targetY+distance*.16,distance);
   homePreviewCamera.lookAt(0,targetY,0);
   homePreviewRenderer.setSize(w,h,false);homePreviewCamera.aspect=w/h;homePreviewCamera.updateProjectionMatrix();homePreviewRenderer.render(homePreviewScene,homePreviewCamera);
   if(!homePreviewResizeObserver){homePreviewResizeObserver=new ResizeObserver(()=>{if(!homePreviewRenderer||!homePreviewCamera||!homePreviewScene)return;const rw=Math.max(1,canvas.clientWidth),rh=Math.max(1,canvas.clientHeight);homePreviewRenderer.setSize(rw,rh,false);homePreviewCamera.aspect=rw/rh;homePreviewCamera.updateProjectionMatrix();homePreviewRenderer.render(homePreviewScene,homePreviewCamera);});homePreviewResizeObserver.observe(canvas);}
@@ -1304,7 +1304,7 @@ window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای
 stats();
 try{online=createRipOnline();online.loadHomeEconomy().then(data=>{if(data){applyEconomy(data.economy);const equipped=data.character?.character_id;if(CHARACTER_ASSETS[equipped]&&ownedCharacters.has(equipped)){player.skin=equipped;persist();}renderHomeCharacter(player.skin);}}).catch(error=>console.warn("Home wallet/character refresh failed:",error));renderHomeCharacter(player.skin);}catch(error){console.warn("Home wallet initialization failed:",error);}
 requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=256",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=257",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
