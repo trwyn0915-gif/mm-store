@@ -782,10 +782,10 @@ function getChatBubbleLineCount(message){
 }
 function getChatBubbleDurationMs(message){
  const lines=getChatBubbleLineCount(message);
- if(lines<=1)return 5000;
- if(lines===2)return 7000;
- if(lines===3)return 10000;
- return 15000;
+ if(lines<=1)return 4000;
+ if(lines===2)return 6000;
+ if(lines===3)return 8000;
+ return 10000;
 }
 function showPlayerChatBubble(playerId,message,createdAt){
  const duration=getChatBubbleDurationMs(message);
@@ -1083,7 +1083,7 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=222",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=223",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
