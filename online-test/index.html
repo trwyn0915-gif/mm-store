@@ -261,6 +261,11 @@ body.desktop-blocked #desktopBlock{display:flex!important}
 }
 
 .clock-warning{position:fixed;z-index:950;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:min(560px,calc(100vw - 24px));padding:14px 16px;border:1px solid #d5ad59;border-radius:14px;background:#17232af5;color:#fff0c8;box-shadow:0 10px 32px #000b;font-size:13px;line-height:1.9;direction:rtl;text-align:right}.clock-warning[hidden]{display:none!important}.clock-warning strong{display:block;color:#f4d58c;font-size:15px;margin-bottom:4px}.clock-warning button{margin-top:8px;min-width:100px;padding:7px 14px;background:#72582a;border-color:#d5ad59;color:#fff7df}
+
+/* MM World chat refresh v192 */
+.chat-panel{display:flex;flex-direction:column;gap:9px;min-height:0;background:linear-gradient(155deg,#1b2b31f5,#081319f5);border:1px solid #b99a5d;border-radius:18px;box-shadow:0 16px 44px #000b;overflow:hidden}.chat-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}.chat-heading h2{margin:0;font-size:clamp(15px,2vw,19px)}.chat-close{width:34px;height:34px;padding:0;border-radius:10px;font-size:24px;line-height:1;background:#263a40;border-color:#657b78}.quick-chat{display:flex;gap:6px;overflow-x:auto;padding:2px 0 5px;scrollbar-width:thin}.quick-chat button{flex:0 0 auto;padding:7px 13px;border-radius:22px;background:#d8d9d7;color:#172127;border:1px solid #fff;font-size:12px;font-weight:900}.chat-panel .chatlog{height:clamp(110px,28dvh,260px);min-height:70px;padding:10px;border:1px solid #4c5b60;border-radius:12px;background:#071015b8;font-size:13px}.chat-panel .chatline{padding:3px 0;border-bottom:1px solid #ffffff12}.chat-panel .chatrow{display:flex;gap:7px;margin:0}.chat-panel .chatrow input{min-width:0;min-height:48px;border-radius:12px;background:#03080b;color:#fff;font-size:15px}.chat-panel .chatrow button{min-width:68px;border-radius:12px}.bottom.chat-open{position:fixed!important;z-index:1200!important;right:max(10px,env(safe-area-inset-right))!important;bottom:calc(var(--chat-vv-bottom,0px) + max(10px,env(safe-area-inset-bottom)))!important;left:max(10px,env(safe-area-inset-left))!important;top:auto!important;width:min(520px,calc(100vw - 20px))!important;max-height:calc(var(--chat-vv-height,100dvh) - 20px)!important;margin:0!important;display:block!important;overflow:hidden!important;pointer-events:auto!important}.bottom.chat-open .chat-panel{max-height:calc(var(--chat-vv-height,100dvh) - 20px);padding:12px}.bottom.chat-open .chatlog{flex:1 1 auto;min-height:70px}.bottom.chat-open .panel:last-child{display:none!important}body.playing .bottom.chat-open,html:fullscreen body .bottom.chat-open{display:block!important;position:fixed!important;right:max(10px,env(safe-area-inset-right))!important;left:max(10px,env(safe-area-inset-left))!important;width:min(520px,calc(100vw - 20px))!important;bottom:calc(var(--chat-vv-bottom,0px) + max(10px,env(safe-area-inset-bottom)))!important;max-height:calc(var(--chat-vv-height,100dvh) - 20px)!important;z-index:1200!important}.chat-toggle{z-index:1100!important}
+@media(max-width:760px){.bottom.chat-open{width:min(520px,calc(100vw - 16px))!important;right:8px!important;left:8px!important}.bottom.chat-open .chat-panel{max-height:calc(var(--chat-vv-height,100dvh) - 16px);padding:10px}.bottom.chat-open .chatlog{height:auto;min-height:65px;max-height:34dvh}.quick-chat button{padding:7px 11px}}
+@media(min-width:761px){.bottom.chat-open{left:auto!important;width:min(440px,48vw)!important;right:14px!important}}
 </style>
 </head>
 <body>
@@ -292,7 +297,7 @@ body.desktop-blocked #desktopBlock{display:flex!important}
  </div>
 </div>
 <div class="bottom">
- <section class="panel"><h2>گفت‌وگوی جهانی</h2><div id="chatlog" class="chatlog" aria-live="polite"><div class="chatline">برای گفت‌وگو ابتدا وارد دنیای آنلاین شو.</div></div><form id="chatform" class="chatrow"><input id="chatinput" maxlength="300" placeholder="پیامت را بنویس..." autocomplete="off"><button class="primary" type="submit">ارسال</button></form></section>
+ <section class="panel chat-panel"><div class="chat-heading"><h2>گفت‌وگوی جهانی</h2><button type="button" id="closeChat" class="chat-close" aria-label="بستن پنجره چت">×</button></div><div class="quick-chat" aria-label="پیام‌های پیشنهادی"><button type="button" data-chat-text="سلام">سلام</button><button type="button" data-chat-text="خوبی؟">خوبی؟</button><button type="button" data-chat-text="بیا دنبالم">بیا دنبالم</button><button type="button" data-chat-text="آره">آره</button><button type="button" data-chat-text="باشه">باشه</button></div><div id="chatlog" class="chatlog" aria-live="polite"><div class="chatline">برای گفت‌وگو ابتدا وارد دنیای آنلاین شو.</div></div><form id="chatform" class="chatrow"><input id="chatinput" maxlength="300" placeholder="پیامت را بنویس..." autocomplete="off" enterkeyhint="send"><button class="primary" type="submit">ارسال</button></form></section>
  <section class="panel"><h2>راهنمای بازی</h2><div class="help">• حرکت: کلیدهای جهت‌دار یا WASD<br>• موبایل: دکمه‌های پایین صفحه<br>• تعامل: کلید E یا دکمه تعامل<br>• کنار نگهبان دهکده ماموریت بگیر.<br>• گیاهان در جنگل را جمع کن و پاداش بگیر.<br>• بازیکنان دیگر را زنده روی نقشه می‌بینی.<br>• موسیقی پس‌زمینه: Butterfly — Purrple Cat (CC BY 4.0).</div></section>
 </div>
 </section>
@@ -420,6 +425,7 @@ async function ensureAvatar(id,characterId){
   updateAvatarNameTag(record,id==="self"?player.name:players[id]?.displayName);
   const old=avatarRecords.get(id);if(old)scene3D.remove(old.group);
   avatarRecords.set(id,record);scene3D.add(group);
+  const pending=id==="self"?pendingSelfChatBubble:players[id]?.chatBubble;if(pending&&pending.expiresAt>(online?.getServerNowMs?.()??Date.now()))setAvatarChatBubble(record,pending.message,pending.expiresAt);
   return record;
  }catch(error){console.error("Character model failed to load:",chosen,error);if(avatarLoading.get(id)===loadToken)avatarLoading.delete(id);return null;}
 }
@@ -517,6 +523,9 @@ function hideLoading(){ $("loadingScreen").classList.remove("visible"); }
 function stats(){ $("onlineCount").textContent=String(Object.keys(players).length+ (connected?1:0));$("level").textContent=player.level;$("xp").textContent=player.xp+" / "+(player.level*100);$("coins").textContent=coins;$("quest").textContent=questDone?"ماموریت تکمیل شد":questStarted?("گیاه جمع کن: "+herbs+" / ۳"):"با نگهبان دهکده صحبت کن"; }
 function addXP(n){player.xp+=n;while(player.xp>=player.level*100){player.xp-=player.level*100;player.level++;coins+=25;sayToast("سطح جدید! پاداش ۲۵ سکه گرفتی");}stats();persist();}
 function addChat(name,message,id=null){if(id!==null&&id!==undefined){const key=String(id);if(seenChatIds.has(key))return;seenChatIds.add(key);}const row=document.createElement("div");row.className="chatline";const b=document.createElement("b");b.textContent=name+": ";row.append(b,document.createTextNode(message));$("chatlog").append(row);while($("chatlog").children.length>60)$("chatlog").firstChild.remove();$("chatlog").scrollTop=$("chatlog").scrollHeight;}
+function setAvatarChatBubble(record,message,expiresAt){if(!record?.group)return;const text=String(message||"").trim().slice(0,300);if(!text)return;if(record.chatBubble){record.group.remove(record.chatBubble);record.chatBubble.material.map?.dispose();record.chatBubble.material.dispose();}const canvas=document.createElement("canvas");canvas.width=768;canvas.height=300;const c=canvas.getContext("2d");c.clearRect(0,0,768,300);c.fillStyle="#fffdf7";c.strokeStyle="#18242a";c.lineWidth=12;c.beginPath();c.moveTo(52,22);c.lineTo(716,22);c.quadraticCurveTo(746,22,746,52);c.lineTo(746,218);c.quadraticCurveTo(746,248,716,248);c.lineTo(420,248);c.lineTo(384,286);c.lineTo(354,248);c.lineTo(52,248);c.quadraticCurveTo(22,248,22,218);c.lineTo(22,52);c.quadraticCurveTo(22,22,52,22);c.closePath();c.fill();c.stroke();c.fillStyle="#172127";c.font="bold 54px Vazirmatn, Tahoma, sans-serif";c.textAlign="center";c.textBaseline="middle";c.direction="rtl";const words=text.split(/\\s+/);const lines=[];let line="";for(const word of words){const candidate=line?line+" "+word:word;if(c.measureText(candidate).width>650&&line){lines.push(line);line=word;}else line=candidate;}if(line)lines.push(line);const shown=lines.slice(-2);shown.forEach((value,index)=>c.fillText(value,384,116+(index-(shown.length-1)/2)*66,650));const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearFilter;texture.magFilter=THREE.LinearFilter;const material=new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false,depthWrite:false});const sprite=new THREE.Sprite(material);sprite.position.set(0,5.35,0);sprite.scale.set(4.8,1.88,1);sprite.renderOrder=30;record.group.add(sprite);record.chatBubble=sprite;record.chatBubbleExpiresAt=Number(expiresAt)||0;}
+function showPlayerChatBubble(playerId,message,createdAt){const expiresAt=(Date.parse(createdAt)||Date.now())+10000;const now=online?.getServerNowMs?.()??Date.now();if(expiresAt<=now)return;if(playerId===userId){const record=avatarRecords.get("self");if(record)setAvatarChatBubble(record,message,expiresAt);else pendingSelfChatBubble={message,expiresAt};return;}const p=players[playerId];if(!p)return;p.chatBubble={message:String(message||"").slice(0,300),expiresAt};const record=avatarRecords.get(playerId);if(record)setAvatarChatBubble(record,message,expiresAt);}
+let pendingSelfChatBubble=null;
 function worldToScreen(x,y){return{x:x-camera.x,y:y-camera.y};}
 function drawTree(x,y,r){const p=worldToScreen(x,y);ctx.fillStyle="#4b392b";ctx.fillRect(p.x-5,p.y+5,10,22);ctx.fillStyle="#1d4e3d";ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fill();ctx.fillStyle="#28654a";ctx.beginPath();ctx.arc(p.x-r*.25,p.y-r*.25,r*.65,0,Math.PI*2);ctx.fill();}
 function drawPerson(p,isSelf=false){const q=worldToScreen(p.x,p.y),color=skins[p.skin]||"#35c4b2";ctx.save();ctx.fillStyle="#10201d";ctx.beginPath();ctx.ellipse(q.x,q.y+10,13,6,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=color;ctx.beginPath();ctx.arc(q.x,q.y,11,0,Math.PI*2);ctx.fill();ctx.strokeStyle=isSelf?"#fff0b5":"#14252a";ctx.lineWidth=3;ctx.stroke();ctx.fillStyle="#f8f5e8";ctx.font="bold 13px Vazirmatn";ctx.textAlign="center";ctx.direction="rtl";ctx.lineWidth=3;ctx.strokeStyle="#071116";ctx.strokeText(p.name||"بازیکن",q.x,q.y-19);ctx.fillText(p.name||"بازیکن",q.x,q.y-19);if(isSelf){ctx.fillStyle="#fff1b6";ctx.font="10px Vazirmatn";ctx.fillText("شما",q.x,q.y+27);}ctx.restore();}
@@ -556,7 +565,7 @@ function drawWorld(dt=0){
    const remoteMoving=!!p.samples&&p.samples.length>1&&Math.hypot(p.samples[p.samples.length-1].x-p.samples[p.samples.length-2].x,p.samples[p.samples.length-1].y-p.samples[p.samples.length-2].y)>.02&&remoteFrameNow-(p.receivedAtMono||0)<700;setAvatarMoving(record,remoteMoving);record.mixer?.update(dt);
   }
  }
- renderer3D.render(scene3D,camera3D);
+ const serverNowForBubbles=online?.getServerNowMs?.()??Date.now();for(const record of avatarRecords.values()){if(record.chatBubble&&record.chatBubbleExpiresAt<=serverNowForBubbles){record.group.remove(record.chatBubble);record.chatBubble.material.map?.dispose();record.chatBubble.material.dispose();record.chatBubble=null;record.chatBubbleExpiresAt=0;}}\n renderer3D.render(scene3D,camera3D);
 }
 
 function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
@@ -637,7 +646,7 @@ async function connect(){
     if(p?.userId&&p.userId!==userId&&remotePresenceIds.has(p.userId))applyRemotePlayer({user_id:p.userId,x:p.x,y:p.y,facing:p.facing,display_name:p.displayName,character_id:p.skin,level:p.level,experience:p.experience,last_seen_at:p.last_seen_at});
     stats();
    },
-   onChat:p=>{if(p?.userId!==userId)addChat(p.displayName||"بازیکن",p.message||"",p.id);}
+   onChat:p=>{if(p?.userId!==userId){addChat(p.displayName||"بازیکن",p.message||"",p.id);showPlayerChatBubble(p.userId,p.message,p.createdAt);}}
   });
   const roomPlayers=await online.loadRoomPlayers(ROOM);
   for(const row of roomPlayers){
@@ -707,7 +716,11 @@ document.querySelectorAll("[data-home-close]").forEach(btn=>btn.addEventListener
 
 $("skin").addEventListener("change",()=>{player.skin=ownedCharacters.has($("skin").value)?$("skin").value:"hero";persist();ensureAvatar("self",player.skin).catch(console.error);});
 $("playerName").addEventListener("change",()=>{player.name=$("playerName").value.trim().slice(0,20)||"بازیکن MM";persist();});
-$("chatform").addEventListener("submit",async e=>{e.preventDefault();const msg=$("chatinput").value.trim();if(!msg)return;if(!connected){sayToast("اول وارد دنیای آنلاین شو");return;}if(Date.now()-lastChat<1200){sayToast("کمی صبر کن و دوباره بفرست");return;}lastChat=Date.now();try{const sent=await online.sendChat(ROOM,msg,player.name);addChat(player.name,msg,sent?.id);$("chatinput").value="";}catch(err){console.error(err);sayToast("پیام ارسال نشد");}});
+$("chatform").addEventListener("submit",async e=>{e.preventDefault();const msg=$("chatinput").value.trim();if(!msg)return;if(!connected){sayToast("اول وارد دنیای آنلاین شو");return;}if(Date.now()-lastChat<1200){sayToast("کمی صبر کن و دوباره بفرست");return;}lastChat=Date.now();try{const sent=await online.sendChat(ROOM,msg,player.name);addChat(player.name,msg,sent?.id);showPlayerChatBubble(userId,msg,sent?.created_at);$("chatinput").value="";$("chatinput").blur();}catch(err){console.error(err);sayToast("پیام ارسال نشد");}});
+$("closeChat").addEventListener("click",()=>document.querySelector(".bottom").classList.remove("chat-open"));
+document.querySelector(".quick-chat").addEventListener("click",e=>{const btn=e.target.closest("[data-chat-text]");if(!btn)return;$("chatinput").value=btn.dataset.chatText;$("chatinput").focus();});
+function syncChatViewport(){const vv=window.visualViewport;if(!vv)return;document.documentElement.style.setProperty("--chat-vv-bottom",Math.max(0,window.innerHeight-(vv.height+vv.offsetTop))+"px");document.documentElement.style.setProperty("--chat-vv-height",vv.height+"px");}
+window.visualViewport?.addEventListener("resize",syncChatViewport);window.visualViewport?.addEventListener("scroll",syncChatViewport);window.addEventListener("resize",syncChatViewport);$("chatinput").addEventListener("focus",()=>{document.querySelector(".bottom").classList.add("chat-open");syncChatViewport();});
 let exitGuardInstalled=false,exitApproved=false;
 function installExitGuard(){if(exitGuardInstalled)return;exitGuardInstalled=true;history.pushState({mmWorldGuard:true},"",location.href);}
 function showExitConfirm(){const modal=$("exitConfirm");modal.classList.add("open");modal.setAttribute("aria-hidden","false");$("stayInGame").focus();}
@@ -720,7 +733,7 @@ async function stayInGame(){if(!document.fullscreenElement){const root=document.
 $("stayInGame").addEventListener("click",stayInGame);
 async function confirmExitSite(){backgroundMusic.pause();backgroundMusic.currentTime=0;exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";const startBtn=$("startLandscape");startBtn.disabled=false;startBtn.textContent="ورود به سایت";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
 $("confirmExit").addEventListener("click",confirmExitSite);
-function toggleChat(){if(!connected){sayToast("برای چت باید ابتدا وارد دنیای آنلاین شوی");return;}const bottom=document.querySelector(".bottom");bottom.classList.toggle("chat-open");}
+function toggleChat(){if(!connected){sayToast("برای چت باید ابتدا وارد دنیای آنلاین شوی");return;}const bottom=document.querySelector(".bottom");bottom.classList.toggle("chat-open");if(bottom.classList.contains("chat-open"))setTimeout(()=>$("chatinput").focus(),80);}
 $("chatToggle").addEventListener("click",toggleChat);
 $("quickChat").addEventListener("click",toggleChat);
 $("quickInteract").addEventListener("click",interact);
@@ -755,6 +768,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=191",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=192",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
