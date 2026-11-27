@@ -452,6 +452,24 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  .chat-panel.chat-floating{top:calc(var(--chat-vv-top,0px) + max(8px,env(safe-area-inset-top)))!important;right:8px!important;left:auto!important;width:min(320px,74vw)!important}
 }
 
+
+/* v210: reliable chat header layout; this CSS must live inside the document style element. */
+.chat-panel.chat-floating .chat-heading{
+ direction:ltr!important;display:flex!important;flex-direction:row!important;align-items:center!important;
+ justify-content:space-between!important;gap:12px!important;width:100%!important;min-height:48px!important;
+}
+.chat-panel.chat-floating .chat-heading h2{
+ display:block!important;visibility:visible!important;direction:rtl!important;text-align:right!important;
+ flex:1 1 auto!important;order:1!important;margin:0!important;color:#eaf1f2!important;
+}
+.chat-panel.chat-floating #closeChat{
+ display:flex!important;visibility:visible!important;opacity:1!important;order:2!important;
+ flex:0 0 46px!important;width:46px!important;min-width:46px!important;height:46px!important;min-height:46px!important;
+ margin:0 0 0 auto!important;padding:0!important;align-items:center!important;justify-content:center!important;
+ background:#fff!important;color:#071015!important;border:0!important;border-radius:12px!important;
+ box-shadow:none!important;font-size:30px!important;font-weight:900!important;line-height:1!important;
+}
+.chat-panel.chat-floating #closeChat:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px!important}
 </style>
 </head>
 <body>
@@ -994,7 +1012,7 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=209",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=210",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
