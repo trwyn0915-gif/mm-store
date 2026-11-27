@@ -70,6 +70,15 @@ export function createRipOnline() {
     return data;
   }
 
+  async function loadHomeEconomy() {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) throw error;
+    const user = data.session?.user;
+    if (!user) return null;
+    currentUser = user;
+    return loadEconomy();
+  }
+
   async function buyCharacter(characterId) {
     if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
     const { data, error } = await supabase.rpc("mm_buy_character", { p_character_id: String(characterId) });
@@ -285,5 +294,5 @@ export function createRipOnline() {
     positionPersistInFlight = false;
   }
 
-  return { connect, getClockStatus, getServerNowMs: () => Date.now() + serverClockOffsetMs, loadCharacter, loadEconomy, buyCharacter, equipCharacter, loadRoomPlayers, saveCharacter, updatePosition, startQuest, collectHerb, completeQuest, joinRoom, publishMove, sendChat, loadRecentChat, leave };
+  return { connect, getClockStatus, getServerNowMs: () => Date.now() + serverClockOffsetMs, loadCharacter, loadEconomy, loadHomeEconomy, buyCharacter, equipCharacter, loadRoomPlayers, saveCharacter, updatePosition, startQuest, collectHerb, completeQuest, joinRoom, publishMove, sendChat, loadRecentChat, leave };
 }
