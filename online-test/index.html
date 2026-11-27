@@ -393,6 +393,23 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 .desktop-block-card{border-color:#34464c!important}
 .desktop-block-card h1{color:#e5eeee!important}
 .clock-warning{border-color:#34464c!important;color:#fff!important}
+/* v203: compact send control and properly sized navy chat launcher. */
+.chat-panel.chat-floating #chatform button.chat-send-icon{
+ flex:0 0 52px!important;width:52px!important;min-width:52px!important;max-width:52px!important;
+ height:46px!important;min-height:46px!important;padding:5px!important;
+ border-radius:12px!important;background:#fff!important;border:0!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+}
+.chat-panel.chat-floating #chatform button.chat-send-icon svg{width:100%!important;height:100%!important;max-width:40px!important;max-height:40px!important}
+.chat-panel.chat-floating #chatform{gap:8px!important;align-items:center!important}
+.chat-panel.chat-floating #chatinput{flex:1 1 auto!important;min-width:0!important}
+.chat-toggle.icon-chat-button,.side-controls .icon-chat-button{
+ background:#122b35!important;border:0!important;box-shadow:none!important;
+ border-radius:50%!important;padding:0!important;overflow:hidden!important
+}
+.chat-toggle.icon-chat-button{width:88px!important;height:88px!important}
+.side-controls .icon-chat-button{width:58px!important;height:58px!important}
+.icon-chat-button svg{width:100%!important;height:100%!important;display:block!important}
 /* Keep the visual fill synchronized with one-percent counter steps. */\n.loading-fill{transition:width .02s linear!important}\n</style>
 </head>
 <body>
@@ -416,9 +433,9 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 </div>
 <div id="gamebox">
  <div id="threeRoot" aria-label="محیط سه‌بعدی بازی"></div><canvas id="game" width="960" height="540" aria-label="نقشه دنیای MM"></canvas><div id="toast"></div>
- <button class="chat-toggle icon-chat-button" id="chatToggle" aria-label="گفت‌وگوی جهانی"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#454744"/><path d="M25 29Q25 20 36 20H66Q78 20 78 32V59Q78 71 66 71H49L35 84V71Q25 69 25 58Z" fill="#fff"/><circle cx="41" cy="46" r="4.5" fill="#454744"/><circle cx="52" cy="46" r="4.5" fill="#454744"/><circle cx="63" cy="46" r="4.5" fill="#454744"/></svg></button>
+ <button class="chat-toggle icon-chat-button" id="chatToggle" aria-label="گفت‌وگوی جهانی"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#122b35"/><path d="M14 30Q14 17 29 17H71Q86 17 86 32V59Q86 74 71 74H49L31 89V74Q14 72 14 57Z" fill="#fff"/><circle cx="37" cy="46" r="4.8" fill="#122b35"/><circle cx="50" cy="46" r="4.8" fill="#122b35"/><circle cx="63" cy="46" r="4.8" fill="#122b35"/></svg></button>
  <div class="game-controls" id="gameControls">
-  <div class="side-controls"><button class="game-btn icon-chat-button" id="quickChat" aria-label="چت"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#454744"/><path d="M25 29Q25 20 36 20H66Q78 20 78 32V59Q78 71 66 71H49L35 84V71Q25 69 25 58Z" fill="#fff"/><circle cx="41" cy="46" r="4.5" fill="#454744"/><circle cx="52" cy="46" r="4.5" fill="#454744"/><circle cx="63" cy="46" r="4.5" fill="#454744"/></svg></button><button class="game-btn" id="quickInteract" aria-label="تعامل">تعامل</button><button class="game-btn" id="openShop" aria-label="فروشگاه کاراکترها">فروشگاه</button></div>
+  <div class="side-controls"><button class="game-btn icon-chat-button" id="quickChat" aria-label="چت"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#122b35"/><path d="M14 30Q14 17 29 17H71Q86 17 86 32V59Q86 74 71 74H49L31 89V74Q14 72 14 57Z" fill="#fff"/><circle cx="37" cy="46" r="4.8" fill="#122b35"/><circle cx="50" cy="46" r="4.8" fill="#122b35"/><circle cx="63" cy="46" r="4.8" fill="#122b35"/></svg></button><button class="game-btn" id="quickInteract" aria-label="تعامل">تعامل</button><button class="game-btn" id="openShop" aria-label="فروشگاه کاراکترها">فروشگاه</button></div>
   <div class="joy-base" id="joystick" aria-label="جوی‌استیک حرکت"><div class="joy-knob" id="joyKnob"></div></div>
   <div class="right-controls"></div>
  </div>
@@ -928,6 +945,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=202",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=203",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
