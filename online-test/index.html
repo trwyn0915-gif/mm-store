@@ -788,14 +788,15 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  <div id="rotatePrompt" class="hidden" hidden><section class="connection-retry-card" role="alert"><strong>ورود به بازی انجام نشد</strong><p id="connectionError"></p><button type="button" id="startLandscape">تلاش دوباره برای ورود آنلاین</button></section></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script>
-/* Use a real CC0 recorded plastic click instead of a synthesized oscillator sound.
-   Source: Takes click sound, derived from a public-domain Freesound recording. */
+/* Preload the real CC0 recorded click early so it is ready before the first tap. */
 (()=>{
  const clickSoundUrl="https://gettakes.app/sounds/click.wav";
  const clickPlayers=Array.from({length:4},()=>{
-  const audio=new Audio(clickSoundUrl);
+  const audio=new Audio();
   audio.preload="auto";
   audio.volume=.42;
+  audio.src=clickSoundUrl;
+  audio.load();
   return audio;
  });
  let clickPlayerIndex=0;
