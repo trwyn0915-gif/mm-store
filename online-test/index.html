@@ -731,6 +731,9 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  </div>
  <div id="rotatePrompt" class="hidden" hidden><section class="connection-retry-card" role="alert"><strong>ورود به بازی انجام نشد</strong><p id="connectionError"></p><button type="button" id="startLandscape">تلاش دوباره برای ورود آنلاین</button></section></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+<script>
+(()=>{const btn=document.getElementById("orientationGateStart");if(!btn)return;btn.addEventListener("click",event=>{event.preventDefault();if(typeof window.__mmStartGame==="function"){window.__mmStartGame();return;}window.__mmStartRequested=true;btn.disabled=true;btn.textContent="در حال آماده‌سازی بازی...";clearTimeout(window.__mmStartWaitTimer);window.__mmStartWaitTimer=setTimeout(()=>{if(window.__mmStartRequested){window.__mmStartRequested=false;btn.disabled=false;btn.textContent="شروع بازی";const p=document.getElementById("connectionError");if(p)p.textContent="بارگذاری بازی کامل نشد؛ اتصال اینترنت را بررسی و صفحه را تازه‌سازی کن.";const prompt=document.getElementById("rotatePrompt");if(prompt){prompt.hidden=false;prompt.classList.remove("hidden");}}},15000);},{passive:false});})();
+</script>
 <script type="module">
 import { createRipOnline } from "../online/multiplayer.js?v=29";
 const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
@@ -1332,7 +1335,7 @@ async function enterOrientationGate(){
  showLoading();setLoadingProgress(8,"در حال آماده‌سازی محیط سه‌بعدی...");
  connect();
 }
-$("orientationGateStart").addEventListener("click",enterOrientationGate);
+window.__mmStartGame=()=>{clearTimeout(window.__mmStartWaitTimer);window.__mmStartRequested=false;enterOrientationGate();};if(window.__mmStartRequested)window.__mmStartGame();
 async function retryConnection(){
  const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
  $("connectionError").textContent="";$("connectionError").classList.remove("visible");
