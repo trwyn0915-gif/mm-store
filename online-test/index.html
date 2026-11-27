@@ -770,7 +770,7 @@ function getChatBubbleLineCount(message){
  const text=String(message||"").trim().slice(0,300);if(!text)return 1;
  const measureCanvas=document.createElement("canvas"),measure=measureCanvas.getContext("2d");
  measure.font="bold 66px Vazirmatn, Tahoma, sans-serif";
- const words=text.split(/\\s+/),lines=[];let line="";
+ const words=text.split(/\s+/),lines=[];let line="";
  for(const word of words){const candidate=line?line+" "+word:word;if(measure.measureText(candidate).width>900&&line){lines.push(line);line=word;}else line=candidate;}
  if(line)lines.push(line);
  return Math.max(1,lines.length);
