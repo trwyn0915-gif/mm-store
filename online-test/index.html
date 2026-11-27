@@ -1104,34 +1104,46 @@ function keepPlayerNameInputVisible(){
  const modal=$("playerNameSetup"),card=modal.querySelector(".player-name-card"),field=$("playerNameSetupInput");
  if(!nameSetupOpen||!field||!card||document.activeElement!==field)return;
  const vv=window.visualViewport;
- const fieldRect=field.getBoundingClientRect();
  const safeTop=(vv?.offsetTop||0)+8;
  const safeBottom=(vv?.offsetTop||0)+(vv?.height||window.innerHeight)-12;
- if(fieldRect.bottom>safeBottom)card.scrollTop+=fieldRect.bottom-safeBottom+20;
- else if(fieldRect.top<safeTop)card.scrollTop-=safeTop-fieldRect.top+12;
+ const rect=field.getBoundingClientRect();
+ if(rect.bottom>safeBottom)card.scrollTop+=rect.bottom-safeBottom+24;
+ else if(rect.top<safeTop)card.scrollTop=Math.max(0,card.scrollTop-(safeTop-rect.top+12));
+ requestAnimationFrame(()=>{
+  const after=field.getBoundingClientRect();
+  if(after.bottom>safeBottom)modal.scrollTop+=after.bottom-safeBottom+20;
+ });
+}
+function schedulePlayerNameVisibility(){
+ // Run on every tap, not only focus: Android may hide the keyboard while
+ // keeping the input focused, so a second tap does not fire another focus event.
+ [0,80,180,320,500,700].forEach(delay=>setTimeout(()=>{
+  if(!nameSetupOpen||document.activeElement!==$("playerNameSetupInput"))return;
+  syncPlayerNameViewport();
+  keepPlayerNameInputVisible();
+ },delay));
 }
 function syncPlayerNameViewport(){
  const vv=window.visualViewport;
  const height=vv?.height||window.innerHeight;
  const top=vv?.offsetTop||0;
- const keyboardOpen=!!vv&&window.innerHeight-(height+top)>80;
+ const inset=Math.max(0,window.innerHeight-(height+top));
+ const keyboardOpen=inset>80||(!!vv&&height<window.screen.height*.72);
  const modal=$("playerNameSetup");
  document.documentElement.style.setProperty("--name-vv-height",height+"px");
  document.documentElement.style.setProperty("--name-vv-top",top+"px");
  modal.classList.toggle("keyboard-open",keyboardOpen);
- if(keyboardOpen&&document.activeElement===$("playerNameSetupInput")){
-  requestAnimationFrame(keepPlayerNameInputVisible);
- }
+ if(keyboardOpen&&document.activeElement===$("playerNameSetupInput"))requestAnimationFrame(keepPlayerNameInputVisible);
+ if(!keyboardOpen){const card=modal.querySelector(".player-name-card");if(card)card.scrollTop=0;modal.scrollTop=0;}
 }
 window.visualViewport?.addEventListener("resize",syncPlayerNameViewport);
 window.visualViewport?.addEventListener("scroll",syncPlayerNameViewport);
 window.addEventListener("resize",syncPlayerNameViewport);
-$("playerNameSetupInput").addEventListener("focus",()=>{
- // Move the field as soon as the keyboard changes the visual viewport,
- // without waiting for the player to type the first character.
- [60,140,240,380,550].forEach(delay=>setTimeout(()=>{syncPlayerNameViewport();keepPlayerNameInputVisible();},delay));
-});
-$("playerNameSetupInput").addEventListener("blur",()=>setTimeout(syncPlayerNameViewport,150));
+const playerNameField=$("playerNameSetupInput");
+playerNameField.addEventListener("focus",schedulePlayerNameVisibility);
+playerNameField.addEventListener("pointerdown",schedulePlayerNameVisibility);
+playerNameField.addEventListener("click",schedulePlayerNameVisibility);
+playerNameField.addEventListener("blur",()=>setTimeout(syncPlayerNameViewport,180));
 function showPlayerNameSetup(){
  nameSetupRequired=true;nameSetupOpen=true;
  const modal=$("playerNameSetup"),field=$("playerNameSetupInput");
