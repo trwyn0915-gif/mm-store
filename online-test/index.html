@@ -762,8 +762,13 @@ function setAvatarChatBubble(record,message,expiresAt){
  lines.forEach((value,index)=>g.fillText(value,width/2,textTop+index*lineHeight,maxTextWidth));
  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearFilter;texture.magFilter=THREE.LinearFilter;
  const material=new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false,depthWrite:false});
- const sprite=new THREE.Sprite(material);sprite.position.set(0,5.8,0);
- sprite.scale.set(width/160,height/160,1);sprite.renderOrder=30;record.group.add(sprite);
+ const sprite=new THREE.Sprite(material);
+ // Keep the bubble tail above the player name tag; taller messages rise by their own height.
+ sprite.scale.set(width/160,height/160,1);
+ const bubbleHeightWorld=sprite.scale.y;
+ const bubbleTailClearance=4.95;
+ sprite.position.set(0,bubbleTailClearance+bubbleHeightWorld/2,0);
+ sprite.renderOrder=30;record.group.add(sprite);
  record.chatBubble=sprite;record.chatBubbleExpiresAt=Number(expiresAt)||0;
 }
 function getChatBubbleLineCount(message){
@@ -1079,7 +1084,7 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=218",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=219",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
