@@ -939,7 +939,6 @@ async function interact(){
  const o=nearest();if(!o){sayToast("چیزی در نزدیکی تو نیست");return;}
  if(!connected||!online){sayToast("ابتدا وارد دنیای آنلاین شو");return;}
  try{
-  await online.updatePosition({x:player.x,y:player.y,facing:player.face});
   if(o.type==="npc"){
    if(!questStarted){applyEconomy(await online.startQuest());sayToast("ماموریت: سه گیاه درخشان جمع کن");}
    else if(questDone){sayToast("ممنون که به دهکده کمک کردی");}
