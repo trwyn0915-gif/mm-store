@@ -1102,41 +1102,45 @@ function makeDefaultPlayerName(id){
 }
 function keepPlayerNameInputVisible(){
  const modal=$("playerNameSetup"),card=modal.querySelector(".player-name-card"),field=$("playerNameSetupInput");
- if(!nameSetupOpen||!field||!card)return;
+ if(!nameSetupOpen||!field||!card||document.activeElement!==field)return;
+ const vv=window.visualViewport;
  const fieldRect=field.getBoundingClientRect();
- const modalRect=modal.getBoundingClientRect();
- const safeTop=Math.max(modalRect.top+8,8),safeBottom=Math.min(modalRect.bottom-8,window.visualViewport?.height||window.innerHeight);
- if(fieldRect.bottom>safeBottom)card.scrollTop+=fieldRect.bottom-safeBottom+18;
+ const safeTop=(vv?.offsetTop||0)+8;
+ const safeBottom=(vv?.offsetTop||0)+(vv?.height||window.innerHeight)-12;
+ if(fieldRect.bottom>safeBottom)card.scrollTop+=fieldRect.bottom-safeBottom+20;
  else if(fieldRect.top<safeTop)card.scrollTop-=safeTop-fieldRect.top+12;
 }
 function syncPlayerNameViewport(){
  const vv=window.visualViewport;
  const height=vv?.height||window.innerHeight;
  const top=vv?.offsetTop||0;
- const keyboardOpen=window.innerHeight-(height+top)>100;
+ const keyboardOpen=!!vv&&window.innerHeight-(height+top)>80;
  const modal=$("playerNameSetup");
  document.documentElement.style.setProperty("--name-vv-height",height+"px");
  document.documentElement.style.setProperty("--name-vv-top",top+"px");
  modal.classList.toggle("keyboard-open",keyboardOpen);
- if(keyboardOpen)requestAnimationFrame(keepPlayerNameInputVisible);
+ if(keyboardOpen&&document.activeElement===$("playerNameSetupInput")){
+  requestAnimationFrame(keepPlayerNameInputVisible);
+ }
 }
 window.visualViewport?.addEventListener("resize",syncPlayerNameViewport);
 window.visualViewport?.addEventListener("scroll",syncPlayerNameViewport);
 window.addEventListener("resize",syncPlayerNameViewport);
 $("playerNameSetupInput").addEventListener("focus",()=>{
- // Android may finish opening its keyboard after the focus event; re-check the
- // visual viewport several times so the input is moved above the keyboard.
- [80,180,320,500].forEach(delay=>setTimeout(()=>{syncPlayerNameViewport();keepPlayerNameInputVisible();},delay));
+ // Move the field as soon as the keyboard changes the visual viewport,
+ // without waiting for the player to type the first character.
+ [60,140,240,380,550].forEach(delay=>setTimeout(()=>{syncPlayerNameViewport();keepPlayerNameInputVisible();},delay));
 });
+$("playerNameSetupInput").addEventListener("blur",()=>setTimeout(syncPlayerNameViewport,150));
 function showPlayerNameSetup(){
  nameSetupRequired=true;nameSetupOpen=true;
  const modal=$("playerNameSetup"),field=$("playerNameSetupInput");
  field.value=player.name||makeDefaultPlayerName(userId);
  const card=modal.querySelector(".player-name-card");
  if(card)card.scrollTop=0;
+ field.blur(); // Do not open the Android keyboard automatically.
  syncPlayerNameViewport();
  modal.classList.add("open");modal.setAttribute("aria-hidden","false");
- requestAnimationFrame(()=>{field.focus({preventScroll:true});field.select();[120,280,450].forEach(delay=>setTimeout(()=>{syncPlayerNameViewport();keepPlayerNameInputVisible();},delay));});
 }
 function hidePlayerNameSetup(){
  nameSetupOpen=false;
