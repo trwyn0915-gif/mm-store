@@ -681,6 +681,20 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 #playerNameConfirm:disabled{opacity:.65;cursor:wait}
 @media(max-width:480px){.player-name-card{padding:58px 18px 22px}}
 
+
+.orientation-gate-card .orientation-wait-note{
+ margin:14px 0 0;
+ padding:11px 13px;
+ border:1px solid #ffffff20;
+ border-radius:12px;
+ background:#061a8344;
+ color:#e4efff;
+ font-size:13px;
+ font-weight:600;
+ line-height:1.9;
+ text-align:center;
+}
+
 </style>
 </head>
 <body>
@@ -753,6 +767,7 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
    <strong>آماده ورود به دنیای MM هستی؟</strong>
    <p>برای نمایش درست بازی، ابتدا صفحه را افقی می‌کنیم.</p>
    <button type="button" id="orientationGateStart">شروع بازی</button>
+   <p class="orientation-wait-note">لطفاً کمی صبر کنید؛ ممکن است دستگاه شما در حال بارگذاری بازی باشد. این فرایند ممکن است حدود ۳۰ ثانیه طول بکشد.</p>
   </div>
  </div>
  <div id="rotatePrompt" class="hidden" hidden><section class="connection-retry-card" role="alert"><strong>ورود به بازی انجام نشد</strong><p id="connectionError"></p><button type="button" id="startLandscape">تلاش دوباره برای ورود آنلاین</button></section></div>
@@ -1505,7 +1520,7 @@ window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای
 stats();
 try{online=createRipOnline();}catch(error){console.error("Game client initialization failed:",error);}
 requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=277",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=278",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
