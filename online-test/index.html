@@ -411,7 +411,20 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 .side-controls .icon-chat-button{width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;padding:0!important}
 .icon-chat-button{display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 48px!important;border-radius:50%!important}
 .icon-chat-button svg{width:86%!important;height:86%!important;max-width:42px!important;max-height:42px!important;display:block!important;flex:none!important}
-/* Keep the visual fill synchronized with one-percent counter steps. */\n.loading-fill{transition:width .02s linear!important}\n</style>
+/* Keep the visual fill synchronized with one-percent counter steps. */\n.loading-fill{transition:width .02s linear!important}\n
+/* v205: simplify chat panel and keep the composer visible above the mobile keyboard. */
+.chat-panel.chat-floating .chat-heading h2{display:none!important}
+.chat-panel.chat-floating>.quick-chat{display:none!important}
+.chat-panel.chat-floating>.chat-heading{flex:0 0 30px!important;min-height:30px!important;height:30px!important;justify-content:flex-start!important;padding:0!important;margin:0!important}
+.chat-panel.chat-floating{width:min(320px,74vw)!important;height:min(260px,calc(var(--chat-vv-height,100dvh) - 24px))!important;max-height:calc(var(--chat-vv-height,100dvh) - 24px)!important;min-height:150px!important;padding:9px!important;gap:6px!important}
+.chat-panel.chat-floating>#chatlog{flex:1 1 auto!important;min-height:48px!important;max-height:none!important}
+.chat-panel.chat-floating>#chatform{flex:0 0 48px!important;height:48px!important;min-height:48px!important}
+@media(max-width:760px){
+ body.playing .bottom.chat-open{width:min(320px,74vw)!important;max-height:calc(var(--chat-vv-height,100dvh) - 24px)!important}
+ .chat-panel.chat-floating{width:min(320px,74vw)!important;height:min(260px,calc(var(--chat-vv-height,100dvh) - 24px))!important;max-height:calc(var(--chat-vv-height,100dvh) - 24px)!important;min-height:150px!important}
+}
+
+</style>
 </head>
 <body>
 <div id="desktopBlock" role="alert" aria-live="assertive"><div class="desktop-block-card"><h1>MM WORLD</h1><p>این بازی فقط برای گوشی طراحی شده است.</p><p>لطفاً لینک بازی را با تلفن همراه باز کنید.</p><small>ورود از طریق کامپیوتر امکان‌پذیر نیست.</small></div></div>
@@ -946,6 +959,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=204",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=205",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
