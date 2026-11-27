@@ -205,8 +205,8 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 #loadingScreen.visible{display:flex}
 .loading-ui{width:min(760px,86vw);margin-bottom:clamp(12px,5vh,58px);text-align:center;color:#fff;text-shadow:0 2px 5px #000}
 .loading-title{font-size:clamp(15px,2.4vw,23px);font-weight:900;margin-bottom:12px}
-.loading-track{height:clamp(16px,2.5vh,24px);padding:3px;border:2px solid #d6e5f3;border-radius:999px;background:#101820ed;box-shadow:0 3px 15px #0009,inset 0 1px 5px #000}
-.loading-fill{height:100%;width:3%;border-radius:999px;background:linear-gradient(90deg,#0877f9,#20d8ff);box-shadow:0 0 12px #16aaff;transition:width .35s ease}
+.loading-track{height:clamp(16px,2.5vh,24px);padding:3px;border:0;border-radius:999px;background:rgba(0,0,0,.55);box-shadow:none}
+.loading-fill{height:100%;width:3%;border-radius:999px;background:#3B82F6;box-shadow:none;transition:width .35s ease}
 .loading-meta{display:flex;justify-content:space-between;gap:12px;margin-top:8px;font-size:clamp(11px,1.8vw,15px);font-weight:800}
 #loadingMessage{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(orientation:portrait){#loadingScreen{width:100dvh;height:100vw;inset:auto;left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%) rotate(90deg);padding:0 5vw 24px;background-size:cover;background-position:center}.loading-ui{width:86vw;margin-bottom:5vh}}
