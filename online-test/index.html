@@ -266,6 +266,14 @@ body.desktop-blocked #desktopBlock{display:flex!important}
 .chat-panel{display:flex;flex-direction:column;gap:9px;min-height:0;background:linear-gradient(155deg,#1b2b31f5,#081319f5);border:1px solid #b99a5d;border-radius:18px;box-shadow:0 16px 44px #000b;overflow:hidden}.chat-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}.chat-heading h2{margin:0;font-size:clamp(15px,2vw,19px)}.chat-close{width:34px;height:34px;padding:0;border-radius:10px;font-size:24px;line-height:1;background:#263a40;border-color:#657b78}.quick-chat{display:flex;gap:6px;overflow-x:auto;padding:2px 0 5px;scrollbar-width:thin}.quick-chat button{flex:0 0 auto;padding:7px 13px;border-radius:22px;background:#d8d9d7;color:#172127;border:1px solid #fff;font-size:12px;font-weight:900}.chat-panel .chatlog{height:clamp(110px,28dvh,260px);min-height:70px;padding:10px;border:1px solid #4c5b60;border-radius:12px;background:#071015b8;font-size:13px}.chat-panel .chatline{padding:3px 0;border-bottom:1px solid #ffffff12}.chat-panel .chatrow{display:flex;gap:7px;margin:0}.chat-panel .chatrow input{min-width:0;min-height:48px;border-radius:12px;background:#03080b;color:#fff;font-size:15px}.chat-panel .chatrow button{min-width:68px;border-radius:12px}.bottom.chat-open{position:fixed!important;z-index:1200!important;right:max(10px,env(safe-area-inset-right))!important;bottom:calc(var(--chat-vv-bottom,0px) + max(10px,env(safe-area-inset-bottom)))!important;left:max(10px,env(safe-area-inset-left))!important;top:auto!important;width:min(520px,calc(100vw - 20px))!important;max-height:calc(var(--chat-vv-height,100dvh) - 20px)!important;margin:0!important;display:block!important;overflow:hidden!important;pointer-events:auto!important}.bottom.chat-open .chat-panel{max-height:calc(var(--chat-vv-height,100dvh) - 20px);padding:12px}.bottom.chat-open .chatlog{flex:1 1 auto;min-height:70px}.bottom.chat-open .panel:last-child{display:none!important}body.playing .bottom.chat-open,html:fullscreen body .bottom.chat-open{display:block!important;position:fixed!important;right:max(10px,env(safe-area-inset-right))!important;left:max(10px,env(safe-area-inset-left))!important;width:min(520px,calc(100vw - 20px))!important;bottom:calc(var(--chat-vv-bottom,0px) + max(10px,env(safe-area-inset-bottom)))!important;max-height:calc(var(--chat-vv-height,100dvh) - 20px)!important;z-index:1200!important}.chat-toggle{z-index:1100!important}
 @media(max-width:760px){.bottom.chat-open{width:min(520px,calc(100vw - 16px))!important;right:8px!important;left:8px!important}.bottom.chat-open .chat-panel{max-height:calc(var(--chat-vv-height,100dvh) - 16px);padding:10px}.bottom.chat-open .chatlog{height:auto;min-height:65px;max-height:34dvh}.quick-chat button{padding:7px 11px}}
 @media(min-width:761px){.bottom.chat-open{left:auto!important;width:min(440px,48vw)!important;right:14px!important}}
+/* Chat viewport fix v197: render the chat outside the rotated game wrapper. */
+.chat-panel.chat-floating{position:fixed!important;z-index:5000!important;display:flex!important;flex-direction:column!important;right:max(12px,env(safe-area-inset-right))!important;left:auto!important;top:auto!important;bottom:calc(var(--chat-keyboard-inset,0px) + max(12px,env(safe-area-inset-bottom)))!important;width:min(560px,calc(100vw - 24px))!important;max-height:calc(var(--chat-vv-height,100dvh) - 24px)!important;height:auto!important;min-height:0!important;margin:0!important;padding:12px!important;overflow:hidden!important;box-sizing:border-box!important;transform:none!important}
+.chat-panel.chat-floating .chat-heading,.chat-panel.chat-floating .quick-chat,.chat-panel.chat-floating .chatrow{flex:0 0 auto!important}
+.chat-panel.chat-floating .chatlog{flex:1 1 auto!important;height:auto!important;min-height:64px!important;max-height:min(30dvh,220px)!important;overflow-y:auto!important;overscroll-behavior:contain}
+.chat-panel.chat-floating .chatrow input{font-size:16px!important;min-height:46px!important}
+.chat-panel.chat-floating .chatrow button{min-height:46px!important}
+@media(max-width:760px){.chat-panel.chat-floating{right:8px!important;width:min(560px,calc(100vw - 16px))!important;padding:9px!important;gap:7px!important}.chat-panel.chat-floating .chatlog{max-height:min(27dvh,190px)!important}}
+@media(orientation:portrait){.chat-panel.chat-floating{right:8px!important;left:8px!important;width:auto!important;max-height:calc(var(--chat-vv-height,100dvh) - 16px)!important}}
 /* Keep the visual fill synchronized with one-percent counter steps. */\n.loading-fill{transition:width .02s linear!important}\n</style>
 </head>
 <body>
@@ -721,11 +729,39 @@ document.querySelectorAll("[data-home-close]").forEach(btn=>btn.addEventListener
 
 $("skin").addEventListener("change",()=>{player.skin=ownedCharacters.has($("skin").value)?$("skin").value:"hero";persist();ensureAvatar("self",player.skin).catch(console.error);});
 $("playerName").addEventListener("change",()=>{player.name=$("playerName").value.trim().slice(0,20)||"بازیکن MM";persist();});
-$("chatform").addEventListener("submit",async e=>{e.preventDefault();const msg=$("chatinput").value.trim();if(!msg)return;if(!connected){sayToast("اول وارد دنیای آنلاین شو");return;}if(Date.now()-lastChat<1200){sayToast("کمی صبر کن و دوباره بفرست");return;}lastChat=Date.now();try{const sent=await online.sendChat(ROOM,msg,player.name);addChat(player.name,msg,sent?.id);showPlayerChatBubble(userId,msg,sent?.created_at);$("chatinput").value="";$("chatinput").blur();}catch(err){console.error(err);sayToast("پیام ارسال نشد");}});
-$("closeChat").addEventListener("click",()=>document.querySelector(".bottom").classList.remove("chat-open"));
-document.querySelector(".quick-chat").addEventListener("click",e=>{const btn=e.target.closest("[data-chat-text]");if(!btn)return;$("chatinput").value=btn.dataset.chatText;$("chatinput").focus();});
-function syncChatViewport(){const vv=window.visualViewport;if(!vv)return;document.documentElement.style.setProperty("--chat-vv-bottom",Math.max(0,window.innerHeight-(vv.height+vv.offsetTop))+"px");document.documentElement.style.setProperty("--chat-vv-height",vv.height+"px");}
-window.visualViewport?.addEventListener("resize",syncChatViewport);window.visualViewport?.addEventListener("scroll",syncChatViewport);window.addEventListener("resize",syncChatViewport);$("chatinput").addEventListener("focus",()=>{document.querySelector(".bottom").classList.add("chat-open");syncChatViewport();});
+$("chatform").addEventListener("submit",async e=>{e.preventDefault();const msg=$("chatinput").value.trim();if(!msg)return;if(!connected){sayToast("اول وارد دنیای آنلاین شو");return;}if(Date.now()-lastChat<1200){sayToast("کمی صبر کن و دوباره بفرست");return;}lastChat=Date.now();try{const sent=await online.sendChat(ROOM,msg,player.name);addChat(player.name,msg,sent?.id);showPlayerChatBubble(userId,msg,sent?.created_at);$("chatinput").value="";$("chatinput").blur();syncChatViewport();}catch(err){console.error(err);sayToast("پیام ارسال نشد");}});
+const chatPanel=document.querySelector(".chat-panel");
+const chatHome=chatPanel.parentElement;
+function openChatPanel(focusInput=false){
+ if(!connected){sayToast("برای چت باید ابتدا وارد دنیای آنلاین شوی");return;}
+ if(chatPanel.parentElement!==document.body)document.body.appendChild(chatPanel);
+ chatPanel.classList.add("chat-floating");
+ syncChatViewport();
+ if(focusInput)setTimeout(()=>$("chatinput").focus({preventScroll:true}),80);
+}
+function closeChatPanel(){
+ $("chatinput").blur();
+ chatPanel.classList.remove("chat-floating");
+ chatHome.insertBefore(chatPanel,chatHome.firstChild);
+ document.documentElement.style.setProperty("--chat-keyboard-inset","0px");
+ syncChatViewport();
+}
+$("closeChat").addEventListener("click",closeChatPanel);
+document.querySelector(".quick-chat").addEventListener("click",e=>{const btn=e.target.closest("[data-chat-text]");if(!btn)return;$("chatinput").value=btn.dataset.chatText;$("chatinput").focus({preventScroll:true});});
+function syncChatViewport(){
+ const vv=window.visualViewport;
+ const height=vv?.height||window.innerHeight;
+ const offsetTop=vv?.offsetTop||0;
+ const keyboardInset=Math.max(0,window.innerHeight-(height+offsetTop));
+ document.documentElement.style.setProperty("--chat-vv-height",height+"px");
+ document.documentElement.style.setProperty("--chat-keyboard-inset",keyboardInset+"px");
+ document.documentElement.style.setProperty("--chat-vv-top",offsetTop+"px");
+}
+window.visualViewport?.addEventListener("resize",syncChatViewport);
+window.visualViewport?.addEventListener("scroll",syncChatViewport);
+window.addEventListener("resize",syncChatViewport);
+$("chatinput").addEventListener("focus",()=>{if(!chatPanel.classList.contains("chat-floating"))openChatPanel(false);syncChatViewport();});
+$("chatinput").addEventListener("blur",()=>{setTimeout(syncChatViewport,120);});
 let exitGuardInstalled=false,exitApproved=false;
 function installExitGuard(){if(exitGuardInstalled)return;exitGuardInstalled=true;history.pushState({mmWorldGuard:true},"",location.href);}
 function showExitConfirm(){const modal=$("exitConfirm");modal.classList.add("open");modal.setAttribute("aria-hidden","false");$("stayInGame").focus();}
@@ -738,7 +774,7 @@ async function stayInGame(){if(!document.fullscreenElement){const root=document.
 $("stayInGame").addEventListener("click",stayInGame);
 async function confirmExitSite(){backgroundMusic.pause();backgroundMusic.currentTime=0;exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";const startBtn=$("startLandscape");startBtn.disabled=false;startBtn.textContent="ورود به سایت";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
 $("confirmExit").addEventListener("click",confirmExitSite);
-function toggleChat(){if(!connected){sayToast("برای چت باید ابتدا وارد دنیای آنلاین شوی");return;}const bottom=document.querySelector(".bottom");bottom.classList.toggle("chat-open");if(bottom.classList.contains("chat-open"))setTimeout(()=>$("chatinput").focus(),80);}
+function toggleChat(){if(chatPanel.classList.contains("chat-floating")){closeChatPanel();return;}openChatPanel(true);}
 $("chatToggle").addEventListener("click",toggleChat);
 $("quickChat").addEventListener("click",toggleChat);
 $("quickInteract").addEventListener("click",interact);
@@ -773,6 +809,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=196",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=197",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
