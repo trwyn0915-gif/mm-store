@@ -1475,7 +1475,7 @@ function prepareMusicAudio(){
  musicAudioContext=new AudioContextClass();
  musicSourceNode=musicAudioContext.createMediaElementSource(backgroundMusic);
  musicGainNode=musicAudioContext.createGain();
- musicGainNode.gain.setValueAtTime(0.03,musicAudioContext.currentTime);
+ musicGainNode.gain.setValueAtTime(0.04,musicAudioContext.currentTime);
  musicSourceNode.connect(musicGainNode);
  musicGainNode.connect(musicAudioContext.destination);
  backgroundMusic.volume=1;
@@ -1484,7 +1484,7 @@ function startBackgroundMusic(){
  try{
   prepareMusicAudio();
   if(musicAudioContext?.state==="suspended")musicAudioContext.resume().catch(error=>console.info("Music audio context could not resume:",error));
- }catch(error){console.warn("Web Audio volume control unavailable:",error);backgroundMusic.volume=0.03;}
+ }catch(error){console.warn("Web Audio volume control unavailable:",error);backgroundMusic.volume=0.04;}
  backgroundMusic.play().catch(error=>console.info("Background music could not start:",error));
 }
 document.addEventListener("visibilitychange",()=>{if(document.hidden)backgroundMusic.pause();else if(connected)startBackgroundMusic();});
