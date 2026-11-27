@@ -666,6 +666,21 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 #rotatePrompt.hidden{display:none!important}
 #loadingScreen.visible{display:flex!important}
 @media(min-width:761px){.orientation-gate-card{width:min(500px,80vw)}}
+
+/* One-time player-name setup, shown over the already-loaded game world. */
+#playerNameSetup{position:fixed;inset:0;z-index:25000;display:none;align-items:center;justify-content:center;padding:20px;direction:rtl;background:radial-gradient(ellipse at 50% 42%,#1e3e62 0%,#102943 48%,#0b192c 100%);color:#fff}
+#playerNameSetup.open{display:flex!important}
+.player-name-card{position:relative;width:min(440px,94vw);display:flex;flex-direction:column;align-items:center;padding:58px 24px 26px;border:1px solid #ffffff22;border-radius:22px;background:#07172bcc;box-shadow:0 18px 65px #0009;text-align:center}
+#playerNameExit{position:absolute;top:14px;right:14px;width:44px;height:44px;display:grid;place-items:center;padding:0;border:0;border-radius:8px;background:linear-gradient(145deg,#ffb52e,#f28b12);color:#fff;box-shadow:0 5px 16px #0005}
+#playerNameExit svg{width:22px;height:22px;stroke:currentColor;stroke-width:2.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.player-name-card h2{margin:0;color:#fff;font-size:clamp(28px,7vw,32px);font-weight:900;line-height:1.4}
+.player-name-card p{margin:7px 0 25px;color:#c4cfdd;font-size:15px;font-weight:500}
+#playerNameSetupInput{display:block;width:100%;height:54px;margin:0 0 14px;padding:14px;border:1px solid #ffffff26;border-radius:12px;background:#ffffff14;color:#fff;text-align:center;direction:ltr;font:700 17px ui-monospace,SFMono-Regular,Consolas,monospace;outline:none;user-select:text;-webkit-user-select:text}
+#playerNameSetupInput:focus{border-color:#60a5fa;box-shadow:0 0 0 3px #3b82f633}
+#playerNameConfirm{width:100%;min-height:54px;border:1px solid #75aaff55;border-radius:12px;background:linear-gradient(to bottom,#3b82f6,#1d4ed8);color:#fff;font-size:17px;font-weight:900;box-shadow:0 8px 20px #174db955}
+#playerNameConfirm:disabled{opacity:.65;cursor:wait}
+@media(max-width:480px){.player-name-card{padding:58px 18px 22px}}
+
 </style>
 </head>
 <body>
@@ -721,6 +736,17 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
   <button type="button" id="dismissClockWarning">متوجه شدم</button>
  </div>
  <div id="loadingScreen" role="status" aria-live="polite" aria-label="در حال بارگذاری بازی"><div class="loading-ui"><div class="loading-track"><div id="loadingFill" class="loading-fill"></div><span id="loadingPercent" class="loading-percent">۳٪</span></div></div></div>
+ <div id="playerNameSetup" role="dialog" aria-modal="true" aria-labelledby="playerNameSetupTitle" aria-describedby="playerNameSetupSubtitle">
+  <section class="player-name-card">
+   <button id="playerNameExit" type="button" aria-label="خروج از بازی">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+   </button>
+   <h2 id="playerNameSetupTitle">نام بازیکن</h2>
+   <p id="playerNameSetupSubtitle">نام خود را در بازی انتخاب کنید</p>
+   <input id="playerNameSetupInput" type="text" minlength="2" maxlength="20" autocomplete="nickname" aria-label="نام بازیکن">
+   <button id="playerNameConfirm" type="button">تأیید</button>
+  </section>
+ </div>
  <div id="orientationGate" role="dialog" aria-modal="true" aria-label="آماده‌سازی حالت افقی">
   <div class="orientation-gate-card">
    <div class="orientation-gate-mark" aria-hidden="true">MM</div>
@@ -735,7 +761,7 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 (()=>{const btn=document.getElementById("orientationGateStart");if(!btn)return;btn.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();if(btn.dataset.started==="1")return;btn.dataset.started="1";btn.disabled=true;btn.textContent="در حال آماده‌سازی بازی...";const root=document.documentElement;try{if(!document.fullscreenElement&&root.requestFullscreen){const p=root.requestFullscreen();p?.catch(()=>{});}}catch(_){}try{const p=screen.orientation?.lock?.("landscape");p?.catch(()=>{});}catch(_){}window.__mmStartRequested=true;const gate=document.getElementById("orientationGate");if(gate){gate.hidden=true;gate.style.display="none";}document.body.classList.remove("exit-to-page");const loading=document.getElementById("loadingScreen");if(loading)loading.classList.add("visible");if(typeof window.__mmStartGame==="function"){window.__mmStartGame();return;}clearTimeout(window.__mmStartWaitTimer);window.__mmStartWaitTimer=setTimeout(()=>{if(window.__mmStartRequested){window.__mmStartRequested=false;const p=document.getElementById("connectionError");if(p)p.textContent="بازی آماده نشد. صفحه را تازه‌سازی کن و دوباره تلاش کن.";const prompt=document.getElementById("rotatePrompt");if(prompt){prompt.hidden=false;prompt.classList.remove("hidden");}if(loading)loading.classList.remove("visible");if(gate){gate.hidden=false;gate.style.display="";}btn.dataset.started="";btn.disabled=false;btn.textContent="شروع بازی";}},20000);},{passive:false});})();
 </script>
 <script type="module">
-import { createRipOnline } from "../online/multiplayer.js?v=30";
+import { createRipOnline } from "../online/multiplayer.js?v=31";
 const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
 const { GLTFLoader } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
 const { clone: cloneSkinned } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js");
@@ -1039,6 +1065,46 @@ function advanceLoadingProgress(){loadingProgressTimer=null;loadingProgressCurre
 function setLoadingProgress(value,message){if(Number(value)>=100&&!loadingProgressComplete){loadingProgressComplete=true;if(loadingProgressTimer===null)loadingProgressTimer=setTimeout(advanceLoadingProgress,0);}}
 function showLoading(){clearTimeout(loadingProgressTimer);loadingProgressTimer=null;loadingProgressCurrent=0;loadingProgressComplete=false;paintLoadingProgress();$("loadingScreen").classList.add("visible");loadingProgressTimer=setTimeout(advanceLoadingProgress,85);}
 function hideLoading(){ $("loadingScreen").classList.remove("visible");clearTimeout(loadingProgressTimer);loadingProgressTimer=null;}
+let nameSetupRequired=false,nameSetupOpen=false;
+function makeDefaultPlayerName(id){
+ const hex=String(id||"").replace(/-/g,"").slice(-8);
+ const parsed=Number.parseInt(hex,16);
+ const number=Number.isFinite(parsed)?(parsed%90000)+10000:93711;
+ return "Player #"+number;
+}
+function showPlayerNameSetup(){
+ nameSetupRequired=true;nameSetupOpen=true;
+ const modal=$("playerNameSetup"),field=$("playerNameSetupInput");
+ field.value=player.name||makeDefaultPlayerName(userId);
+ modal.classList.add("open");modal.setAttribute("aria-hidden","false");
+ requestAnimationFrame(()=>{field.focus();field.select();});
+}
+function hidePlayerNameSetup(){
+ nameSetupOpen=false;
+ const modal=$("playerNameSetup");modal.classList.remove("open");modal.setAttribute("aria-hidden","true");
+}
+async function confirmPlayerName(){
+ if(!nameSetupRequired||!connected||!online)return;
+ const field=$("playerNameSetupInput"),button=$("playerNameConfirm");
+ const name=field.value.trim().slice(0,20);
+ if(name.length<2){sayToast("نام بازیکن باید حداقل دو حرف داشته باشد");field.focus();return;}
+ button.disabled=true;button.textContent="در حال ذخیره...";
+ try{
+  const result=await online.confirmPlayerName(name);
+  player.name=result?.display_name||name;
+  $("playerName").value=player.name;
+  nameSetupRequired=false;hidePlayerNameSetup();persist();
+  const avatar=avatarRecords.get("self");if(avatar)updateAvatarNameTag(avatar,player.name);
+  sayToast("نام بازیکن با موفقیت ثبت شد");
+ }catch(error){
+  console.error("Player name confirmation failed:",error);
+  sayToast("ذخیره نام انجام نشد؛ دوباره تلاش کن");
+ }finally{button.disabled=false;button.textContent="تأیید";}
+}
+$("playerNameConfirm").addEventListener("click",confirmPlayerName);
+$("playerNameSetupInput").addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();confirmPlayerName();}});
+$("playerNameExit").addEventListener("click",()=>{hidePlayerNameSetup();showExitConfirm();});
+
 function waitForLoadingProgress(target=100){return new Promise(resolve=>{const check=()=>{if(loadingProgressCurrent>=target){resolve();return;}requestAnimationFrame(check);};check();});}
 
 function updateCoinDisplays(){const value=new Intl.NumberFormat("fa-IR").format(coins);$("coins").textContent=value;const hud=$("hudCoinBalance");if(hud)hud.textContent=value;}
@@ -1223,15 +1289,14 @@ async function interact(){
 }
 async function connect(){
  if(connected)return;
- const name=$("playerName").value.trim().slice(0,20);
- if(name.length<2){hideLoading();sayToast("نام باید حداقل دو حرف باشد");return;}
- player.name=name;
  const btn=$("connect");btn.disabled=true;status("در حال اتصال به دنیای آنلاین...");setLoadingProgress(12,"در حال اتصال به سرور بازی...");
  try{
   online=online||createRipOnline();
   const auth=await online.connect();userId=auth.userId;if(Math.abs(auth.offsetMs)>120000)showClockWarning();setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
   const economy=await online.loadEconomy();applyEconomy(economy);
   const saved=await online.loadCharacter();setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
+  player.name=saved?.name_setup_completed?saved.display_name:makeDefaultPlayerName(auth.userId);
+  $("playerName").value=player.name;
   if(saved){
    player.level=saved.level||1;player.xp=saved.experience||0;
    player.x=Number.isFinite(Number(saved.x))?Number(saved.x):W/2;
@@ -1277,7 +1342,8 @@ async function connect(){
    await online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw,moving:!!player.moving});
   }catch(moveError){console.warn("Initial position broadcast failed; live movement will retry:",moveError);}
   setLoadingProgress(100,"ورود به دنیای MM موفق بود");await waitForLoadingProgress(100);await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));hideLoading();
-  stats();sayToast("با موفقیت وارد دنیای آنلاین شدی");persist();
+  stats();persist();
+  if(!saved?.name_setup_completed)showPlayerNameSetup();else sayToast("با موفقیت وارد دنیای آنلاین شدی");
  }catch(e){
   console.error("Online connection failed:",e);hideLoading();
   connected=false;players={};userId="";
@@ -1392,13 +1458,13 @@ $("chatinput").addEventListener("focus",()=>{if(!chatPanel.classList.contains("c
 $("chatinput").addEventListener("blur",()=>{setTimeout(syncChatViewport,120);});
 let exitGuardInstalled=false,exitApproved=false,exitFlowActive=false;
 function installExitGuard(){if(exitGuardInstalled)return;exitGuardInstalled=true;history.pushState({mmWorldGuard:true},"",location.href);}
-function showExitConfirm(){const modal=$("exitConfirm");modal.classList.add("open");modal.setAttribute("aria-hidden","false");$("stayInGame").focus();}
+function showExitConfirm(){if(nameSetupOpen)hidePlayerNameSetup();const modal=$("exitConfirm");modal.classList.add("open");modal.setAttribute("aria-hidden","false");$("stayInGame").focus();}
 function hideExitConfirm(){const modal=$("exitConfirm");modal.classList.remove("open");modal.setAttribute("aria-hidden","true");}
 window.addEventListener("popstate",()=>{if(!exitFlowActive||exitApproved)return;history.pushState({mmWorldGuard:true},"",location.href);showExitConfirm();});
 // If Android/browser Back exits fullscreen, keep the game page open and ask what to do.
 window.addEventListener("fullscreenchange",()=>{if(exitFlowActive&&!document.fullscreenElement&&!exitApproved)showExitConfirm();});
 // Portrait devices use a rotated landscape game viewport; no physical rotation is required.
-async function stayInGame(){if(!document.fullscreenElement){const root=document.documentElement;if(!root.requestFullscreen){sayToast("این مرورگر امکان بازگشت به تمام‌صفحه را نمی‌دهد");return;}try{await root.requestFullscreen();}catch(e){sayToast("برای ادامه، حالت تمام‌صفحه را از مرورگر فعال کن");return;}}try{await screen.orientation?.lock?.("landscape");}catch(_){}hideExitConfirm();}
+async function stayInGame(){if(!document.fullscreenElement){const root=document.documentElement;if(!root.requestFullscreen){sayToast("این مرورگر امکان بازگشت به تمام‌صفحه را نمی‌دهد");return;}try{await root.requestFullscreen();}catch(e){sayToast("برای ادامه، حالت تمام‌صفحه را از مرورگر فعال کن");return;}}try{await screen.orientation?.lock?.("landscape");}catch(_){}hideExitConfirm();if(nameSetupRequired)showPlayerNameSetup();}
 $("stayInGame").addEventListener("click",stayInGame);
 async function confirmExitSite(){exitFlowActive=false;closeChatPanel();backgroundMusic.pause();backgroundMusic.currentTime=0;exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");const gate=$("orientationGate");gate.hidden=false;gate.style.display="flex";const gateBtn=$("orientationGateStart");gateBtn.disabled=false;gateBtn.textContent="شروع بازی";const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، دکمه شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
 $("confirmExit").addEventListener("click",confirmExitSite);
@@ -1439,7 +1505,7 @@ window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای
 stats();
 try{online=createRipOnline();}catch(error){console.error("Game client initialization failed:",error);}
 requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=276",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=277",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
