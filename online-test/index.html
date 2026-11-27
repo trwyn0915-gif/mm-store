@@ -951,6 +951,7 @@ async function connect(){
   if(online){try{await online.leave();}catch(_){}}
   online=null;
   document.body.classList.remove("playing");
+  exitFlowActive=false;
   btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";
   status("اتصال برقرار نشد؛ دوباره تلاش کن");
   const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");$("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";
@@ -983,7 +984,7 @@ function startBackgroundMusic(){
  backgroundMusic.play().catch(error=>console.info("Background music could not start:",error));
 }
 document.addEventListener("visibilitychange",()=>{if(document.hidden)backgroundMusic.pause();else if(connected)startBackgroundMusic();});
-async function startFromPage(){if(desktopDevice){document.body.classList.add("desktop-blocked");return;}startBackgroundMusic();const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");showLoading();const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال فعال‌سازی حالت افقی و تمام‌صفحه...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{if(screen.orientation?.lock)await screen.orientation.lock("landscape");}catch(e){console.info("Landscape lock unavailable; using the rotated landscape game stage",e);}await waitForStableViewport();setLoadingProgress(8,"در حال آماده‌سازی محیط سه‌بعدی...");document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
+async function startFromPage(){if(desktopDevice){document.body.classList.add("desktop-blocked");return;}exitFlowActive=true;exitApproved=false;installExitGuard();startBackgroundMusic();const errorBox=$("connectionError");errorBox.textContent="";errorBox.classList.remove("visible");showLoading();const root=document.documentElement;const btn=$("startLandscape");btn.disabled=true;btn.textContent="در حال فعال‌سازی حالت افقی و تمام‌صفحه...";try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen();}catch(e){console.info("Fullscreen unavailable",e);}try{if(screen.orientation?.lock)await screen.orientation.lock("landscape");}catch(e){console.info("Landscape lock unavailable; using the rotated landscape game stage",e);}await waitForStableViewport();setLoadingProgress(8,"در حال آماده‌سازی محیط سه‌بعدی...");document.body.classList.remove("exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");btn.textContent="در حال اتصال به دنیای آنلاین...";btn.disabled=true;connect();}
 $("connect").addEventListener("click",startFromPage);
 $("startLandscape").addEventListener("click",startFromPage);
 $("homeShop").addEventListener("click",()=>openCharacterShop());
@@ -1036,17 +1037,17 @@ window.visualViewport?.addEventListener("scroll",syncChatViewport);
 window.addEventListener("resize",syncChatViewport);
 $("chatinput").addEventListener("focus",()=>{if(!chatPanel.classList.contains("chat-floating"))openChatPanel(false);syncChatViewport();});
 $("chatinput").addEventListener("blur",()=>{setTimeout(syncChatViewport,120);});
-let exitGuardInstalled=false,exitApproved=false;
+let exitGuardInstalled=false,exitApproved=false,exitFlowActive=false;
 function installExitGuard(){if(exitGuardInstalled)return;exitGuardInstalled=true;history.pushState({mmWorldGuard:true},"",location.href);}
 function showExitConfirm(){const modal=$("exitConfirm");modal.classList.add("open");modal.setAttribute("aria-hidden","false");$("stayInGame").focus();}
 function hideExitConfirm(){const modal=$("exitConfirm");modal.classList.remove("open");modal.setAttribute("aria-hidden","true");}
-window.addEventListener("popstate",()=>{if(!document.body.classList.contains("playing")||exitApproved)return;history.pushState({mmWorldGuard:true},"",location.href);showExitConfirm();});
+window.addEventListener("popstate",()=>{if(!exitFlowActive||exitApproved)return;history.pushState({mmWorldGuard:true},"",location.href);showExitConfirm();});
 // If Android/browser Back exits fullscreen, keep the game page open and ask what to do.
-window.addEventListener("fullscreenchange",()=>{if(document.body.classList.contains("playing")&&!document.fullscreenElement&&!exitApproved)showExitConfirm();});
+window.addEventListener("fullscreenchange",()=>{if(exitFlowActive&&!document.fullscreenElement&&!exitApproved)showExitConfirm();});
 // Portrait devices use a rotated landscape game viewport; no physical rotation is required.
 async function stayInGame(){if(!document.fullscreenElement){const root=document.documentElement;if(!root.requestFullscreen){sayToast("این مرورگر امکان بازگشت به تمام‌صفحه را نمی‌دهد");return;}try{await root.requestFullscreen();}catch(e){sayToast("برای ادامه، حالت تمام‌صفحه را از مرورگر فعال کن");return;}}try{await screen.orientation?.lock?.("landscape");}catch(_){}hideExitConfirm();}
 $("stayInGame").addEventListener("click",stayInGame);
-async function confirmExitSite(){closeChatPanel();backgroundMusic.pause();backgroundMusic.currentTime=0;exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";const startBtn=$("startLandscape");startBtn.disabled=false;startBtn.textContent="ورود به سایت";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
+async function confirmExitSite(){exitFlowActive=false;closeChatPanel();backgroundMusic.pause();backgroundMusic.currentTime=0;exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";const startBtn=$("startLandscape");startBtn.disabled=false;startBtn.textContent="ورود به سایت";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
 $("confirmExit").addEventListener("click",confirmExitSite);
 function toggleChat(){if(chatPanel.classList.contains("chat-floating")){closeChatPanel();return;}openChatPanel(false);}
 $("chatToggle").addEventListener("click",toggleChat);
@@ -1083,7 +1084,7 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=226",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=227",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
