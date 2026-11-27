@@ -1100,6 +1100,15 @@ function makeDefaultPlayerName(id){
  const number=Number.isFinite(parsed)?(parsed%90000)+10000:93711;
  return "Player #"+number;
 }
+function keepPlayerNameInputVisible(){
+ const modal=$("playerNameSetup"),card=modal.querySelector(".player-name-card"),field=$("playerNameSetupInput");
+ if(!nameSetupOpen||!field||!card)return;
+ const fieldRect=field.getBoundingClientRect();
+ const modalRect=modal.getBoundingClientRect();
+ const safeTop=Math.max(modalRect.top+8,8),safeBottom=Math.min(modalRect.bottom-8,window.visualViewport?.height||window.innerHeight);
+ if(fieldRect.bottom>safeBottom)card.scrollTop+=fieldRect.bottom-safeBottom+18;
+ else if(fieldRect.top<safeTop)card.scrollTop-=safeTop-fieldRect.top+12;
+}
 function syncPlayerNameViewport(){
  const vv=window.visualViewport;
  const height=vv?.height||window.innerHeight;
@@ -1109,17 +1118,25 @@ function syncPlayerNameViewport(){
  document.documentElement.style.setProperty("--name-vv-height",height+"px");
  document.documentElement.style.setProperty("--name-vv-top",top+"px");
  modal.classList.toggle("keyboard-open",keyboardOpen);
+ if(keyboardOpen)requestAnimationFrame(keepPlayerNameInputVisible);
 }
 window.visualViewport?.addEventListener("resize",syncPlayerNameViewport);
 window.visualViewport?.addEventListener("scroll",syncPlayerNameViewport);
 window.addEventListener("resize",syncPlayerNameViewport);
+$("playerNameSetupInput").addEventListener("focus",()=>{
+ // Android may finish opening its keyboard after the focus event; re-check the
+ // visual viewport several times so the input is moved above the keyboard.
+ [80,180,320,500].forEach(delay=>setTimeout(()=>{syncPlayerNameViewport();keepPlayerNameInputVisible();},delay));
+});
 function showPlayerNameSetup(){
  nameSetupRequired=true;nameSetupOpen=true;
  const modal=$("playerNameSetup"),field=$("playerNameSetupInput");
  field.value=player.name||makeDefaultPlayerName(userId);
+ const card=modal.querySelector(".player-name-card");
+ if(card)card.scrollTop=0;
  syncPlayerNameViewport();
  modal.classList.add("open");modal.setAttribute("aria-hidden","false");
- requestAnimationFrame(()=>{field.focus();field.select();setTimeout(()=>{syncPlayerNameViewport();field.scrollIntoView({block:"nearest",behavior:"smooth"});},180);});
+ requestAnimationFrame(()=>{field.focus({preventScroll:true});field.select();[120,280,450].forEach(delay=>setTimeout(()=>{syncPlayerNameViewport();keepPlayerNameInputVisible();},delay));});
 }
 function hidePlayerNameSetup(){
  nameSetupOpen=false;
