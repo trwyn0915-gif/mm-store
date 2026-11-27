@@ -658,16 +658,16 @@ const stored=JSON.parse(localStorage.getItem("mmworld-profile")||"{}");
 const ownedCharacters=new Set(["robot","hero",...(Array.isArray(stored.ownedCharacters)?stored.ownedCharacters.filter(id=>CHARACTER_IDS.includes(id)):[])]);
 const savedSkin=stored.skin==="robot"?"hero":CHARACTER_IDS.includes(stored.skin)&&ownedCharacters.has(stored.skin)?stored.skin:"hero";
 $("playerName").value=stored.name||"بازیکن MM";$("skin").value=savedSkin;
-const spawnPoints=Array.from({length:50},(_,i)=>({x:W/2+((i%10)-4.5)*42,y:H/2+(Math.floor(i/10)-2)*42}));
-function chooseSpawnPoint(){
- let best=spawnPoints[0],bestScore=-Infinity;
- for(const point of spawnPoints){
-  const distances=Object.values(players).filter(p=>Number.isFinite(Number(p.x))&&Number.isFinite(Number(p.y))).map(p=>Math.hypot(point.x-Number(p.x),point.y-Number(p.y)));
-  const nearest=distances.length?Math.min(...distances):Infinity;
-  if(nearest>=38)return point;
-  if(nearest>bestScore){bestScore=nearest;best=point;}
- }
- return best;
+const spawnOffsets=[[-76,-20],[-38,-20],[0,-20],[38,-20],[76,-20],[-76,20],[-38,20],[0,20],[38,20],[76,20]];
+const spawnPoints=spawnOffsets.map(([dx,dy])=>({x:W/2+dx,y:H/2+dy}));
+function chooseSpawnPoint(occupiedRows=[]){
+ const occupied=[...Object.values(players),...occupiedRows].filter(p=>p&&p.user_id!==userId&&Number.isFinite(Number(p.x))&&Number.isFinite(Number(p.y)));
+ const available=spawnPoints.map(point=>({point,nearest:occupied.length?Math.min(...occupied.map(p=>Math.hypot(point.x-Number(p.x),point.y-Number(p.y)))):Infinity}));
+ const free=available.filter(item=>item.nearest>=30);
+ if(free.length)return free[Math.floor(Math.random()*free.length)].point;
+ const maxDistance=Math.max(...available.map(item=>item.nearest));
+ const leastCrowded=available.filter(item=>item.nearest===maxDistance);
+ return leastCrowded[Math.floor(Math.random()*leastCrowded.length)].point;
 }
 let player={x:W/2,y:H/2,face:"down",avatarYaw:Math.PI,name:$("playerName").value,skin:savedSkin,level:1,xp:0,moving:false};
 let coins=Number(stored.coins)||0,herbs=Number(stored.herbs)||0,questStarted=!!stored.questStarted,questDone=!!stored.questDone;const collected=new Set(Array.isArray(stored.collected)?stored.collected:[]);
@@ -914,7 +914,7 @@ async function connect(){
   // Create the authenticated player's room row before subscribing to their
   // private player topic; the Realtime SELECT policy checks this row.
   const roomPlayers=await online.loadRoomPlayers(ROOM);
-  const spawnPoint=chooseSpawnPoint();player.x=spawnPoint.x;player.y=spawnPoint.y;
+  const spawnPoint=chooseSpawnPoint(roomPlayers);player.x=spawnPoint.x;player.y=spawnPoint.y;
   await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});
   await online.joinRoom(ROOM,{
    // Presence is deliberately not trusted to create or identify player avatars.
@@ -1084,7 +1084,7 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=227",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=228",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
