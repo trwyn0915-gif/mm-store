@@ -926,6 +926,7 @@ function closeChatPanel(){
 }
 $("closeChat").addEventListener("click",closeChatPanel);
 document.querySelector(".quick-chat").addEventListener("click",e=>{const btn=e.target.closest("[data-chat-text]");if(!btn)return;$("chatinput").value=btn.dataset.chatText;$("chatinput").focus({preventScroll:true});});
+let previousChatKeyboardInset=0;
 function syncChatViewport(){
  const vv=window.visualViewport;
  const height=vv?.height||window.innerHeight;
@@ -934,6 +935,12 @@ function syncChatViewport(){
  document.documentElement.style.setProperty("--chat-vv-height",height+"px");
  document.documentElement.style.setProperty("--chat-keyboard-inset",keyboardInset+"px");
  document.documentElement.style.setProperty("--chat-vv-top",offsetTop+"px");
+ // Android Back can hide the keyboard without reliably blurring the input.
+ // When the visual viewport returns to its normal height, leave typing mode.
+ if(previousChatKeyboardInset>100&&keyboardInset<80&&document.activeElement===$("chatinput")){
+  $("chatinput").blur();
+ }
+ previousChatKeyboardInset=keyboardInset;
 }
 window.visualViewport?.addEventListener("resize",syncChatViewport);
 window.visualViewport?.addEventListener("scroll",syncChatViewport);
@@ -987,6 +994,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=207",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=208",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
