@@ -874,11 +874,15 @@ async function connect(){
   document.body.classList.add("playing");
   installExitGuard();status("متصل · دنیای آنلاین فعال");
   btn.textContent="متصل شدی";btn.disabled=true;
-  const history=await online.loadRecentChat(ROOM,30);
-  const log=$("chatlog");
-  if(log.children.length===1&&log.firstChild.textContent.includes("برای گفت‌وگو"))log.innerHTML="";
-  history.slice().sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0)).forEach(m=>addChat(m.display_name,m.message,m.id));scrollChatToLatest();
-  await online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw,moving:!!player.moving});
+  try{
+   const history=await online.loadRecentChat(ROOM,30);
+   const log=$("chatlog");
+   if(log.children.length===1&&log.firstChild.textContent.includes("برای گفت‌وگو"))log.innerHTML="";
+   history.slice().sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0)).forEach(m=>addChat(m.display_name,m.message,m.id));scrollChatToLatest();
+  }catch(chatError){console.warn("Chat history could not be loaded; continuing game connection:",chatError);}
+  try{
+   await online.publishMove({x:player.x,y:player.y,facing:player.face,displayName:player.name,skin:player.skin,yaw:player.avatarYaw,moving:!!player.moving});
+  }catch(moveError){console.warn("Initial position broadcast failed; live movement will retry:",moveError);}
   setLoadingProgress(100,"ورود به دنیای MM موفق بود");await waitForLoadingProgress(100);await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));hideLoading();
   stats();sayToast("با موفقیت وارد دنیای آنلاین شدی");persist();
  }catch(e){
@@ -1017,7 +1021,7 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=211",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=212",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
