@@ -742,7 +742,7 @@ async function renderHomeCharacter(characterId=player.skin){
   model.updateMatrixWorld(true);
   const orientedBox=new THREE.Box3().setFromObject(model),orientedSize=orientedBox.getSize(new THREE.Vector3());
   const modelHeight=Math.max(orientedSize.x,orientedSize.y,orientedSize.z,0.001);
-  model.scale.setScalar(1.55/modelHeight);model.updateMatrixWorld(true);
+  model.scale.setScalar(1.82/modelHeight);model.updateMatrixWorld(true);
   const fitted=new THREE.Box3().setFromObject(model),center=fitted.getCenter(new THREE.Vector3());
   const platformTopY=.05;
   model.position.x-=center.x;
@@ -755,9 +755,9 @@ async function renderHomeCharacter(characterId=player.skin){
    homePreviewScene=new THREE.Scene();homePreviewCamera=new THREE.PerspectiveCamera(34,1,.1,40);
    homePreviewScene.add(new THREE.HemisphereLight(0xffffff,0x6a8aa8,1.8));
    const key=new THREE.DirectionalLight(0xffffff,2.1);key.position.set(-3,5,4);homePreviewScene.add(key);
-   const platform=new THREE.Mesh(new THREE.CylinderGeometry(.92,1.02,.22,40),new THREE.MeshStandardMaterial({color:0x27343e,metalness:.68,roughness:.32}));platform.position.y=-.12;homePreviewScene.add(platform);
-   const platformTop=new THREE.Mesh(new THREE.CylinderGeometry(.9,.9,.06,40),new THREE.MeshStandardMaterial({color:0x7d858b,metalness:.5,roughness:.36}));platformTop.position.y=.02;homePreviewScene.add(platformTop);
-   const platformGlow=new THREE.Mesh(new THREE.TorusGeometry(.92,.035,8,48),new THREE.MeshBasicMaterial({color:0x25cfff}));platformGlow.rotation.x=Math.PI/2;platformGlow.position.y=-.06;homePreviewScene.add(platformGlow);
+   const platform=new THREE.Mesh(new THREE.CylinderGeometry(1.12,1.20,.24,48),new THREE.MeshStandardMaterial({color:0x27343e,metalness:.68,roughness:.32}));platform.position.y=-.13;homePreviewScene.add(platform);
+   const platformTop=new THREE.Mesh(new THREE.CylinderGeometry(1.10,1.10,.07,48),new THREE.MeshStandardMaterial({color:0x7d858b,metalness:.5,roughness:.36}));platformTop.position.y=.025;homePreviewScene.add(platformTop);
+   const platformGlow=new THREE.Mesh(new THREE.TorusGeometry(1.12,.04,10,64),new THREE.MeshBasicMaterial({color:0x25cfff}));platformGlow.rotation.x=Math.PI/2;platformGlow.position.y=-.065;homePreviewScene.add(platformGlow);
   }
   if(homePreviewModel)homePreviewScene.remove(homePreviewModel);
   if(homePreviewMixer)homePreviewMixer.stopAllAction();
@@ -769,15 +769,15 @@ async function renderHomeCharacter(characterId=player.skin){
   const modelBounds=new THREE.Box3().setFromObject(model);
   // Center the full character/platform composition, not just the character's feet.
   const compositionCenterY=(modelBounds.max.y-.23)*.5;
-  const targetY=compositionCenterY;
+  const targetY=compositionCenterY-.28;
   const verticalFov=THREE.MathUtils.degToRad(homePreviewCamera.fov);
   const sphere=new THREE.Sphere();modelBounds.getBoundingSphere(sphere);
-  const fitRadius=Math.max(.9,sphere.radius+.08);
-  const verticalDistance=fitRadius/Math.sin(verticalFov/2)*1.02;
+  const fitRadius=Math.max(1.0,sphere.radius+.10);
+  const verticalDistance=fitRadius/Math.sin(verticalFov/2)*.78;
   const horizontalFov=2*Math.atan(Math.tan(verticalFov/2)*(w/h));
-  const horizontalDistance=fitRadius/Math.sin(Math.max(.12,horizontalFov/2))*1.02;
+  const horizontalDistance=fitRadius/Math.sin(Math.max(.12,horizontalFov/2))*.78;
   const distance=Math.max(verticalDistance,horizontalDistance);
-  homePreviewCamera.position.set(0,targetY+distance*.12,distance);
+  homePreviewCamera.position.set(0,targetY+distance*.28,distance);
   homePreviewCamera.lookAt(0,targetY,0);
   homePreviewRenderer.setSize(w,h,false);homePreviewCamera.aspect=w/h;homePreviewCamera.updateProjectionMatrix();homePreviewRenderer.render(homePreviewScene,homePreviewCamera);
   if(!homePreviewResizeObserver){homePreviewResizeObserver=new ResizeObserver(()=>{if(!homePreviewRenderer||!homePreviewCamera||!homePreviewScene)return;const rw=Math.max(1,canvas.clientWidth),rh=Math.max(1,canvas.clientHeight);homePreviewRenderer.setSize(rw,rh,false);homePreviewCamera.aspect=rw/rh;homePreviewCamera.updateProjectionMatrix();homePreviewRenderer.render(homePreviewScene,homePreviewCamera);});homePreviewResizeObserver.observe(canvas);}
@@ -1304,7 +1304,7 @@ window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای
 stats();
 try{online=createRipOnline();online.loadHomeEconomy().then(data=>{if(data){applyEconomy(data.economy);const equipped=data.character?.character_id;if(CHARACTER_ASSETS[equipped]&&ownedCharacters.has(equipped)){player.skin=equipped;persist();}renderHomeCharacter(player.skin);}}).catch(error=>console.warn("Home wallet/character refresh failed:",error));renderHomeCharacter(player.skin);}catch(error){console.warn("Home wallet initialization failed:",error);}
 requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=254",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=255",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
