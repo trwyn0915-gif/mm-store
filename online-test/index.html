@@ -797,7 +797,7 @@ function loadCharacterModel(characterId){
 }
 function updateAvatarNameTag(record,name){
  if(!record?.group)return;
- const label=String(name||"بازیکن").trim().slice(0,20)||"بازیکن";
+ const label=String(name||"بازیکن").trim().replace(/#[0-9a-f]{8}$/i,"").slice(0,20)||"بازیکن";
  if(record.nameTagText===label&&record.nameTag)return;
  const canvas=document.createElement("canvas");canvas.width=768;canvas.height=192;
  const c=canvas.getContext("2d");c.clearRect(0,0,768,192);
