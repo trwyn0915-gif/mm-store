@@ -424,6 +424,34 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  .chat-panel.chat-floating{width:min(320px,74vw)!important;height:min(260px,calc(var(--chat-vv-height,100dvh) - 24px))!important;max-height:calc(var(--chat-vv-height,100dvh) - 24px)!important;min-height:150px!important}
 }
 
+
+/* v206: top-right chat layout; hide history while composing and remove outer frame. */
+.chat-panel.chat-floating{
+ position:fixed!important;
+ top:calc(var(--chat-vv-top,0px) + max(8px,env(safe-area-inset-top)))!important;
+ bottom:auto!important;
+ right:max(8px,env(safe-area-inset-right))!important;
+ left:auto!important;
+ border:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+}
+.chat-panel.chat-floating>.chat-heading{
+ direction:ltr!important;
+ justify-content:flex-start!important;
+}
+.chat-panel.chat-floating .chat-close{margin-right:auto!important;margin-left:0!important}
+.chat-panel.chat-floating:focus-within>#chatlog{display:none!important}
+.chat-panel.chat-floating:focus-within{
+ height:auto!important;
+ min-height:0!important;
+ max-height:calc(var(--chat-vv-height,100dvh) - 16px)!important;
+}
+.chat-panel.chat-floating:focus-within>#chatform{flex:0 0 48px!important;height:48px!important;min-height:48px!important}
+@media(max-width:760px){
+ .chat-panel.chat-floating{top:calc(var(--chat-vv-top,0px) + max(8px,env(safe-area-inset-top)))!important;right:8px!important;left:auto!important;width:min(320px,74vw)!important}
+}
+
 </style>
 </head>
 <body>
@@ -959,6 +987,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=205",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=206",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
