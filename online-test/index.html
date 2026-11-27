@@ -407,9 +407,10 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  background:#122b35!important;border:0!important;box-shadow:none!important;
  border-radius:50%!important;padding:0!important;overflow:hidden!important
 }
-.chat-toggle.icon-chat-button{width:88px!important;height:88px!important}
-.side-controls .icon-chat-button{width:58px!important;height:58px!important}
-.icon-chat-button svg{width:100%!important;height:100%!important;display:block!important}
+.chat-toggle.icon-chat-button{width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;padding:0!important}
+.side-controls .icon-chat-button{width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;padding:0!important}
+.icon-chat-button{display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 48px!important;border-radius:50%!important}
+.icon-chat-button svg{width:86%!important;height:86%!important;max-width:42px!important;max-height:42px!important;display:block!important;flex:none!important}
 /* Keep the visual fill synchronized with one-percent counter steps. */\n.loading-fill{transition:width .02s linear!important}\n</style>
 </head>
 <body>
@@ -945,6 +946,6 @@ function showFatalGameError(message){hideLoading();
 window.addEventListener("error",event=>showFatalGameError("خطای اجرای بازی: "+(event.message||"خطای نامشخص")));
 window.addEventListener("unhandledrejection",event=>showFatalGameError("خطای ارتباط/برنامه: "+(event.reason?.message||String(event.reason||"خطای نامشخص"))));
 stats();requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=203",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=204",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
