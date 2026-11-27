@@ -68,38 +68,71 @@ export function createRipOnline() {
     return data;
   }
 
+  async function loadEconomy() {
+    if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
+    const { data, error } = await supabase.rpc("mm_get_economy");
+    if (error) throw error;
+    return data;
+  }
+
+  async function buyCharacter(characterId) {
+    if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
+    const { data, error } = await supabase.rpc("mm_buy_character", { p_character_id: String(characterId) });
+    if (error) throw error;
+    return data;
+  }
+
+  async function equipCharacter(characterId) {
+    if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
+    const { data, error } = await supabase.rpc("mm_equip_character", { p_character_id: String(characterId) });
+    if (error) throw error;
+    return data;
+  }
+
   async function saveCharacter(character) {
     if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
-    const now = new Date().toISOString();
-    const row = {
-      user_id: currentUser.id,
-      display_name: String(character.displayName || "بازیکن").trim().slice(0, 20),
-      character_id: String(character.characterId || "survivor").slice(0, 40),
-      room_id: String(character.roomId || "station").slice(0, 40),
-      x: Number.isFinite(character.x) ? character.x : 480,
-      y: Number.isFinite(character.y) ? character.y : 270,
-      facing: ["up", "down", "left", "right"].includes(character.facing) ? character.facing : "down",
-      last_seen_at: now,
-      updated_at: now
-    };
-    const { data: updated, error: updateError } = await supabase
-      .from("world_players")
-      .update({
-        display_name: row.display_name,
-        character_id: row.character_id,
-        room_id: row.room_id,
-        facing: row.facing
-      })
-      .eq("user_id", currentUser.id)
-      .eq("room_id", row.room_id)
-      .select("user_id")
-      .maybeSingle();
-    if (updateError) throw updateError;
-    if (updated?.user_id) return row;
+    const { data, error } = await supabase.rpc("mm_save_player", {
+      p_display_name: String(character.displayName || "بازیکن").trim().slice(0, 20),
+      p_character_id: String(character.characterId || "hero").slice(0, 40),
+      p_room_id: String(character.roomId || "mm-world-main").slice(0, 40),
+      p_x: Number.isFinite(character.x) ? character.x : 2500,
+      p_y: Number.isFinite(character.y) ? character.y : 2500,
+      p_facing: ["up", "down", "left", "right"].includes(character.facing) ? character.facing : "down"
+    });
+    if (error) throw error;
+    return data;
+  }
 
-    const { error: insertError } = await supabase.from("world_players").insert(row);
-    if (insertError) throw insertError;
-    return row;
+  async function updatePosition(position) {
+    if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
+    const { data, error } = await supabase.rpc("mm_update_player_position", {
+      p_x: Number(position.x),
+      p_y: Number(position.y),
+      p_facing: ["up", "down", "left", "right"].includes(position.facing) ? position.facing : "down"
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async function startQuest() {
+    if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
+    const { data, error } = await supabase.rpc("mm_start_quest");
+    if (error) throw error;
+    return data;
+  }
+
+  async function collectHerb(spotId) {
+    if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
+    const { data, error } = await supabase.rpc("mm_collect_herb", { p_spot_id: Number(spotId) });
+    if (error) throw error;
+    return data;
+  }
+
+  async function completeQuest() {
+    if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
+    const { data, error } = await supabase.rpc("mm_complete_quest");
+    if (error) throw error;
+    return data;
   }
 
   function playerTopic(userId) {
@@ -263,23 +296,8 @@ export function createRipOnline() {
         if (!positionPersistInFlight && now - lastMovementWrite >= 1500) {
           lastMovementWrite = now;
           positionPersistInFlight = true;
-          supabase.from("world_players")
-            .update({
-              x: payload.x,
-              y: payload.y,
-              facing: payload.facing,
-              display_name: payload.display_name,
-              character_id: payload.character_id,
-              room_id: payload.room_id
-            })
-            .eq("user_id", currentUser.id)
-            .eq("room_id", payload.room_id)
-            .select("user_id")
-            .maybeSingle()
-            .then(({ data, error }) => {
-              if (error) console.warn("Player snapshot save failed:", error);
-              else if (!data?.user_id) console.warn("Player snapshot was not accepted by server.");
-            })
+          updatePosition({ x: payload.x, y: payload.y, facing: payload.facing })
+            .catch(error => console.warn("Server rejected player movement snapshot:", error))
             .catch(error => console.warn("Player snapshot save failed:", error))
             .finally(() => { positionPersistInFlight = false; });
         }
@@ -336,5 +354,5 @@ export function createRipOnline() {
     playerChannel = null;
   }
 
-  return { connect, getClockStatus, getServerNowMs: () => Date.now() + serverClockOffsetMs, loadCharacter, loadRoomPlayers, saveCharacter, joinRoom, publishMove, sendChat, loadRecentChat, leave };
+  return { connect, getClockStatus, getServerNowMs: () => Date.now() + serverClockOffsetMs, loadCharacter, loadEconomy, buyCharacter, equipCharacter, loadRoomPlayers, saveCharacter, updatePosition, startQuest, collectHerb, completeQuest, joinRoom, publishMove, sendChat, loadRecentChat, leave };
 }
