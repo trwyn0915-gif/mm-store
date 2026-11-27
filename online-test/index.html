@@ -698,6 +698,13 @@ function applyRemotePlayer(row){
  const facingYaw={up:Math.PI,down:0,left:-Math.PI/2,right:Math.PI/2}[facing];
  const monoNow=performance.now();
  const serverNow=online?.getServerNowMs?.()??Date.now();
+ // Treat sender timestamps as untrusted and reject implausible or teleport-like updates.
+ if(Math.abs(serverNow-stamp)>10000)return false;
+ if(Number.isFinite(previous.x)&&Number.isFinite(previous.y)&&Number.isFinite(previous.receivedAtMono)){
+  const elapsed=Math.max(.1,Math.min(5,(monoNow-previous.receivedAtMono)/1000));
+  const maxStep=Math.max(75,Math.min(220,elapsed*55+35));
+  if(Math.hypot(x-previous.x,y-previous.y)>maxStep)return false;
+ }
  const ageMs=Math.max(0,Math.min(5000,serverNow-stamp));
  const sampleTime=serverNow-ageMs;
  const samples=Array.isArray(previous.samples)?previous.samples.slice(-5):[];
