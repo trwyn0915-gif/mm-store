@@ -15,6 +15,7 @@ export function createRipOnline() {
   });
 
   let channel = null;
+  let homeConnectivityChannel = null;
   let currentUser = null;
   let currentRoom = "mm-world-main";
   let serverClockOffsetMs = 0;
@@ -36,6 +37,29 @@ export function createRipOnline() {
 
   function getClockStatus() {
     return { offsetMs: serverClockOffsetMs, serverNowMs: Date.now() + serverClockOffsetMs };
+  }
+
+  function startHomeConnectivityMonitor(handlers = {}) {
+    if (homeConnectivityChannel) return true;
+    const monitor = supabase.channel("mm-home-connectivity");
+    homeConnectivityChannel = monitor;
+    monitor.subscribe((state, channelError) => {
+      if (homeConnectivityChannel !== monitor) return;
+      handlers.onStatus?.(state, channelError || null);
+    });
+    return true;
+  }
+
+  function stopHomeConnectivityMonitor() {
+    const monitor = homeConnectivityChannel;
+    homeConnectivityChannel = null;
+    if (!monitor) return;
+    try {
+      const cleanup = supabase.removeChannel(monitor);
+      cleanup?.catch(error => console.warn("Home connectivity monitor cleanup failed:", error));
+    } catch (error) {
+      console.warn("Home connectivity monitor cleanup failed:", error);
+    }
   }
 
   async function connect() {
@@ -302,6 +326,7 @@ export function createRipOnline() {
   }
 
   async function leave() {
+    stopHomeConnectivityMonitor();
     const channelToRemove = channel;
     channel = null;
     if (channelToRemove) await supabase.removeChannel(channelToRemove);
@@ -311,5 +336,5 @@ export function createRipOnline() {
     positionPersistInFlight = false;
   }
 
-  return { connect, getClockStatus, getServerNowMs: () => Date.now() + serverClockOffsetMs, loadCharacter, loadEconomy, loadHomeEconomy, buyCharacter, confirmPlayerName, equipCharacter, loadRoomPlayers, saveCharacter, updatePosition, startQuest, collectHerb, completeQuest, joinRoom, publishMove, sendChat, loadRecentChat, leave };
+  return { connect, startHomeConnectivityMonitor, stopHomeConnectivityMonitor, getClockStatus, getServerNowMs: () => Date.now() + serverClockOffsetMs, loadCharacter, loadEconomy, loadHomeEconomy, buyCharacter, confirmPlayerName, equipCharacter, loadRoomPlayers, saveCharacter, updatePosition, startQuest, collectHerb, completeQuest, joinRoom, publishMove, sendChat, loadRecentChat, leave };
 }
