@@ -195,10 +195,11 @@ export function createRipOnline() {
       });
 
     await new Promise((resolve, reject) => {
-      channel.subscribe(state => {
+      channel.subscribe((state, channelError) => {
         if (state === "SUBSCRIBED") resolve(state);
         if (state === "CHANNEL_ERROR" || state === "TIMED_OUT") {
-          reject(new Error("اتصال به اتاق بازی برقرار نشد."));
+          const detail = channelError?.message || channelError?.reason || state;
+          reject(new Error("اتصال به اتاق بازی برقرار نشد (" + String(detail).slice(0, 140) + ")."));
         }
       });
     });
