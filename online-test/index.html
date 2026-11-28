@@ -48,16 +48,16 @@ button,input,select{font:inherit}button{border:1px solid #65766d;border-radius:1
 /* Final fullscreen layout: the game itself is the only visible screen. */
 
 /* In-game exit confirmation */
-.exit-overlay{position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(2,9,12,.78);backdrop-filter:blur(5px);direction:rtl}
+.exit-overlay{position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.58);backdrop-filter:blur(3px);direction:rtl}
 .exit-overlay.open{display:flex!important}
-.exit-dialog{width:min(440px,92vw);padding:26px 24px 22px;border:1px solid #39bfff;border-radius:22px;background:linear-gradient(145deg,#0b347dcc,#061947f2 62%,#041233f5);box-shadow:0 18px 70px #00154dcc,0 0 30px #087eff33,inset 0 1px 0 #9deaff44;text-align:center;color:#eff9ff}
-.exit-mark{width:48px;height:48px;margin:0 auto 12px;border:2px solid #4ccfff;border-radius:15px;display:grid;place-items:center;color:#9beaff;background:#0879df22;box-shadow:0 0 18px #08aaff33;font-weight:900;letter-spacing:1px}
-.exit-dialog h2{margin:0 0 12px;color:#79dcff;text-shadow:0 0 14px #078dff66;font-size:clamp(19px,4vw,25px)}
-.exit-dialog p{margin:0 auto 22px;max-width:34ch;color:#e0f1ff;font-size:clamp(14px,3vw,17px);line-height:1.9}
+.exit-dialog{position:relative;width:min(530px,92vw);min-height:230px;padding:26px 28px 24px;border:1px solid #292929;border-radius:18px;background:linear-gradient(160deg,#171717,#050505 72%);box-shadow:0 12px 35px #0009;text-align:center;color:#fff}
+.exit-mark{display:none!important}
+.exit-dialog h2{margin:0 0 42px;padding-top:2px;color:#fff;text-shadow:none;font-size:clamp(20px,3vw,26px);font-weight:950}
+.exit-dialog p{display:none!important}
 .exit-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.exit-actions button{min-height:48px;padding:10px 18px;border-radius:13px;font:700 14px inherit;cursor:pointer}
-.exit-stay{background:linear-gradient(135deg,#087fe5,#0752b5);color:#fff;border:1px solid #65d8ff;box-shadow:0 5px 18px #007bff44}
-.exit-leave{background:linear-gradient(135deg,#123b70,#0a2450);color:#e8f7ff;border:1px solid #438dca;box-shadow:0 5px 16px #00143e66}
+.exit-actions button{min-height:48px;padding:10px 24px;border-radius:999px;font:900 15px inherit;cursor:pointer}
+.exit-stay{position:absolute;top:24px;right:24px;width:36px;height:36px;min-height:36px;padding:0;border:0;border-radius:9px;background:#ed2458;color:#fff;box-shadow:0 3px 10px #0006;font-size:22px;line-height:1}
+.exit-leave{min-width:154px;background:linear-gradient(135deg,#f52c61,#d81749);color:#fff;border:1px solid #ff6d8e;box-shadow:0 5px 14px #0005}
 .exit-actions button:focus-visible{outline:3px solid #fff;outline-offset:3px}
 
 
@@ -768,12 +768,11 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 <div id="characterShop" class="shop-overlay" aria-hidden="true"><section class="shop-dialog" role="dialog" aria-modal="true" aria-labelledby="shopTitle"><div class="shop-head"><h2 id="shopTitle">فروشگاه کاراکترها</h2><strong class="shop-balance">سکه: <span id="shopCoins">۰</span></strong><button type="button" class="shop-close" id="closeShop">بستن</button></div><div class="shop-grid" id="shopItems"></div><p class="shop-note">ربات کاراکتر رایگان و پیش‌فرض است. برای خرید کاراکترهای دیگر از سکه‌های بازی استفاده کن.</p></section></div>
 <div id="exitConfirm" class="exit-overlay" aria-hidden="true">
  <div class="exit-dialog" role="dialog" aria-modal="true" aria-labelledby="exitTitle" aria-describedby="exitMessage">
-  <div class="exit-mark" aria-hidden="true">MM</div>
-  <h2 id="exitTitle">خروج از سایت؟</h2>
-  <p id="exitMessage">آیا مطمئن هستید می‌خواهید از سایت بازی خارج شوید؟ با تأیید، از صفحه بازی خارج می‌شوید.</p>
+  <button type="button" id="stayInGame" class="exit-stay" aria-label="بستن پنجره و ادامه بازی">×</button>
+  <h2 id="exitTitle">میخوای خارج بشی؟</h2>
+  <p id="exitMessage">برای ادامه بازی، پنجره را ببند.</p>
   <div class="exit-actions">
-   <button type="button" id="stayInGame" class="exit-stay">ادامه بازی</button>
-   <button type="button" id="confirmExit" class="exit-leave">بله، خروج از سایت</button>
+   <button type="button" id="confirmExit" class="exit-leave">خروج از بازی</button>
   </div>
  </div>
 </div>
