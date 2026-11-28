@@ -120,6 +120,18 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 #rotatePrompt{display:flex}
 #rotatePrompt.hidden{display:none!important}
 #connectionError.visible{display:block!important}
+/* In-game connection-loss dialog: deliberately modal and non-dismissible. */
+#gameConnectionAlert{position:fixed;inset:0;z-index:40000;display:none;align-items:center;justify-content:center;padding:18px;background:#0008}
+#gameConnectionAlert.visible{display:flex!important}
+#gameConnectionAlert .game-connection-card{width:min(590px,94vw);min-height:330px;overflow:hidden;border:8px solid #171717;border-radius:16px;background:#f7f7f7;box-shadow:0 10px 28px #0008;text-align:center;color:#111}
+#gameConnectionAlert .game-connection-heading{min-height:38px;display:flex;align-items:center;justify-content:center;padding:7px 12px;background:#171717;color:#fff;font-size:14px;font-weight:900}
+#gameConnectionAlert .game-connection-content{min-height:290px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 18px}
+#gameConnectionAlert .game-connection-message{margin:0 0 20px;font-size:clamp(21px,3.2vw,30px);font-weight:950;color:#fff;-webkit-text-stroke:1.2px #111;text-shadow:1px 2px 0 #111}
+#gameConnectionAlert .game-connection-spinner{width:34px;height:34px;margin:0 0 20px;border:5px solid #d5d5d5;border-top-color:#171717;border-radius:50%;animation:mmConnectionSpin .8s linear infinite}
+#gameConnectionAlert .game-connection-exit{width:min(160px,70%);min-height:62px;border:2px solid #171717;border-radius:16px;background:linear-gradient(#ffe900,#e6b900);box-shadow:0 3px 0 #777;color:#111;font:inherit;font-size:22px;font-weight:950}
+#gameConnectionAlert .game-connection-exit:active{transform:translateY(2px);box-shadow:0 1px 0 #777}
+@keyframes mmConnectionSpin{to{transform:rotate(360deg)}}
+@media(max-width:600px){#gameConnectionAlert .game-connection-card{min-height:270px;border-width:6px}#gameConnectionAlert .game-connection-content{min-height:230px;padding:18px 12px}#gameConnectionAlert .game-connection-exit{min-height:56px}}
 
 /* After leaving the game, restore the ordinary portrait-friendly site page. */
 .exit-to-page #rotatePrompt{display:none!important}
@@ -791,6 +803,16 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
    <a id="panelServicesLink" href="https://rubika.ir/AnimalRush_MM" target="_blank" rel="noopener noreferrer">چنل روبیکا</a>
   </div>
  </div>
+ <div id="gameConnectionAlert" role="alertdialog" aria-modal="true" aria-labelledby="gameConnectionTitle" aria-describedby="gameConnectionMessage">
+  <section class="game-connection-card">
+   <div class="game-connection-heading" id="gameConnectionTitle">اتصال مجدد</div>
+   <div class="game-connection-content">
+    <p class="game-connection-message" id="gameConnectionMessage">خطا در برقراری ارتباط</p>
+    <div class="game-connection-spinner" role="img" aria-label="در حال تلاش برای اتصال مجدد"></div>
+    <button type="button" class="game-connection-exit" id="gameConnectionExit">خروج</button>
+   </div>
+  </section>
+ </div>
  <div id="rotatePrompt" class="hidden" hidden><section class="connection-retry-card" role="alert"><strong>ورود به بازی انجام نشد</strong><p id="connectionError"></p><button type="button" id="startLandscape">تلاش دوباره برای ورود آنلاین</button></section></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script>
@@ -820,7 +842,7 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 (()=>{const btn=document.getElementById("orientationGateStart");if(!btn)return;btn.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();if(btn.dataset.started==="1")return;btn.dataset.started="1";btn.disabled=true;btn.textContent="در حال آماده‌سازی بازی...";const root=document.documentElement;try{if(!document.fullscreenElement&&root.requestFullscreen){const p=root.requestFullscreen();p?.catch(()=>{});}}catch(_){}try{const p=screen.orientation?.lock?.("landscape");p?.catch(()=>{});}catch(_){}window.__mmStartRequested=true;const gate=document.getElementById("orientationGate");if(gate){gate.hidden=true;gate.style.display="none";}document.body.classList.remove("exit-to-page");const loading=document.getElementById("loadingScreen");if(loading)loading.classList.add("visible");if(typeof window.__mmStartGame==="function"){window.__mmStartGame();return;}clearTimeout(window.__mmStartWaitTimer);window.__mmStartWaitTimer=setTimeout(()=>{if(window.__mmStartRequested){window.__mmStartRequested=false;const panel=document.getElementById("loadingErrorPanel");const ui=loading?.querySelector(".loading-ui");if(ui)ui.classList.add("has-error");const title=panel?.querySelector("strong");if(title)title.textContent="خطا در برقراری ارتباط";if(panel)panel.hidden=false;const retry=document.getElementById("loadingRetryButton");if(retry)retry.disabled=false;if(loading)loading.classList.add("visible");if(gate){gate.hidden=true;gate.style.display="none";}btn.dataset.started="";btn.disabled=false;btn.textContent="شروع بازی";}},20000);},{passive:false});})();
 </script>
 <script type="module">
-import { createRipOnline } from "../online/multiplayer.js?v=35";
+import { createRipOnline } from "../online/multiplayer.js?v=36";
 const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
 const { GLTFLoader } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
 const { clone: cloneSkinned } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js");
@@ -1120,6 +1142,38 @@ function sayToast(t){$("toast").textContent=t;$("toast").classList.add("show");c
 function status(t){$("status").textContent=t;}
 let loadingProgressCurrent=0,loadingProgressTimer=null,loadingProgressComplete=false;
 let connectionAttempt=0,connectionWatchdogTimer=null,startupNetworkMonitor=null;
+ let gameRoomHandlers=null,gameReconnectTimer=null,gameReconnectBusy=false,gameConnectionLost=false;
+ function showGameConnectionAlert(){
+  if(!connected||gameConnectionLost)return;
+  gameConnectionLost=true;player.moving=false;resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);
+  $("gameConnectionAlert").classList.add("visible");
+  scheduleGameReconnect(0);
+ }
+ function hideGameConnectionAlert(){
+  gameConnectionLost=false;clearTimeout(gameReconnectTimer);gameReconnectTimer=null;
+  $("gameConnectionAlert").classList.remove("visible");
+ }
+ function scheduleGameReconnect(delay=2500){
+  if(!connected||!gameConnectionLost||gameReconnectBusy||gameReconnectTimer!==null)return;
+  gameReconnectTimer=setTimeout(async()=>{
+   gameReconnectTimer=null;
+   if(!connected||!gameConnectionLost||gameReconnectBusy)return;
+   if(!navigator.onLine){scheduleGameReconnect(1800);return;}
+   if(!online||!gameRoomHandlers){scheduleGameReconnect(2500);return;}
+   gameReconnectBusy=true;
+   try{await online.joinRoom(ROOM,gameRoomHandlers);}
+   catch(error){console.warn("In-game room reconnect attempt failed:",error);}
+   finally{gameReconnectBusy=false;if(gameConnectionLost)scheduleGameReconnect(2500);}
+  },delay);
+ }
+ function handleGameRoomStatus(state){
+  if(!connected)return;
+  if(state==="SUBSCRIBED"){if(gameConnectionLost)hideGameConnectionAlert();return;}
+  if(state==="CHANNEL_ERROR"||state==="TIMED_OUT"||state==="CLOSED")showGameConnectionAlert();
+ }
+ window.addEventListener("offline",()=>{if(connected)showGameConnectionAlert();});
+ window.addEventListener("online",()=>{if(connected&&gameConnectionLost)scheduleGameReconnect(0);});
+ $("gameConnectionExit").addEventListener("click",()=>confirmExitSite());
 function cleanupConnectionNonBlocking(connection,label){
  if(!connection||typeof connection.leave!=="function")return;
  try{
@@ -1472,15 +1526,17 @@ async function connect(){
   const canonicalPlayer=await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});if(attemptId!==connectionAttempt)return;
   if(canonicalPlayer?.display_name){player.name=canonicalPlayer.display_name;$("playerName").value=player.name;}
   stage="join_room";armCriticalWatchdog("join_room");
-  await online.joinRoom(ROOM,{
+  gameRoomHandlers={
    // Presence is deliberately not trusted to create or identify player avatars.
    onPlayers:state=>reconcileRemotePresence(state),
    onPlayerUpdate:p=>{
     if(p?.userId&&p.userId!==userId)applyRemotePlayer({user_id:p.userId,x:p.x,y:p.y,facing:p.facing,display_name:p.displayName,character_id:p.skin,level:p.level,experience:p.experience,last_seen_at:p.last_seen_at});
     stats();
    },
-   onChat:p=>{if(p?.userId!==userId){addChat(p.displayName||"بازیکن",p.message||"",p.id);showPlayerChatBubble(p.userId,p.message||"",p.createdAt);}}
-  });
+   onChat:p=>{if(p?.userId!==userId){addChat(p.displayName||"بازیکن",p.message||"",p.id);showPlayerChatBubble(p.userId,p.message||"",p.createdAt);}},
+   onStatus:state=>handleGameRoomStatus(state)
+  };
+  await online.joinRoom(ROOM,gameRoomHandlers);
   if(attemptId!==connectionAttempt)return;
   for(const row of roomPlayers){
    if(row.user_id&&row.user_id!==userId&&remotePresenceIds.has(row.user_id))applyRemotePlayer(row);
@@ -1660,7 +1716,7 @@ window.addEventListener("fullscreenchange",()=>{if(exitFlowActive&&!document.ful
 // Portrait devices use a rotated landscape game viewport; no physical rotation is required.
 async function stayInGame(){if(!document.fullscreenElement){const root=document.documentElement;if(!root.requestFullscreen){sayToast("این مرورگر امکان بازگشت به تمام‌صفحه را نمی‌دهد");return;}try{await root.requestFullscreen();}catch(e){sayToast("برای ادامه، حالت تمام‌صفحه را از مرورگر فعال کن");return;}}try{await screen.orientation?.lock?.("landscape");}catch(_){}hideExitConfirm();if(nameSetupRequired)showPlayerNameSetup();}
 $("stayInGame").addEventListener("click",stayInGame);
-async function confirmExitSite(){exitFlowActive=false;closeChatPanel();backgroundMusic.pause();backgroundMusic.currentTime=0;exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}connected=false;players={};userId="";resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");const gate=$("orientationGate");gate.hidden=false;gate.style.display="flex";const gateBtn=$("orientationGateStart");gateBtn.dataset.started="";gateBtn.disabled=false;gateBtn.textContent="شروع بازی";const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، دکمه شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
+async function confirmExitSite(){hideGameConnectionAlert();clearTimeout(gameReconnectTimer);gameReconnectTimer=null;gameRoomHandlers=null;gameReconnectBusy=false;exitFlowActive=false;closeChatPanel();backgroundMusic.pause();backgroundMusic.currentTime=0;exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}connected=false;players={};userId="";resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");const gate=$("orientationGate");gate.hidden=false;gate.style.display="flex";const gateBtn=$("orientationGateStart");gateBtn.dataset.started="";gateBtn.disabled=false;gateBtn.textContent="شروع بازی";const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، دکمه شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
 $("confirmExit").addEventListener("click",confirmExitSite);
 function toggleChat(){if(chatPanel.classList.contains("chat-floating")){closeChatPanel();return;}openChatPanel(false);}
 $("chatToggle").addEventListener("click",toggleChat);
