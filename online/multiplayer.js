@@ -151,7 +151,9 @@ export function createRipOnline() {
 
   async function joinRoom(roomId, handlers = {}) {
     if (!currentUser) throw new Error("ابتدا به دنیای آنلاین وصل شو.");
-    if (channel) await supabase.removeChannel(channel);
+    const previousChannel = channel;
+    channel = null;
+    if (previousChannel) await supabase.removeChannel(previousChannel);
     const room = String(roomId).slice(0, 40);
     currentRoom = room;
     channel = supabase.channel("rip-world:" + room, {
@@ -296,11 +298,12 @@ export function createRipOnline() {
   }
 
   async function leave() {
-    if (channel) {
-      await supabase.removeChannel(channel);
-      channel = null;
-    }
+    const channelToRemove = channel;
+    channel = null;
+    if (channelToRemove) await supabase.removeChannel(channelToRemove);
     lastPublishedPosition = null;
+    lastPresenceTrack = 0;
+    lastMovementWrite = 0;
     positionPersistInFlight = false;
   }
 
