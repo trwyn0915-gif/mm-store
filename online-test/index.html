@@ -1431,9 +1431,10 @@ async function connect(){
  const btn=$("connect");btn.disabled=true;status("در حال اتصال به دنیای آنلاین...");setLoadingProgress(12,"در حال اتصال به سرور بازی...");
  try{
   online=online||createRipOnline();
-  const auth=await online.connect();if(attemptId!==connectionAttempt)return;armConnectionWatchdog();userId=auth.userId;if(Math.abs(auth.offsetMs)>120000)showClockWarning();setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
-  const economy=await online.loadEconomy();if(attemptId!==connectionAttempt)return;armConnectionWatchdog();applyEconomy(economy);
-  const saved=await online.loadCharacter();if(attemptId!==connectionAttempt)return;armConnectionWatchdog();setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
+  const auth=await online.connect();if(attemptId!==connectionAttempt)return;clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;userId=auth.userId;if(Math.abs(auth.offsetMs)>120000)showClockWarning();setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
+  const optionalStartup=async(label,task,fallback)=>{let timer;try{return await Promise.race([task(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(label+" timed out")),10000);})]);}catch(error){console.warn("Optional startup step failed; continuing:",label,error);return fallback;}finally{clearTimeout(timer);}};
+  const economy=await optionalStartup("load economy",()=>online.loadEconomy(),null);if(attemptId!==connectionAttempt)return;if(economy){try{applyEconomy(economy);}catch(error){console.warn("Economy data could not be applied; continuing with local defaults:",error);}}
+  const saved=await optionalStartup("load character",()=>online.loadCharacter(),null);if(attemptId!==connectionAttempt)return;setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
   player.name=saved?.name_setup_completed?saved.display_name:makeDefaultPlayerName(auth.userId);
   $("playerName").value=player.name;
   if(saved){
@@ -1444,15 +1445,15 @@ async function connect(){
   }else{player.skin="hero";}
   persist();
   setLoadingProgress(60,"در حال بارگذاری کاراکتر سه‌بعدی...");
-  await ensureAvatar("self",player.skin);if(attemptId!==connectionAttempt)return;armConnectionWatchdog();
-  if(!avatarRecords.has("self"))throw new Error("مدل کاراکتر بارگذاری نشد؛ اتصال اینترنت را بررسی کن.");
+  await optionalStartup("load character model",()=>ensureAvatar("self",player.skin),null);if(attemptId!==connectionAttempt)return;
   setLoadingProgress(68,"در حال ورود به دنیای MM...");
   // Create the authenticated player's room row before subscribing to their
   // private player topic; the Realtime SELECT policy checks this row.
-  const roomPlayers=await online.loadRoomPlayers(ROOM);if(attemptId!==connectionAttempt)return;armConnectionWatchdog();
+  const roomPlayers=await optionalStartup("load room players",()=>online.loadRoomPlayers(ROOM),[]);if(attemptId!==connectionAttempt)return;
   if(!saved){const spawnPoint=chooseSpawnPoint(roomPlayers);player.x=spawnPoint.x;player.y=spawnPoint.y;}
-  const canonicalPlayer=await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});if(attemptId!==connectionAttempt)return;armConnectionWatchdog();
+  const canonicalPlayer=await optionalStartup("save player",()=>online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp}),null);if(attemptId!==connectionAttempt)return;
   if(canonicalPlayer?.display_name){player.name=canonicalPlayer.display_name;$("playerName").value=player.name;}
+  armConnectionWatchdog();
   await online.joinRoom(ROOM,{
    // Presence is deliberately not trusted to create or identify player avatars.
    onPlayers:state=>reconcileRemotePresence(state),
@@ -1463,7 +1464,7 @@ async function connect(){
    onChat:p=>{if(p?.userId!==userId){addChat(p.displayName||"بازیکن",p.message||"",p.id);showPlayerChatBubble(p.userId,p.message||"",p.createdAt);}}
   });
   if(attemptId!==connectionAttempt)return;
-  armConnectionWatchdog();
+  clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;
   for(const row of roomPlayers){
    if(row.user_id&&row.user_id!==userId&&remotePresenceIds.has(row.user_id))applyRemotePlayer(row);
   }
