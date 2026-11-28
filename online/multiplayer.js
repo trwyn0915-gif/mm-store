@@ -194,8 +194,11 @@ export function createRipOnline() {
         }
       });
 
+    const roomChannel = channel;
     await new Promise((resolve, reject) => {
-      channel.subscribe((state, channelError) => {
+      roomChannel.subscribe((state, channelError) => {
+        if (channel !== roomChannel) return;
+        handlers.onStatus?.(state, channelError || null);
         if (state === "SUBSCRIBED") resolve(state);
         if (state === "CHANNEL_ERROR" || state === "TIMED_OUT") {
           const detail = channelError?.message || channelError?.reason || state;
