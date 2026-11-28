@@ -689,6 +689,11 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 #rotatePrompt.hidden{display:none!important}
 #loadingScreen.visible{display:flex!important}
 @media(min-width:761px){.orientation-gate-card{width:min(500px,80vw)}}
+.home-connection-error{display:none;width:min(440px,92vw);padding:30px 22px;border:1px solid #58cfff88;border-radius:22px;background:linear-gradient(145deg,#082d78ee,#07194fee);box-shadow:0 18px 60px #00104499;text-align:center;color:#fff}
+.home-connection-error.visible{display:block!important}
+.home-connection-error strong{display:block;font-size:clamp(20px,5vw,26px);font-weight:1000;color:#fff}
+.home-connection-error p{margin:12px 0 20px;font-size:15px;line-height:1.9;color:#d7eaff}
+.home-connection-error button{width:100%;min-height:54px;border:0;border-radius:14px;background:linear-gradient(135deg,#3987ff,#174bd5);color:#fff;font:inherit;font-size:17px;font-weight:950}
 
 /* One-time player-name setup, shown over the already-loaded game world. */
 #playerNameSetup{position:fixed;inset:0;z-index:25000;display:none;align-items:center;justify-content:center;padding:20px;direction:rtl;background:radial-gradient(ellipse at 50% 42%,#1e3e62 0%,#102943 48%,#0b192c 100%);color:#fff}
@@ -804,6 +809,11 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
    <p class="orientation-wait-note">ممکن است دکمه‌ها در لحظات اول کار نکنند. لطفاً حدود ۳۰ ثانیه صبر کنید؛ شاید دستگاه شما هنوز در حال بارگذاری بازی باشد.</p>
    <a id="panelServicesLink" href="https://rubika.ir/AnimalRush_MM" target="_blank" rel="noopener noreferrer">چنل روبیکا</a>
   </div>
+  <section id="homeConnectionError" class="home-connection-error" role="alert" aria-live="assertive" hidden>
+   <strong>خطا در برقراری ارتباط</strong>
+   <p>اتصال اینترنت برقرار نیست. لطفاً اینترنت را بررسی کنید.</p>
+   <button type="button" id="homeConnectionRetry">تلاش مجدد</button>
+  </section>
  </div>
  <div id="gameConnectionAlert" role="alertdialog" aria-modal="true" aria-labelledby="gameConnectionTitle" aria-describedby="gameConnectionMessage">
   <section class="game-connection-card">
@@ -845,6 +855,7 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 </script>
 <script type="module">
 import { createRipOnline } from "../online/multiplayer.js?v=36";
+import { SUPABASE_URL } from "../online/config.js";
 const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
 const { GLTFLoader } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
 const { clone: cloneSkinned } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js");
@@ -1176,7 +1187,7 @@ let connectionAttempt=0,connectionWatchdogTimer=null,startupNetworkMonitor=null;
  window.addEventListener("offline",()=>{if(connected)showGameConnectionAlert();});
  window.addEventListener("online",()=>{
  if(connected&&gameConnectionLost){scheduleGameReconnect(0);return;}
- if(!connected&&!$("loadingScreen").classList.contains("visible"))clearHomeConnectionError();
+ if(!connected&&!$("loadingScreen").classList.contains("visible"))checkHomeConnectivity();
 });
  $("gameConnectionExit").addEventListener("click",()=>confirmExitSite());
 function cleanupConnectionNonBlocking(connection,label){
@@ -1652,22 +1663,53 @@ async function retryConnection(){
  connect();
 }
 window.__mmRetryConnection=retryConnection;
-// Use the same connection-error screen both during startup and on the home page.
+// The home screen is orientationGate (not rotatePrompt). Probe Supabase itself,
+// because navigator.onLine can remain true when mobile data has no internet access.
+let homeConnectivityTimer=null,homeConnectivityBusy=false;
+async function probeHomeConnection(){
+ if(!navigator.onLine)return false;
+ const controller=new AbortController();
+ const timeout=setTimeout(()=>controller.abort(),4500);
+ try{
+  const response=await fetch(SUPABASE_URL+"/auth/v1/health",{method:"GET",cache:"no-store",mode:"cors",signal:controller.signal});
+  return response.status<500;
+ }catch(_){return false;}
+ finally{clearTimeout(timeout);}
+}
 function showHomeConnectionError(){
  if(connected||$("loadingScreen").classList.contains("visible"))return;
- const gate=$("orientationGate");gate.hidden=true;gate.style.display="none";
- const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");prompt.style.display="flex";
- $("connectionError").textContent="خطا در برقراری ارتباط";
- $("connectionError").classList.add("visible");
- const retry=$("startLandscape");retry.disabled=false;retry.textContent="تلاش مجدد";
+ const gate=$("orientationGate");gate.hidden=false;gate.style.display="flex";
+ gate.querySelector(".orientation-gate-card").hidden=true;
+ $("homeConnectionError").hidden=false;$("homeConnectionError").classList.add("visible");
 }
 function clearHomeConnectionError(){
  if(connected||$("loadingScreen").classList.contains("visible"))return;
- const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
  const gate=$("orientationGate");gate.hidden=false;gate.style.display="flex";
- $("connectionError").textContent="";$("connectionError").classList.remove("visible");
- const retry=$("startLandscape");retry.disabled=false;retry.textContent="تلاش دوباره برای ورود آنلاین";
+ gate.querySelector(".orientation-gate-card").hidden=false;
+ $("homeConnectionError").hidden=true;$("homeConnectionError").classList.remove("visible");
 }
+async function checkHomeConnectivity(){
+ if(connected||$("loadingScreen").classList.contains("visible")||homeConnectivityBusy)return;
+ if(!navigator.onLine){showHomeConnectionError();return;}
+ homeConnectivityBusy=true;
+ const reachable=await probeHomeConnection();
+ homeConnectivityBusy=false;
+ if(connected||$("loadingScreen").classList.contains("visible"))return;
+ if(reachable)clearHomeConnectionError();else showHomeConnectionError();
+}
+function startHomeConnectivityMonitor(){
+ clearInterval(homeConnectivityTimer);
+ checkHomeConnectivity();
+ homeConnectivityTimer=setInterval(()=>{
+  if(document.hidden||connected||$("loadingScreen").classList.contains("visible"))return;
+  checkHomeConnectivity();
+ },5000);
+}
+$("homeConnectionRetry").addEventListener("click",async()=>{
+ const button=$("homeConnectionRetry");button.disabled=true;button.textContent="در حال بررسی اتصال...";
+ await checkHomeConnectivity();
+ button.disabled=false;button.textContent="تلاش مجدد";
+});
 // Detect an actual browser offline transition immediately instead of waiting
 // for a Supabase request or the connection watchdog to time out.
 function handleStartupOffline(){
@@ -1685,8 +1727,8 @@ function handleStartupOffline(){
  cleanupConnectionNonBlocking(failedConnection,"Offline connection cleanup failed:");
 }
 window.addEventListener("offline",handleStartupOffline);
-if(!navigator.onLine)showHomeConnectionError();
-window.addEventListener("pageshow",()=>{if(!navigator.onLine&&!connected&&!$("loadingScreen").classList.contains("visible"))showHomeConnectionError();});
+window.addEventListener("pageshow",()=>{if(!connected&&!$("loadingScreen").classList.contains("visible"))checkHomeConnectivity();});
+startHomeConnectivityMonitor();
 $("loadingRetryButton").addEventListener("click",retryConnection);
 $("startLandscape").addEventListener("click",retryConnection);
 $("hudCoinPlus").addEventListener("click",()=>openCharacterShop());
