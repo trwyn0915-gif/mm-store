@@ -48,7 +48,14 @@ export function createRipOnline() {
       user = data.user;
     }
     currentUser = user;
-    await syncServerClock();
+    // The clock RPC is auxiliary: an unavailable clock must never block world entry.
+    try {
+      await syncServerClock();
+    } catch (clockError) {
+      console.warn("Server clock sync unavailable; continuing with the device clock:", clockError);
+      serverClockOffsetMs = 0;
+      lastClockSyncMono = performance.now();
+    }
     return { userId: user.id, ...getClockStatus() };
   }
 
