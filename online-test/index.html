@@ -1451,7 +1451,15 @@ async function connect(){
   // private player topic; the Realtime SELECT policy checks this row.
   const roomPlayers=await optionalStartup("load room players",()=>online.loadRoomPlayers(ROOM),[]);if(attemptId!==connectionAttempt)return;
   if(!saved){const spawnPoint=chooseSpawnPoint(roomPlayers);player.x=spawnPoint.x;player.y=spawnPoint.y;}
-  const canonicalPlayer=await optionalStartup("save player",()=>online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp}),null);if(attemptId!==connectionAttempt)return;
+  const playerSavePayload={displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp};
+  let canonicalPlayer=await optionalStartup("save player",()=>online.saveCharacter(playerSavePayload),null);if(attemptId!==connectionAttempt)return;
+  // A player row is required by the private Realtime room policy. Retry once,
+  // but never pretend the room can be joined if the row was not saved.
+  if(!canonicalPlayer){
+   await new Promise(resolve=>setTimeout(resolve,900));
+   canonicalPlayer=await online.saveCharacter(playerSavePayload);
+   if(attemptId!==connectionAttempt)return;
+  }
   if(canonicalPlayer?.display_name){player.name=canonicalPlayer.display_name;$("playerName").value=player.name;}
   armConnectionWatchdog();
   await online.joinRoom(ROOM,{
