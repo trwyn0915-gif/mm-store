@@ -1429,12 +1429,19 @@ async function connect(){
  try{
   online=online||createRipOnline();
   const auth=await online.connect();if(attemptId!==connectionAttempt)return;userId=auth.userId;if(Math.abs(auth.offsetMs)>120000)showClockWarning();setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
+  const optionalStartup=async(label,task)=>{
+   try{
+    const result=await Promise.race([task,new Promise(resolve=>setTimeout(()=>resolve(null),10000))]);
+    if(result===null)console.warn(label+" timed out; continuing with fallback data");
+    return result;
+   }catch(e){console.warn(label+" unavailable; continuing with fallback data:",e);return null;}
+  };
   stage="economy";
-  try{const economy=await online.loadEconomy();if(attemptId!==connectionAttempt)return;applyEconomy(economy);}catch(e){console.warn("Economy unavailable; continuing with local defaults:",e);}
+  const economy=await optionalStartup("Economy loading",online.loadEconomy());
   if(attemptId!==connectionAttempt)return;
+  if(economy)applyEconomy(economy);
   stage="character";
-  let saved=null;
-  try{saved=await online.loadCharacter();}catch(e){console.warn("Saved character unavailable; using a fresh local character:",e);}
+  const saved=await optionalStartup("Character loading",online.loadCharacter());
   if(attemptId!==connectionAttempt)return;setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
   player.name=saved?.name_setup_completed?saved.display_name:makeDefaultPlayerName(auth.userId);
   $("playerName").value=player.name;
