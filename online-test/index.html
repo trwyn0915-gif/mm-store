@@ -1521,7 +1521,9 @@ async function connect(){
   btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";
   $("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";
   const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
-  showLoadingError(stage==="save"?"ذخیره اطلاعات بازیکن در سرور انجام نشد؛ دوباره تلاش کن.":getFriendlyConnectionError(e));
+  const stageNames={auth:"ورود امن به سرور",economy:"دریافت اطلاعات سکه",character:"دریافت اطلاعات بازیکن",avatar:"بارگذاری کاراکتر",room_players:"دریافت فهرست بازیکنان",save:"ذخیره بازیکن",join_room:"ورود به اتاق بازی"};
+  const detail=String(e?.message||e||"خطای نامشخص").replace(/https?:\/\/\S+/g,"[server]").slice(0,180);
+  showLoadingError("مرحله ناموفق: "+(stageNames[stage]||stage)+" — "+detail);
   ctx.clearRect(0,0,canvas.width,canvas.height);stats();
  }
 }
@@ -1694,7 +1696,7 @@ function showFatalGameError(message){
 stats();
 try{online=createRipOnline();}catch(error){console.error("Game client initialization failed:",error);}
 requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=281",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=282",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
