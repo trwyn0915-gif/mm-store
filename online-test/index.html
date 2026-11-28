@@ -1429,7 +1429,6 @@ async function connect(){
  };
  armConnectionWatchdog();
  const btn=$("connect");btn.disabled=true;status("در حال اتصال به دنیای آنلاین...");setLoadingProgress(12,"در حال اتصال به سرور بازی...");
- if(navigator.onLine===false){clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;connectionAttempt++;btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";$("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";showLoadingError("خطا در برقراری ارتباط");return;}
  try{
   online=online||createRipOnline();
   const auth=await online.connect();if(attemptId!==connectionAttempt)return;armConnectionWatchdog();userId=auth.userId;if(Math.abs(auth.offsetMs)>120000)showClockWarning();setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
@@ -1571,19 +1570,6 @@ async function retryConnection(){
  connect();
 }
 window.__mmRetryConnection=retryConnection;
-// Detect an actual browser offline transition immediately instead of waiting
-// for a Supabase request or the connection watchdog to time out.
-function handleStartupOffline(){
- if(connected||!$("loadingScreen").classList.contains("visible"))return;
- connectionAttempt++;
- clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;
- const failedConnection=online;online=null;
- const btn=$("connect");if(btn){btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";}
- $("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";
- showLoadingError("خطا در برقراری ارتباط");
- cleanupConnectionNonBlocking(failedConnection,"Offline connection cleanup failed:");
-}
-window.addEventListener("offline",handleStartupOffline);
 $("loadingRetryButton").addEventListener("click",retryConnection);
 $("startLandscape").addEventListener("click",retryConnection);
 $("hudCoinPlus").addEventListener("click",()=>openCharacterShop());
