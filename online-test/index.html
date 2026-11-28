@@ -202,14 +202,17 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
   overflow:hidden!important;
  }
  .exit-dialog{
-  width:min(84%,620px)!important;max-width:620px!important;max-height:94%!important;
-  overflow:auto!important;padding:clamp(14px,2.4dvh,26px)!important;
+  box-sizing:border-box!important;width:min(530px,84%)!important;max-width:530px!important;
+  height:250px!important;min-height:0!important;max-height:82%!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:flex-start!important;overflow:hidden!important;
+  padding:24px 24px 22px!important;
  }
- .exit-mark{width:clamp(40px,7dvh,54px)!important;height:clamp(40px,7dvh,54px)!important}
- .exit-dialog h2{font-size:clamp(18px,3.8dvh,26px)!important}
- .exit-dialog p{font-size:clamp(13px,2.7dvh,18px)!important;line-height:1.65!important;margin-bottom:clamp(12px,2.5dvh,22px)!important}
- .exit-actions{flex-wrap:nowrap!important;gap:clamp(8px,1.8dvh,14px)!important}
- .exit-actions button{min-height:clamp(42px,7dvh,54px)!important;padding:8px clamp(12px,2.5dvh,22px)!important;font-size:clamp(12px,2.4dvh,16px)!important}
+ .exit-dialog h2{margin:0!important;padding:0!important;font-size:clamp(18px,3.8dvh,26px)!important}
+ .exit-dialog p{display:none!important}
+ .exit-actions{width:100%!important;flex-wrap:nowrap!important;justify-content:center!important;gap:0!important;margin-top:auto!important;padding-top:24px!important}
+ .exit-actions button{min-height:clamp(42px,7dvh,54px)!important;padding:8px clamp(16px,2.5dvh,24px)!important;font-size:clamp(12px,2.4dvh,16px)!important}
+ .exit-stay{top:14px!important;right:14px!important}
 }
 
 /* MM WORLD loading screen: artwork is embedded so it works offline after the page is cached. */
