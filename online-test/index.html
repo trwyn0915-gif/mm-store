@@ -770,7 +770,7 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
   ساعت یا تاریخ دستگاه شما با زمان سرور بازی اختلاف دارد. ممکن است نمایش بازیکنان و تجربه بازی دچار اختلال شود. لطفاً تاریخ و ساعت دستگاه را روی حالت خودکار قرار دهید.
   <button type="button" id="dismissClockWarning">متوجه شدم</button>
  </div>
- <div id="loadingScreen" role="status" aria-live="polite" aria-label="در حال بارگذاری بازی"><div class="loading-ui"><div class="loading-track"><div id="loadingFill" class="loading-fill"></div><span id="loadingPercent" class="loading-percent">۳٪</span></div><section id="loadingErrorPanel" class="loading-error-panel" role="alert" aria-live="assertive" hidden><strong>خطا در برقراری ارتباط!</strong><button id="loadingRetryButton" type="button" class="loading-retry-button" onclick="if(typeof window.__mmRetryConnection==='function')window.__mmRetryConnection();else location.reload()">تلاش مجدد</button></section></div></div>
+ <div id="loadingScreen" role="status" aria-live="polite" aria-label="در حال بارگذاری بازی"><div class="loading-ui"><div class="loading-track"><div id="loadingFill" class="loading-fill"></div><span id="loadingPercent" class="loading-percent">۳٪</span></div><section id="loadingErrorPanel" class="loading-error-panel" role="alert" aria-live="assertive" hidden><strong>خطا در برقراری ارتباط</strong><button id="loadingRetryButton" type="button" class="loading-retry-button" onclick="if(typeof window.__mmRetryConnection==='function')window.__mmRetryConnection();else location.reload()">تلاش مجدد</button></section></div></div>
  <div id="playerNameSetup" role="dialog" aria-modal="true" aria-labelledby="playerNameSetupTitle" aria-describedby="playerNameSetupSubtitle">
   <section class="player-name-card">
    <button id="playerNameExit" type="button" aria-label="خروج از بازی">
@@ -1138,7 +1138,7 @@ function showLoadingError(message){
  const screen=$("loadingScreen");screen.classList.add("visible");
  const ui=screen.querySelector(".loading-ui");ui.classList.add("has-error");
  const errorTitle=$("loadingErrorPanel").querySelector("strong");
- if(errorTitle)errorTitle.textContent="خطا در اتصال";
+ if(errorTitle)errorTitle.textContent="خطا در برقراری ارتباط";
  $("loadingErrorPanel").hidden=false;
  $("loadingRetryButton").disabled=false;
  status("خطا در برقراری ارتباط");
@@ -1523,7 +1523,7 @@ async function connect(){
   $("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";
   const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
   const stageNames={auth:"ورود امن به سرور",economy:"دریافت اطلاعات سکه",character:"دریافت اطلاعات بازیکن",avatar:"بارگذاری کاراکتر",room_players:"دریافت فهرست بازیکنان",save:"ذخیره بازیکن",join_room:"ورود به اتاق بازی"};
-  showLoadingError("خطا در اتصال");
+  showLoadingError("خطا در برقراری ارتباط");
   ctx.clearRect(0,0,canvas.width,canvas.height);stats();
  }
 }
@@ -1598,7 +1598,7 @@ function handleStartupOffline(){
  const failedConnection=online;online=null;
  const btn=$("connect");if(btn){btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";}
  $("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";
- showLoadingError("خطا در اتصال");
+ showLoadingError("خطا در برقراری ارتباط");
  cleanupConnectionNonBlocking(failedConnection,"Offline connection cleanup failed:");
 }
 window.addEventListener("offline",handleStartupOffline);
