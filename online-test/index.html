@@ -1522,10 +1522,11 @@ async function connect(){
   if(attemptId!==connectionAttempt)return;
   if(!selfAvatar)throw new Error("Player character model could not be loaded");
   setLoadingProgress(68,"در حال ورود به دنیای MM...");
-  // Room-player listing is supplementary; save the current player before private subscribe.
+  // The initial room list is part of startup; a failed or stalled request must not
+  // let the game appear partially loaded.
   stage="room_players";
-  let roomPlayers=[];
-  try{roomPlayers=await online.loadRoomPlayers(ROOM)||[];}catch(e){console.warn("Room player list unavailable; continuing:",e);}
+  const roomPlayers=await requiredStartup("Room player list loading",online.loadRoomPlayers(ROOM),12000);
+  if(!Array.isArray(roomPlayers))throw new Error("Room player list was not loaded");
   if(attemptId!==connectionAttempt)return;
   if(!saved){const spawnPoint=chooseSpawnPoint(roomPlayers);player.x=spawnPoint.x;player.y=spawnPoint.y;}
   stage="save";armCriticalWatchdog("save");
