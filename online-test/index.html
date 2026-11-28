@@ -120,18 +120,18 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 #rotatePrompt{display:flex}
 #rotatePrompt.hidden{display:none!important}
 #connectionError.visible{display:block!important}
-/* In-game connection-loss dialog: deliberately modal and non-dismissible. */
-#gameConnectionAlert{position:fixed;inset:0;z-index:40000;display:none;align-items:center;justify-content:center;padding:18px;background:#0008}
+/* In-game connection-loss dialog: compact proportions matching the reference screen. */
+#gameConnectionAlert{position:fixed;inset:0;z-index:40000;display:none;align-items:center;justify-content:center;padding:10px;background:#0008}
 #gameConnectionAlert.visible{display:flex!important}
-#gameConnectionAlert .game-connection-card{width:min(590px,94vw);min-height:330px;overflow:hidden;border:8px solid #171717;border-radius:16px;background:#f7f7f7;box-shadow:0 10px 28px #0008;text-align:center;color:#111}
-#gameConnectionAlert .game-connection-heading{min-height:38px;display:flex;align-items:center;justify-content:center;padding:7px 12px;background:#171717;color:#fff;font-size:14px;font-weight:900}
-#gameConnectionAlert .game-connection-content{min-height:290px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 18px}
-#gameConnectionAlert .game-connection-message{margin:0 0 20px;font-size:clamp(21px,3.2vw,30px);font-weight:950;color:#fff;-webkit-text-stroke:1.2px #111;text-shadow:1px 2px 0 #111}
-#gameConnectionAlert .game-connection-spinner{width:34px;height:34px;margin:0 0 20px;border:5px solid #d5d5d5;border-top-color:#171717;border-radius:50%;animation:mmConnectionSpin .8s linear infinite}
-#gameConnectionAlert .game-connection-exit{width:min(160px,70%);min-height:62px;border:2px solid #171717;border-radius:16px;background:linear-gradient(#ffe900,#e6b900);box-shadow:0 3px 0 #777;color:#111;font:inherit;font-size:22px;font-weight:950}
-#gameConnectionAlert .game-connection-exit:active{transform:translateY(2px);box-shadow:0 1px 0 #777}
+#gameConnectionAlert .game-connection-card{box-sizing:border-box;width:min(300px,88vw);height:198px;min-height:0;overflow:hidden;border:4px solid #171717;border-radius:9px;background:#f7f7f7;box-shadow:0 5px 14px #0007;text-align:center;color:#111}
+#gameConnectionAlert .game-connection-heading{box-sizing:border-box;height:28px;min-height:28px;display:flex;align-items:center;justify-content:center;padding:3px 8px;background:#171717;color:#fff;font-size:10px;line-height:1;font-weight:900}
+#gameConnectionAlert .game-connection-content{box-sizing:border-box;height:162px;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 8px}
+#gameConnectionAlert .game-connection-message{display:block;width:100%;margin:0 0 12px;white-space:nowrap;direction:rtl;unicode-bidi:plaintext;font-size:14px;line-height:1.5;font-weight:900;color:#fff;-webkit-text-stroke:.65px #111;text-shadow:.7px 1px 0 #111}
+#gameConnectionAlert .game-connection-spinner{flex:0 0 auto;width:30px;height:30px;margin:0 0 12px;border:3px solid #d5d5d5;border-top-color:#171717;border-radius:50%;animation:mmConnectionSpin .8s linear infinite}
+#gameConnectionAlert .game-connection-exit{box-sizing:border-box;width:80px;height:34px;min-height:34px;padding:2px 8px;border:1.5px solid #171717;border-radius:9px;background:linear-gradient(#ffe900,#e6b900);box-shadow:0 2px 0 #777;color:#fff;-webkit-text-stroke:.8px #111;text-shadow:.7px 1px 0 #111;font:inherit;font-size:14px;line-height:1;font-weight:950}
+#gameConnectionAlert .game-connection-exit:active{transform:translateY(1px);box-shadow:0 1px 0 #777}
 @keyframes mmConnectionSpin{to{transform:rotate(360deg)}}
-@media(max-width:600px){#gameConnectionAlert .game-connection-card{min-height:270px;border-width:6px}#gameConnectionAlert .game-connection-content{min-height:230px;padding:18px 12px}#gameConnectionAlert .game-connection-exit{min-height:56px}}
+@media(max-width:380px){#gameConnectionAlert .game-connection-card{width:min(300px,88vw)}#gameConnectionAlert .game-connection-message{font-size:clamp(11px,3.7vw,14px)}}
 
 /* After leaving the game, restore the ordinary portrait-friendly site page. */
 .exit-to-page #rotatePrompt{display:none!important}
