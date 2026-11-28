@@ -822,7 +822,7 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  const clickPlayers=Array.from({length:4},()=>{
   const audio=new Audio();
   audio.preload="auto";
-  audio.volume=.10;
+  audio.volume=.17;
   audio.src=clickSoundUrl;
   audio.load();
   return audio;
@@ -1593,7 +1593,7 @@ function prepareMusicAudio(){
  musicAudioContext=new AudioContextClass();
  musicSourceNode=musicAudioContext.createMediaElementSource(backgroundMusic);
  musicGainNode=musicAudioContext.createGain();
- musicGainNode.gain.setValueAtTime(0.05,musicAudioContext.currentTime);
+ musicGainNode.gain.setValueAtTime(0.12,musicAudioContext.currentTime);
  musicSourceNode.connect(musicGainNode);
  musicGainNode.connect(musicAudioContext.destination);
  backgroundMusic.volume=1;
