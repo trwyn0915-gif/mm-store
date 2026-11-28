@@ -1128,9 +1128,9 @@ function cleanupConnectionNonBlocking(connection,label){
  }catch(error){console.warn(label,error);}
 }
 function paintLoadingProgress(){ $("loadingFill").style.width=loadingProgressCurrent+"%";$("loadingPercent").textContent=new Intl.NumberFormat("fa-IR").format(loadingProgressCurrent)+"٪"; }
-function advanceLoadingProgress(){loadingProgressTimer=null;loadingProgressCurrent=Math.min(loadingProgressComplete?100:99,loadingProgressCurrent+1);paintLoadingProgress();if(loadingProgressCurrent<100)loadingProgressTimer=setTimeout(advanceLoadingProgress,110);}
-function setLoadingProgress(value,message){if(Number(value)>=100){loadingProgressComplete=true;clearTimeout(loadingProgressTimer);loadingProgressTimer=null;loadingProgressCurrent=100;paintLoadingProgress();}}
-function showLoading(){clearTimeout(loadingProgressTimer);loadingProgressTimer=null;loadingProgressCurrent=0;loadingProgressComplete=false;const ui=document.querySelector("#loadingScreen .loading-ui");ui.classList.remove("has-error");$("loadingErrorPanel").hidden=true;$("loadingRetryButton").disabled=false;paintLoadingProgress();$("loadingScreen").classList.add("visible");loadingProgressTimer=setTimeout(advanceLoadingProgress,85);}
+function advanceLoadingProgress(){loadingProgressTimer=null;loadingProgressCurrent=Math.min(loadingProgressComplete?100:99,loadingProgressCurrent+1);paintLoadingProgress();if(loadingProgressCurrent<100)loadingProgressTimer=setTimeout(advanceLoadingProgress,300);}
+function setLoadingProgress(value,message){if(Number(value)>=100){loadingProgressComplete=true;if(loadingProgressTimer===null)loadingProgressTimer=setTimeout(advanceLoadingProgress,300);}}
+function showLoading(){clearTimeout(loadingProgressTimer);loadingProgressTimer=null;loadingProgressCurrent=0;loadingProgressComplete=false;const ui=document.querySelector("#loadingScreen .loading-ui");ui.classList.remove("has-error");$("loadingErrorPanel").hidden=true;$("loadingRetryButton").disabled=false;paintLoadingProgress();$("loadingScreen").classList.add("visible");loadingProgressTimer=setTimeout(advanceLoadingProgress,300);}
 function hideLoading(){ $("loadingScreen").classList.remove("visible");clearTimeout(loadingProgressTimer);loadingProgressTimer=null;}
 function showLoadingError(message){
  clearTimeout(loadingProgressTimer);loadingProgressTimer=null;
@@ -1231,7 +1231,7 @@ $("playerNameConfirm").addEventListener("click",confirmPlayerName);
 $("playerNameSetupInput").addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();confirmPlayerName();}});
 $("playerNameExit").addEventListener("click",()=>{hidePlayerNameSetup();showExitConfirm();});
 
-function waitForLoadingProgress(target=100,timeoutMs=8000){return new Promise((resolve,reject)=>{const started=performance.now();const check=()=>{if(loadingProgressCurrent>=target){resolve();return;}if(performance.now()-started>=timeoutMs){reject(new Error("Loading progress did not reach "+target+"% in time."));return;}setTimeout(check,50);};check();});}
+function waitForLoadingProgress(target=100){return new Promise(resolve=>{const check=()=>{if(loadingProgressCurrent>=target){resolve();return;}setTimeout(check,50);};check();});}
 
 function updateCoinDisplays(){const value=new Intl.NumberFormat("fa-IR").format(coins);$("coins").textContent=value;const hud=$("hudCoinBalance");if(hud)hud.textContent=value;}
 function stats(){ $("onlineCount").textContent=String(Object.keys(players).length+ (connected?1:0));$("level").textContent=player.level;$("xp").textContent=player.xp+" / "+(player.level*100);updateCoinDisplays();$("quest").textContent=questDone?"ماموریت تکمیل شد":questStarted?("گیاه جمع کن: "+herbs+" / ۳"):"با نگهبان دهکده صحبت کن"; }
@@ -1504,6 +1504,7 @@ async function connect(){
    .catch(moveError=>console.warn("Initial position broadcast failed; live movement will retry:",moveError));
   // The bar reaches 100 only after the required world connection and room setup succeeded.
   setLoadingProgress(100,"ورود به دنیای MM موفق بود");
+  await waitForLoadingProgress(100);
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   hideLoading();
   stats();persist();
