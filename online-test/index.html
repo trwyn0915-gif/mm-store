@@ -820,7 +820,7 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 (()=>{const btn=document.getElementById("orientationGateStart");if(!btn)return;const showOfflineError=()=>{window.__mmStartRequested=false;clearTimeout(window.__mmStartWaitTimer);const loading=document.getElementById("loadingScreen"),panel=document.getElementById("loadingErrorPanel"),ui=loading?.querySelector(".loading-ui"),title=panel?.querySelector("strong"),retry=document.getElementById("loadingRetryButton"),gate=document.getElementById("orientationGate");if(ui)ui.classList.add("has-error");if(title)title.textContent="خطا در برقراری ارتباط";if(panel)panel.hidden=false;if(retry)retry.disabled=false;if(loading)loading.classList.add("visible");if(gate){gate.hidden=true;gate.style.display="none";}btn.dataset.started="";btn.disabled=false;btn.textContent="شروع بازی";};btn.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();if(btn.dataset.started==="1")return;btn.dataset.started="1";btn.disabled=true;btn.textContent="در حال آماده‌سازی بازی...";window.__mmStartRequested=true;const gate=document.getElementById("orientationGate"),loading=document.getElementById("loadingScreen");if(gate){gate.hidden=true;gate.style.display="none";}document.body.classList.remove("exit-to-page");if(loading)loading.classList.add("visible");const root=document.documentElement;try{if(!document.fullscreenElement&&root.requestFullscreen){const p=root.requestFullscreen();p?.catch(()=>{});}}catch(_){}try{const p=screen.orientation?.lock?.("landscape");p?.catch(()=>{});}catch(_){}if(typeof window.__mmStartGame==="function"){window.__mmStartGame();return;}clearTimeout(window.__mmStartWaitTimer);window.__mmStartWaitTimer=setTimeout(()=>{if(window.__mmStartRequested)showOfflineError();},30000);},{passive:false});})();
 </script>
 <script type="module">
-import { createRipOnline } from "../online/multiplayer.js?v=31";
+import { createRipOnline } from "../online/multiplayer.js?v=32";
 const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
 const { GLTFLoader } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
 const { clone: cloneSkinned } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js");
@@ -1675,7 +1675,7 @@ window.addEventListener("unhandledrejection",event=>{console.error("Unhandled ga
 stats();
 try{online=createRipOnline();}catch(error){console.error("Game client initialization failed:",error);}
 requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=278",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=279",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
