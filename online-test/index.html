@@ -1119,6 +1119,7 @@ $("openShop").addEventListener("click",openCharacterShop);$("closeShop").addEven
 function sayToast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2100);}
 function status(t){$("status").textContent=t;}
 let loadingProgressCurrent=0,loadingProgressTimer=null,loadingProgressComplete=false;
+let connectionAttempt=0,connectionWatchdogTimer=null;
 function paintLoadingProgress(){ $("loadingFill").style.width=loadingProgressCurrent+"%";$("loadingPercent").textContent=new Intl.NumberFormat("fa-IR").format(loadingProgressCurrent)+"٪"; }
 function advanceLoadingProgress(){loadingProgressTimer=null;loadingProgressCurrent=Math.min(loadingProgressComplete?100:99,loadingProgressCurrent+1);paintLoadingProgress();if(loadingProgressCurrent<100)loadingProgressTimer=setTimeout(advanceLoadingProgress,110);}
 function setLoadingProgress(value,message){if(Number(value)>=100&&!loadingProgressComplete){loadingProgressComplete=true;if(loadingProgressTimer===null)loadingProgressTimer=setTimeout(advanceLoadingProgress,0);}}
@@ -1405,12 +1406,21 @@ async function interact(){
 }
 async function connect(){
  if(connected)return;
+ const attemptId=++connectionAttempt;
+ clearTimeout(connectionWatchdogTimer);
+ connectionWatchdogTimer=setTimeout(()=>{
+  if(attemptId!==connectionAttempt||connected)return;
+  connectionAttempt++;
+  const stalledConnection=online;online=null;
+  if(stalledConnection)stalledConnection.leave().catch(error=>console.warn("Timed-out connection cleanup failed:",error));
+  showLoadingError("اتصال یا آماده‌سازی بازی بیش از حد طول کشید. اینترنت را بررسی کنید و دوباره تلاش کنید.");
+ },45000);
  const btn=$("connect");btn.disabled=true;status("در حال اتصال به دنیای آنلاین...");setLoadingProgress(12,"در حال اتصال به سرور بازی...");
  try{
   online=online||createRipOnline();
-  const auth=await online.connect();userId=auth.userId;if(Math.abs(auth.offsetMs)>120000)showClockWarning();setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
-  const economy=await online.loadEconomy();applyEconomy(economy);
-  const saved=await online.loadCharacter();setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
+  const auth=await online.connect();if(attemptId!==connectionAttempt)return;userId=auth.userId;if(Math.abs(auth.offsetMs)>120000)showClockWarning();setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
+  const economy=await online.loadEconomy();if(attemptId!==connectionAttempt)return;applyEconomy(economy);
+  const saved=await online.loadCharacter();if(attemptId!==connectionAttempt)return;setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
   player.name=saved?.name_setup_completed?saved.display_name:makeDefaultPlayerName(auth.userId);
   $("playerName").value=player.name;
   if(saved){
@@ -1421,14 +1431,14 @@ async function connect(){
   }else{player.skin="hero";}
   persist();
   setLoadingProgress(60,"در حال بارگذاری کاراکتر سه‌بعدی...");
-  await ensureAvatar("self",player.skin);
+  await ensureAvatar("self",player.skin);if(attemptId!==connectionAttempt)return;
   if(!avatarRecords.has("self"))throw new Error("مدل کاراکتر بارگذاری نشد؛ اتصال اینترنت را بررسی کن.");
   setLoadingProgress(68,"در حال ورود به دنیای MM...");
   // Create the authenticated player's room row before subscribing to their
   // private player topic; the Realtime SELECT policy checks this row.
-  const roomPlayers=await online.loadRoomPlayers(ROOM);
+  const roomPlayers=await online.loadRoomPlayers(ROOM);if(attemptId!==connectionAttempt)return;
   if(!saved){const spawnPoint=chooseSpawnPoint(roomPlayers);player.x=spawnPoint.x;player.y=spawnPoint.y;}
-  const canonicalPlayer=await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});
+  const canonicalPlayer=await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});if(attemptId!==connectionAttempt)return;
   if(canonicalPlayer?.display_name){player.name=canonicalPlayer.display_name;$("playerName").value=player.name;}
   await online.joinRoom(ROOM,{
    // Presence is deliberately not trusted to create or identify player avatars.
@@ -1439,9 +1449,11 @@ async function connect(){
    },
    onChat:p=>{if(p?.userId!==userId){addChat(p.displayName||"بازیکن",p.message||"",p.id);showPlayerChatBubble(p.userId,p.message||"",p.createdAt);}}
   });
+  if(attemptId!==connectionAttempt)return;
   for(const row of roomPlayers){
    if(row.user_id&&row.user_id!==userId&&remotePresenceIds.has(row.user_id))applyRemotePlayer(row);
   }
+  clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;
   connected=true;for(const p of Object.values(players))if(p?.userId)ensureAvatar(p.userId,p.skin).catch(console.error);setLoadingProgress(90,"دنیای بازی آماده شد...");
   document.body.classList.remove("exit-to-page");
   const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
@@ -1467,6 +1479,8 @@ async function connect(){
   stats();persist();
   if(!saved?.name_setup_completed)showPlayerNameSetup();else sayToast("با موفقیت وارد دنیای آنلاین شدی");
  }catch(e){
+  if(attemptId!==connectionAttempt)return;
+  clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;
   console.error("Online connection failed:",e);
   connected=false;players={};userId="";
   if(online){try{await online.leave();}catch(_){}}
@@ -1524,6 +1538,7 @@ async function enterOrientationGate(){
 }
 window.__mmStartGame=()=>{clearTimeout(window.__mmStartWaitTimer);window.__mmStartRequested=false;enterOrientationGate();};if(window.__mmStartRequested)window.__mmStartGame();
 async function retryConnection(){
+ connectionAttempt++;clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;
  const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
  $("connectionError").textContent="";$("connectionError").classList.remove("visible");clearLoadingError();
  $("loadingRetryButton").disabled=true;
