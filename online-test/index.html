@@ -820,7 +820,7 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
 (()=>{const btn=document.getElementById("orientationGateStart");if(!btn)return;btn.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();if(btn.dataset.started==="1")return;btn.dataset.started="1";btn.disabled=true;btn.textContent="در حال آماده‌سازی بازی...";const root=document.documentElement;try{if(!document.fullscreenElement&&root.requestFullscreen){const p=root.requestFullscreen();p?.catch(()=>{});}}catch(_){}try{const p=screen.orientation?.lock?.("landscape");p?.catch(()=>{});}catch(_){}window.__mmStartRequested=true;const gate=document.getElementById("orientationGate");if(gate){gate.hidden=true;gate.style.display="none";}document.body.classList.remove("exit-to-page");const loading=document.getElementById("loadingScreen");if(loading)loading.classList.add("visible");if(typeof window.__mmStartGame==="function"){window.__mmStartGame();return;}clearTimeout(window.__mmStartWaitTimer);window.__mmStartWaitTimer=setTimeout(()=>{if(window.__mmStartRequested){window.__mmStartRequested=false;const panel=document.getElementById("loadingErrorPanel");const ui=loading?.querySelector(".loading-ui");if(ui)ui.classList.add("has-error");const title=panel?.querySelector("strong");if(title)title.textContent="خطا در برقراری ارتباط";if(panel)panel.hidden=false;const retry=document.getElementById("loadingRetryButton");if(retry)retry.disabled=false;if(loading)loading.classList.add("visible");if(gate){gate.hidden=true;gate.style.display="none";}btn.dataset.started="";btn.disabled=false;btn.textContent="شروع بازی";}},20000);},{passive:false});})();
 </script>
 <script type="module">
-import { createRipOnline } from "../online/multiplayer.js?v=31";
+import { createRipOnline } from "../online/multiplayer.js?v=34";
 const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
 const { GLTFLoader } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
 const { clone: cloneSkinned } = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js");
@@ -1417,20 +1417,25 @@ async function connect(){
  if(connected)return;
  const attemptId=++connectionAttempt;
  clearTimeout(connectionWatchdogTimer);
+ let stage="auth";
  connectionWatchdogTimer=setTimeout(()=>{
-  if(attemptId!==connectionAttempt||connected)return;
+  if(attemptId!==connectionAttempt||connected||!["auth","save","join_room"].includes(stage))return;
   connectionAttempt++;
   const stalledConnection=online;online=null;
   showLoadingError(getFriendlyConnectionError("timeout"));
   cleanupConnectionNonBlocking(stalledConnection,"Timed-out connection cleanup failed:");
  },25000);
  const btn=$("connect");btn.disabled=true;status("در حال اتصال به دنیای آنلاین...");setLoadingProgress(12,"در حال اتصال به سرور بازی...");
- if(navigator.onLine===false){clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;connectionAttempt++;btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";$("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";showLoadingError("خطا در برقراری ارتباط");return;}
  try{
   online=online||createRipOnline();
   const auth=await online.connect();if(attemptId!==connectionAttempt)return;userId=auth.userId;if(Math.abs(auth.offsetMs)>120000)showClockWarning();setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
-  const economy=await online.loadEconomy();if(attemptId!==connectionAttempt)return;applyEconomy(economy);
-  const saved=await online.loadCharacter();if(attemptId!==connectionAttempt)return;setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
+  stage="economy";
+  try{const economy=await online.loadEconomy();if(attemptId!==connectionAttempt)return;applyEconomy(economy);}catch(e){console.warn("Economy unavailable; continuing with local defaults:",e);}
+  if(attemptId!==connectionAttempt)return;
+  stage="character";
+  let saved=null;
+  try{saved=await online.loadCharacter();}catch(e){console.warn("Saved character unavailable; using a fresh local character:",e);}
+  if(attemptId!==connectionAttempt)return;setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
   player.name=saved?.name_setup_completed?saved.display_name:makeDefaultPlayerName(auth.userId);
   $("playerName").value=player.name;
   if(saved){
@@ -1441,15 +1446,20 @@ async function connect(){
   }else{player.skin="hero";}
   persist();
   setLoadingProgress(60,"در حال بارگذاری کاراکتر سه‌بعدی...");
-  await ensureAvatar("self",player.skin);if(attemptId!==connectionAttempt)return;
-  if(!avatarRecords.has("self"))throw new Error("مدل کاراکتر بارگذاری نشد؛ اتصال اینترنت را بررسی کن.");
+  stage="avatar";
+  try{await ensureAvatar("self",player.skin);}catch(e){console.warn("Avatar unavailable; continuing with fallback rendering:",e);}
+  if(attemptId!==connectionAttempt)return;
   setLoadingProgress(68,"در حال ورود به دنیای MM...");
-  // Create the authenticated player's room row before subscribing to their
-  // private player topic; the Realtime SELECT policy checks this row.
-  const roomPlayers=await online.loadRoomPlayers(ROOM);if(attemptId!==connectionAttempt)return;
+  // Room-player listing is supplementary; save the current player before private subscribe.
+  stage="room_players";
+  let roomPlayers=[];
+  try{roomPlayers=await online.loadRoomPlayers(ROOM)||[];}catch(e){console.warn("Room player list unavailable; continuing:",e);}
+  if(attemptId!==connectionAttempt)return;
   if(!saved){const spawnPoint=chooseSpawnPoint(roomPlayers);player.x=spawnPoint.x;player.y=spawnPoint.y;}
+  stage="save";
   const canonicalPlayer=await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});if(attemptId!==connectionAttempt)return;
   if(canonicalPlayer?.display_name){player.name=canonicalPlayer.display_name;$("playerName").value=player.name;}
+  stage="join_room";
   await online.joinRoom(ROOM,{
    // Presence is deliberately not trusted to create or identify player avatars.
    onPlayers:state=>reconcileRemotePresence(state),
@@ -1463,7 +1473,7 @@ async function connect(){
   for(const row of roomPlayers){
    if(row.user_id&&row.user_id!==userId&&remotePresenceIds.has(row.user_id))applyRemotePlayer(row);
   }
-  clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;
+  clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;stage="finish";
   connected=true;for(const p of Object.values(players))if(p?.userId)ensureAvatar(p.userId,p.skin).catch(console.error);setLoadingProgress(90,"دنیای بازی آماده شد...");
   document.body.classList.remove("exit-to-page");
   const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
@@ -1500,7 +1510,7 @@ async function connect(){
   btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";
   $("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";
   const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
-  showLoadingError(getFriendlyConnectionError(e));
+  showLoadingError(stage==="save"?"ذخیره اطلاعات بازیکن در سرور انجام نشد؛ دوباره تلاش کن.":getFriendlyConnectionError(e));
   ctx.clearRect(0,0,canvas.width,canvas.height);stats();
  }
 }
@@ -1637,7 +1647,7 @@ window.addEventListener("fullscreenchange",()=>{if(exitFlowActive&&!document.ful
 // Portrait devices use a rotated landscape game viewport; no physical rotation is required.
 async function stayInGame(){if(!document.fullscreenElement){const root=document.documentElement;if(!root.requestFullscreen){sayToast("این مرورگر امکان بازگشت به تمام‌صفحه را نمی‌دهد");return;}try{await root.requestFullscreen();}catch(e){sayToast("برای ادامه، حالت تمام‌صفحه را از مرورگر فعال کن");return;}}try{await screen.orientation?.lock?.("landscape");}catch(_){}hideExitConfirm();if(nameSetupRequired)showPlayerNameSetup();}
 $("stayInGame").addEventListener("click",stayInGame);
-async function confirmExitSite(){exitFlowActive=false;closeChatPanel();backgroundMusic.pause();backgroundMusic.currentTime=0;exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}online=null;connected=false;players={};userId="";resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");const gate=$("orientationGate");gate.hidden=false;gate.style.display="flex";const gateBtn=$("orientationGateStart");gateBtn.dataset.started="";gateBtn.disabled=false;gateBtn.textContent="شروع بازی";const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، دکمه شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
+async function confirmExitSite(){exitFlowActive=false;closeChatPanel();backgroundMusic.pause();backgroundMusic.currentTime=0;exitApproved=true;closeCharacterShop();hideExitConfirm();hideLoading();hideLoading();try{if(online)await online.leave();}catch(e){console.warn("Could not leave online room cleanly:",e);}connected=false;players={};userId="";resetJoy();Object.keys(keys).forEach(k=>keys[k]=false);document.body.classList.remove("playing","exit-to-page");const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");const gate=$("orientationGate");gate.hidden=false;gate.style.display="flex";const gateBtn=$("orientationGateStart");gateBtn.dataset.started="";gateBtn.disabled=false;gateBtn.textContent="شروع بازی";const connectBtn=$("connect");connectBtn.disabled=false;connectBtn.textContent="ورود به دنیای آنلاین";$("connectionError").textContent="";$("connectionError").classList.remove("visible");status("برای ورود، دکمه شروع بازی را بزن");try{await screen.orientation?.unlock?.();}catch(_){}if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){console.info("Could not leave fullscreen:",e);}}stats();}
 $("confirmExit").addEventListener("click",confirmExitSite);
 function toggleChat(){if(chatPanel.classList.contains("chat-floating")){closeChatPanel();return;}openChatPanel(false);}
 $("chatToggle").addEventListener("click",toggleChat);
@@ -1670,12 +1680,10 @@ function showFatalGameError(message){
  const btn=$("startLandscape");btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";
  showLoadingError(message||"خطایی هنگام آماده‌سازی بازی رخ داد. دوباره تلاش کنید.");
 }
-window.addEventListener("error",event=>showFatalGameError(getFriendlyConnectionError(event.message||"خطای نامشخص")));
-window.addEventListener("unhandledrejection",event=>showFatalGameError(getFriendlyConnectionError(event.reason)));
 stats();
 try{online=createRipOnline();}catch(error){console.error("Game client initialization failed:",error);}
 requestAnimationFrame(frame);
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=278",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?build=281",{updateViaCache:"none"}).then(reg=>reg.update()).catch(e=>console.warn("Service worker update failed:",e)));
 </script>
 </body></html>
 /* v209: keep the chat title and place a white close control at the far right. */
