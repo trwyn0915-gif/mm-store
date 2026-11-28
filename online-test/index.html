@@ -1119,7 +1119,7 @@ $("openShop").addEventListener("click",openCharacterShop);$("closeShop").addEven
 function sayToast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2100);}
 function status(t){$("status").textContent=t;}
 let loadingProgressCurrent=0,loadingProgressTimer=null,loadingProgressComplete=false;
-let connectionAttempt=0,connectionWatchdogTimer=null;
+let connectionAttempt=0,connectionWatchdogTimer=null,startupNetworkMonitor=null;
 function cleanupConnectionNonBlocking(connection,label){
  if(!connection||typeof connection.leave!=="function")return;
  try{
@@ -1138,7 +1138,7 @@ function showLoadingError(message){
  const screen=$("loadingScreen");screen.classList.add("visible");
  const ui=screen.querySelector(".loading-ui");ui.classList.add("has-error");
  const errorTitle=$("loadingErrorPanel").querySelector("strong");
- if(errorTitle)errorTitle.textContent=message||"خطا در برقراری ارتباط!";
+ if(errorTitle)errorTitle.textContent="خطا در اتصال";
  $("loadingErrorPanel").hidden=false;
  $("loadingRetryButton").disabled=false;
  status("خطا در برقراری ارتباط");
@@ -1416,7 +1416,8 @@ async function interact(){
 async function connect(){
  if(connected)return;
  const attemptId=++connectionAttempt;
- clearTimeout(connectionWatchdogTimer);
+ clearTimeout(connectionWatchdogTimer);clearInterval(startupNetworkMonitor);
+ startupNetworkMonitor=setInterval(()=>{if(attemptId===connectionAttempt&&!navigator.onLine)handleStartupOffline();},100);
  let stage="auth";
  const armCriticalWatchdog=expectedStage=>{
   clearTimeout(connectionWatchdogTimer);
@@ -1484,7 +1485,7 @@ async function connect(){
   for(const row of roomPlayers){
    if(row.user_id&&row.user_id!==userId&&remotePresenceIds.has(row.user_id))applyRemotePlayer(row);
   }
-  clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;stage="finish";
+  clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;clearInterval(startupNetworkMonitor);startupNetworkMonitor=null;stage="finish";
   connected=true;for(const p of Object.values(players))if(p?.userId)ensureAvatar(p.userId,p.skin).catch(console.error);setLoadingProgress(90,"دنیای بازی آماده شد...");
   document.body.classList.remove("exit-to-page");
   const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
@@ -1511,7 +1512,7 @@ async function connect(){
   if(!saved?.name_setup_completed)showPlayerNameSetup();else sayToast("با موفقیت وارد دنیای آنلاین شدی");
  }catch(e){
   if(attemptId!==connectionAttempt)return;
-  clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;
+  clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;clearInterval(startupNetworkMonitor);startupNetworkMonitor=null;
   console.error("Online connection failed:",e);
   connected=false;players={};userId="";
   if(online){const failedConnection=online;online=null;cleanupConnectionNonBlocking(failedConnection,"Failed connection cleanup failed:");}
@@ -1522,8 +1523,7 @@ async function connect(){
   $("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";
   const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
   const stageNames={auth:"ورود امن به سرور",economy:"دریافت اطلاعات سکه",character:"دریافت اطلاعات بازیکن",avatar:"بارگذاری کاراکتر",room_players:"دریافت فهرست بازیکنان",save:"ذخیره بازیکن",join_room:"ورود به اتاق بازی"};
-  const detail=String(e?.message||e||"خطای نامشخص").replace(/https?:\/\/\S+/g,"[server]").slice(0,180);
-  showLoadingError("مرحله ناموفق: "+(stageNames[stage]||stage)+" — "+detail);
+  showLoadingError("خطا در اتصال");
   ctx.clearRect(0,0,canvas.width,canvas.height);stats();
  }
 }
@@ -1571,7 +1571,7 @@ async function enterOrientationGate(){
 }
 window.__mmStartGame=()=>{clearTimeout(window.__mmStartWaitTimer);window.__mmStartRequested=false;enterOrientationGate();};if(window.__mmStartRequested)window.__mmStartGame();
 async function retryConnection(){
- connectionAttempt++;clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;
+ connectionAttempt++;clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;clearInterval(startupNetworkMonitor);startupNetworkMonitor=null;
  const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
  $("connectionError").textContent="";$("connectionError").classList.remove("visible");clearLoadingError();
  $("loadingRetryButton").disabled=true;
@@ -1594,11 +1594,11 @@ window.__mmRetryConnection=retryConnection;
 function handleStartupOffline(){
  if(connected||!$("loadingScreen").classList.contains("visible"))return;
  connectionAttempt++;
- clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;
+ clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;clearInterval(startupNetworkMonitor);startupNetworkMonitor=null;
  const failedConnection=online;online=null;
  const btn=$("connect");if(btn){btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";}
  $("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";
- showLoadingError("خطا در برقراری ارتباط");
+ showLoadingError("خطا در اتصال");
  cleanupConnectionNonBlocking(failedConnection,"Offline connection cleanup failed:");
 }
 window.addEventListener("offline",handleStartupOffline);
