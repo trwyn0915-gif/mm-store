@@ -1418,13 +1418,17 @@ async function connect(){
  const attemptId=++connectionAttempt;
  clearTimeout(connectionWatchdogTimer);
  let stage="auth";
- connectionWatchdogTimer=setTimeout(()=>{
-  if(attemptId!==connectionAttempt||connected||!["auth","save","join_room"].includes(stage))return;
-  connectionAttempt++;
-  const stalledConnection=online;online=null;
-  showLoadingError(getFriendlyConnectionError("timeout"));
-  cleanupConnectionNonBlocking(stalledConnection,"Timed-out connection cleanup failed:");
- },25000);
+ const armCriticalWatchdog=expectedStage=>{
+  clearTimeout(connectionWatchdogTimer);
+  connectionWatchdogTimer=setTimeout(()=>{
+   if(attemptId!==connectionAttempt||connected||stage!==expectedStage)return;
+   connectionAttempt++;
+   const stalledConnection=online;online=null;
+   showLoadingError(getFriendlyConnectionError("timeout"));
+   cleanupConnectionNonBlocking(stalledConnection,"Timed-out connection cleanup failed:");
+  },25000);
+ };
+ armCriticalWatchdog("auth");
  const btn=$("connect");btn.disabled=true;status("در حال اتصال به دنیای آنلاین...");setLoadingProgress(12,"در حال اتصال به سرور بازی...");
  try{
   online=online||createRipOnline();
@@ -1463,10 +1467,10 @@ async function connect(){
   try{roomPlayers=await online.loadRoomPlayers(ROOM)||[];}catch(e){console.warn("Room player list unavailable; continuing:",e);}
   if(attemptId!==connectionAttempt)return;
   if(!saved){const spawnPoint=chooseSpawnPoint(roomPlayers);player.x=spawnPoint.x;player.y=spawnPoint.y;}
-  stage="save";
+  stage="save";armCriticalWatchdog("save");
   const canonicalPlayer=await online.saveCharacter({displayName:player.name,characterId:player.skin,roomId:ROOM,x:player.x,y:player.y,facing:player.face,level:player.level,experience:player.xp});if(attemptId!==connectionAttempt)return;
   if(canonicalPlayer?.display_name){player.name=canonicalPlayer.display_name;$("playerName").value=player.name;}
-  stage="join_room";
+  stage="join_room";armCriticalWatchdog("join_room");
   await online.joinRoom(ROOM,{
    // Presence is deliberately not trusted to create or identify player avatars.
    onPlayers:state=>reconcileRemotePresence(state),
