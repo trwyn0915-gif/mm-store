@@ -1174,7 +1174,10 @@ let connectionAttempt=0,connectionWatchdogTimer=null,startupNetworkMonitor=null;
   if(state==="CHANNEL_ERROR"||state==="TIMED_OUT"||state==="CLOSED")showGameConnectionAlert();
  }
  window.addEventListener("offline",()=>{if(connected)showGameConnectionAlert();});
- window.addEventListener("online",()=>{if(connected&&gameConnectionLost)scheduleGameReconnect(0);});
+ window.addEventListener("online",()=>{
+ if(connected&&gameConnectionLost){scheduleGameReconnect(0);return;}
+ if(!connected&&!$("loadingScreen").classList.contains("visible"))clearHomeConnectionError();
+});
  $("gameConnectionExit").addEventListener("click",()=>confirmExitSite());
 function cleanupConnectionNonBlocking(connection,label){
  if(!connection||typeof connection.leave!=="function")return;
@@ -1490,19 +1493,19 @@ async function connect(){
  try{
   online=online||createRipOnline();
   const auth=await online.connect();if(attemptId!==connectionAttempt)return;userId=auth.userId;if(Math.abs(auth.offsetMs)>120000)showClockWarning();setLoadingProgress(34,"اتصال برقرار شد؛ در حال دریافت اطلاعات بازیکن...");
-  const optionalStartup=async(label,task)=>{
+  const requiredStartup=async(label,task,timeoutMs=12000)=>{
+   let timer=null;
    try{
-    const result=await Promise.race([task,new Promise(resolve=>setTimeout(()=>resolve(null),10000))]);
-    if(result===null)console.warn(label+" timed out; continuing with fallback data");
-    return result;
-   }catch(e){console.warn(label+" unavailable; continuing with fallback data:",e);return null;}
+    return await Promise.race([Promise.resolve(task),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(label+" timed out")),timeoutMs);})]);
+   }finally{clearTimeout(timer);}
   };
   stage="economy";
-  const economy=await optionalStartup("Economy loading",online.loadEconomy());
+  const economy=await requiredStartup("Economy loading",online.loadEconomy());
   if(attemptId!==connectionAttempt)return;
-  if(economy)applyEconomy(economy);
+  if(!economy||typeof economy!=="object")throw new Error("Economy data was not loaded");
+  applyEconomy(economy);
   stage="character";
-  const saved=await optionalStartup("Character loading",online.loadCharacter());
+  const saved=await requiredStartup("Character loading",online.loadCharacter());
   if(attemptId!==connectionAttempt)return;setLoadingProgress(52,"اطلاعات بازیکن آماده شد...");
   player.name=saved?.name_setup_completed?saved.display_name:makeDefaultPlayerName(auth.userId);
   $("playerName").value=player.name;
@@ -1515,8 +1518,9 @@ async function connect(){
   persist();
   setLoadingProgress(60,"در حال بارگذاری کاراکتر سه‌بعدی...");
   stage="avatar";
-  try{await ensureAvatar("self",player.skin);}catch(e){console.warn("Avatar unavailable; continuing with fallback rendering:",e);}
+  const selfAvatar=await requiredStartup("Avatar loading",ensureAvatar("self",player.skin),15000);
   if(attemptId!==connectionAttempt)return;
+  if(!selfAvatar)throw new Error("Player character model could not be loaded");
   setLoadingProgress(68,"در حال ورود به دنیای MM...");
   // Room-player listing is supplementary; save the current player before private subscribe.
   stage="room_players";
@@ -1647,19 +1651,41 @@ async function retryConnection(){
  connect();
 }
 window.__mmRetryConnection=retryConnection;
+// Use the same connection-error screen both during startup and on the home page.
+function showHomeConnectionError(){
+ if(connected||$("loadingScreen").classList.contains("visible"))return;
+ const gate=$("orientationGate");gate.hidden=true;gate.style.display="none";
+ const prompt=$("rotatePrompt");prompt.hidden=false;prompt.classList.remove("hidden");prompt.style.display="flex";
+ $("connectionError").textContent="خطا در برقراری ارتباط";
+ $("connectionError").classList.add("visible");
+ const retry=$("startLandscape");retry.disabled=false;retry.textContent="تلاش مجدد";
+}
+function clearHomeConnectionError(){
+ if(connected||$("loadingScreen").classList.contains("visible"))return;
+ const prompt=$("rotatePrompt");prompt.hidden=true;prompt.classList.add("hidden");
+ const gate=$("orientationGate");gate.hidden=false;gate.style.display="flex";
+ $("connectionError").textContent="";$("connectionError").classList.remove("visible");
+ const retry=$("startLandscape");retry.disabled=false;retry.textContent="تلاش دوباره برای ورود آنلاین";
+}
 // Detect an actual browser offline transition immediately instead of waiting
 // for a Supabase request or the connection watchdog to time out.
 function handleStartupOffline(){
- if(connected||!$("loadingScreen").classList.contains("visible"))return;
+ if(connected)return;
  connectionAttempt++;
  clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;clearInterval(startupNetworkMonitor);startupNetworkMonitor=null;
  const failedConnection=online;online=null;
  const btn=$("connect");if(btn){btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";}
- $("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";
- showLoadingError("خطا در برقراری ارتباط");
+ if($("loadingScreen").classList.contains("visible")){
+  $("startLandscape").disabled=false;$("startLandscape").textContent="تلاش دوباره برای ورود آنلاین";
+  showLoadingError("خطا در برقراری ارتباط");
+ }else{
+  showHomeConnectionError();
+ }
  cleanupConnectionNonBlocking(failedConnection,"Offline connection cleanup failed:");
 }
 window.addEventListener("offline",handleStartupOffline);
+if(!navigator.onLine)showHomeConnectionError();
+window.addEventListener("pageshow",()=>{if(!navigator.onLine&&!connected&&!$("loadingScreen").classList.contains("visible"))showHomeConnectionError();});
 $("loadingRetryButton").addEventListener("click",retryConnection);
 $("startLandscape").addEventListener("click",retryConnection);
 $("hudCoinPlus").addEventListener("click",()=>openCharacterShop());
