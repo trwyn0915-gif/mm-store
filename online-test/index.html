@@ -828,6 +828,39 @@ button:focus-visible{outline:2px solid #dce5e3!important;outline-offset:2px}
  <div id="rotatePrompt" class="hidden" hidden><section class="connection-retry-card" role="alert"><strong>ورود به بازی انجام نشد</strong><p id="connectionError"></p><button type="button" id="startLandscape">تلاش دوباره برای ورود آنلاین</button></section></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script>
+// Home connectivity check runs independently of the Three.js module, so it still
+// works if the game's CDN imports fail while the device has no internet.
+(()=>{
+ const endpoint="https://ncdbhxttxqxsygsbsyyc.supabase.co/auth/v1/health";
+ const gate=document.getElementById("orientationGate");
+ const gateCard=gate?.querySelector(".orientation-gate-card");
+ const errorPanel=document.getElementById("homeConnectionError");
+ const retry=document.getElementById("homeConnectionRetry");
+ const loading=document.getElementById("loadingScreen");
+ let busy=false;
+ const isHome=()=>!document.body.classList.contains("playing")&&!loading?.classList.contains("visible");
+ const show=()=>{if(!isHome()||!gate||!errorPanel)return;gate.hidden=false;gate.style.display="flex";if(gateCard)gateCard.hidden=true;errorPanel.hidden=false;errorPanel.classList.add("visible");};
+ const clear=()=>{if(!isHome()||!gate||!errorPanel)return;gate.hidden=false;gate.style.display="flex";if(gateCard)gateCard.hidden=false;errorPanel.hidden=true;errorPanel.classList.remove("visible");};
+ const probe=async()=>{
+  if(!navigator.onLine)return false;
+  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),4500);
+  try{const response=await fetch(endpoint,{method:"GET",cache:"no-store",mode:"cors",signal:controller.signal});return response.status<500;}
+  catch(_){return false;}finally{clearTimeout(timeout);}
+ };
+ const check=async()=>{
+  if(!isHome()||busy)return;
+  if(!navigator.onLine){show();return;}
+  busy=true;const reachable=await probe();busy=false;
+  if(!isHome())return;
+  if(reachable)clear();else show();
+ };
+ window.addEventListener("offline",show);
+ window.addEventListener("online",check);
+ window.addEventListener("pageshow",check);
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden)check();});
+ retry?.addEventListener("click",async()=>{retry.disabled=true;retry.textContent="در حال بررسی اتصال...";await check();retry.disabled=false;retry.textContent="تلاش مجدد";});
+ check();setInterval(()=>{if(!document.hidden)check();},5000);
+})();
 /* Load the short click WAV from this site so playback does not wait on another domain. */
 (()=>{
  const clickSoundUrl="./click.wav";
@@ -1665,7 +1698,6 @@ async function retryConnection(){
 window.__mmRetryConnection=retryConnection;
 // The home screen is orientationGate (not rotatePrompt). Probe Supabase itself,
 // because navigator.onLine can remain true when mobile data has no internet access.
-let homeConnectivityTimer=null,homeConnectivityBusy=false;
 async function probeHomeConnection(){
  if(!navigator.onLine)return false;
  const controller=new AbortController();
@@ -1689,27 +1721,11 @@ function clearHomeConnectionError(){
  $("homeConnectionError").hidden=true;$("homeConnectionError").classList.remove("visible");
 }
 async function checkHomeConnectivity(){
- if(connected||$("loadingScreen").classList.contains("visible")||homeConnectivityBusy)return;
- if(!navigator.onLine){showHomeConnectionError();return;}
- homeConnectivityBusy=true;
+ if(connected||$("loadingScreen").classList.contains("visible"))return;
  const reachable=await probeHomeConnection();
- homeConnectivityBusy=false;
  if(connected||$("loadingScreen").classList.contains("visible"))return;
  if(reachable)clearHomeConnectionError();else showHomeConnectionError();
 }
-function startHomeConnectivityMonitor(){
- clearInterval(homeConnectivityTimer);
- checkHomeConnectivity();
- homeConnectivityTimer=setInterval(()=>{
-  if(document.hidden||connected||$("loadingScreen").classList.contains("visible"))return;
-  checkHomeConnectivity();
- },5000);
-}
-$("homeConnectionRetry").addEventListener("click",async()=>{
- const button=$("homeConnectionRetry");button.disabled=true;button.textContent="در حال بررسی اتصال...";
- await checkHomeConnectivity();
- button.disabled=false;button.textContent="تلاش مجدد";
-});
 // Detect an actual browser offline transition immediately instead of waiting
 // for a Supabase request or the connection watchdog to time out.
 function handleStartupOffline(){
@@ -1728,7 +1744,7 @@ function handleStartupOffline(){
 }
 window.addEventListener("offline",handleStartupOffline);
 window.addEventListener("pageshow",()=>{if(!connected&&!$("loadingScreen").classList.contains("visible"))checkHomeConnectivity();});
-startHomeConnectivityMonitor();
+
 $("loadingRetryButton").addEventListener("click",retryConnection);
 $("startLandscape").addEventListener("click",retryConnection);
 $("hudCoinPlus").addEventListener("click",()=>openCharacterShop());
