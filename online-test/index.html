@@ -1670,8 +1670,8 @@ function showFatalGameError(message){
  const btn=$("startLandscape");btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";
  showLoadingError(message||"خطایی هنگام آماده‌سازی بازی رخ داد. دوباره تلاش کنید.");
 }
-window.addEventListener("error",event=>showFatalGameError(getFriendlyConnectionError(event.message||"خطای نامشخص")));
-window.addEventListener("unhandledrejection",event=>showFatalGameError(getFriendlyConnectionError(event.reason)));
+window.addEventListener("error",event=>{console.error("Game runtime/resource error:",event.message||event.target||event.error||"Unknown error");});
+window.addEventListener("unhandledrejection",event=>{console.error("Unhandled game promise rejection:",event.reason);});
 stats();
 try{online=createRipOnline();}catch(error){console.error("Game client initialization failed:",error);}
 requestAnimationFrame(frame);
