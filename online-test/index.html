@@ -1427,7 +1427,7 @@ async function connect(){
    const stalledConnection=online;online=null;
    showLoadingError(getFriendlyConnectionError("timeout"));
    cleanupConnectionNonBlocking(stalledConnection,"Timed-out connection cleanup failed:");
-  },25000);
+  },8000);
  };
  armCriticalWatchdog("auth");
  const btn=$("connect");btn.disabled=true;status("در حال اتصال به دنیای آنلاین...");setLoadingProgress(12,"در حال اتصال به سرور بازی...");
