@@ -206,7 +206,7 @@ body.playing .bottom.chat-open{display:block;position:fixed;z-index:80;right:10p
 .loading-error-panel{width:min(340px,88vw);margin:0 auto;padding:13px 16px;border:0;border-radius:0;background:transparent;box-shadow:none;text-align:center;color:#fff;direction:rtl;transform:translateY(18px)}
 .loading-error-panel[hidden]{display:none!important}
 .loading-ui.has-error .loading-track{display:none!important}
-.loading-error-panel strong{display:block;margin-bottom:10px;font-size:clamp(16px,2.4vw,20px);font-weight:950;color:#fff;white-space:nowrap}
+.loading-error-panel strong{display:block;margin-bottom:10px;font-size:clamp(16px,2.4vw,20px);font-weight:950;color:#fff;white-space:normal;line-height:1.7}
 .loading-retry-button{min-width:126px;min-height:40px;padding:6px 20px;border:0;border-radius:9px;background:linear-gradient(180deg,#3b82f6,#1d4ed8);color:#fff;font:inherit;font-size:15px;font-weight:900;box-shadow:0 3px 0 #1e3a8a;cursor:pointer}
 .loading-retry-button:active{transform:translateY(2px);box-shadow:0 1px 0 #1e3a8a}
 .loading-ui{width:min(760px,86vw);margin-bottom:clamp(12px,5vh,58px);text-align:center;color:#fff;text-shadow:0 2px 5px #000}
@@ -1130,6 +1130,8 @@ function showLoadingError(message){
  connected=false;document.body.classList.remove("playing");
  const screen=$("loadingScreen");screen.classList.add("visible");
  const ui=screen.querySelector(".loading-ui");ui.classList.add("has-error");
+ const errorTitle=$("loadingErrorPanel").querySelector("strong");
+ if(errorTitle)errorTitle.textContent=message||"خطا در برقراری ارتباط!";
  $("loadingErrorPanel").hidden=false;
  $("loadingRetryButton").disabled=false;
  status("خطا در برقراری ارتباط");
@@ -1483,8 +1485,8 @@ async function connect(){
   clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;
   console.error("Online connection failed:",e);
   connected=false;players={};userId="";
-  if(online){try{await online.leave();}catch(_){}}
-  online=null;
+  if(online){const failedConnection=online;online=null;failedConnection.leave().catch(cleanupError=>console.warn("Failed connection cleanup failed:",cleanupError));}
+  else online=null;
   document.body.classList.remove("playing");
   exitFlowActive=false;
   btn.disabled=false;btn.textContent="تلاش دوباره برای ورود آنلاین";
