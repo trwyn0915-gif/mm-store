@@ -1120,6 +1120,13 @@ function sayToast(t){$("toast").textContent=t;$("toast").classList.add("show");c
 function status(t){$("status").textContent=t;}
 let loadingProgressCurrent=0,loadingProgressTimer=null,loadingProgressComplete=false;
 let connectionAttempt=0,connectionWatchdogTimer=null;
+function cleanupConnectionNonBlocking(connection,label){
+ if(!connection||typeof connection.leave!=="function")return;
+ try{
+  const cleanup=connection.leave();
+  if(cleanup&&typeof cleanup.catch==="function")cleanup.catch(error=>console.warn(label,error));
+ }catch(error){console.warn(label,error);}
+}
 function paintLoadingProgress(){ $("loadingFill").style.width=loadingProgressCurrent+"%";$("loadingPercent").textContent=new Intl.NumberFormat("fa-IR").format(loadingProgressCurrent)+"٪"; }
 function advanceLoadingProgress(){loadingProgressTimer=null;loadingProgressCurrent=Math.min(loadingProgressComplete?100:99,loadingProgressCurrent+1);paintLoadingProgress();if(loadingProgressCurrent<100)loadingProgressTimer=setTimeout(advanceLoadingProgress,110);}
 function setLoadingProgress(value,message){if(Number(value)>=100&&!loadingProgressComplete){loadingProgressComplete=true;if(loadingProgressTimer===null)loadingProgressTimer=setTimeout(advanceLoadingProgress,0);}}
@@ -1414,9 +1421,9 @@ async function connect(){
   if(attemptId!==connectionAttempt||connected)return;
   connectionAttempt++;
   const stalledConnection=online;online=null;
-  if(stalledConnection)stalledConnection.leave().catch(error=>console.warn("Timed-out connection cleanup failed:",error));
-  showLoadingError("اتصال یا آماده‌سازی بازی بیش از حد طول کشید. اینترنت را بررسی کنید و دوباره تلاش کنید.");
- },45000);
+  showLoadingError(getFriendlyConnectionError("timeout"));
+  cleanupConnectionNonBlocking(stalledConnection,"Timed-out connection cleanup failed:");
+ },25000);
  const btn=$("connect");btn.disabled=true;status("در حال اتصال به دنیای آنلاین...");setLoadingProgress(12,"در حال اتصال به سرور بازی...");
  try{
   online=online||createRipOnline();
@@ -1485,7 +1492,7 @@ async function connect(){
   clearTimeout(connectionWatchdogTimer);connectionWatchdogTimer=null;
   console.error("Online connection failed:",e);
   connected=false;players={};userId="";
-  if(online){const failedConnection=online;online=null;failedConnection.leave().catch(cleanupError=>console.warn("Failed connection cleanup failed:",cleanupError));}
+  if(online){const failedConnection=online;online=null;cleanupConnectionNonBlocking(failedConnection,"Failed connection cleanup failed:");}
   else online=null;
   document.body.classList.remove("playing");
   exitFlowActive=false;
